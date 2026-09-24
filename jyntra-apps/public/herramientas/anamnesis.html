@@ -1,0 +1,822 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<script src="./_puente.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#0A0805">
+<title>JINTRA PRO · Anamnesis Nutricional y Deportiva</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#050403; --bg:#0A0805; --surface:#131009; --surface-2:#1B1610; --surface-3:#241D13;
+  --line:#33291A; --line-hi:#5C451F; --gold-lo:#8A5F1E; --gold:#C8912F; --gold-hi:#F0C070;
+  --gold-glow:rgba(200,145,47,.14); --text:#F5EDE0; --muted:#A08C6A; --muted-2:#75654B;
+  --prot:#E2574C; --carb:#4FA8B8; --fat:#E8A33D; --kcal:#F0C070; --ok:#5CB88A; --warn:#E2A33D;
+  --radius:14px;
+}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);color:var(--text);min-height:100vh;
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',sans-serif;
+  font-size:14px;line-height:1.45;-webkit-font-smoothing:antialiased;
+  background-image:radial-gradient(900px 420px at 50% -140px,rgba(200,145,47,.09),transparent 70%);
+  background-attachment:fixed;
+}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-track{background:var(--ink)}
+::-webkit-scrollbar-thumb{background:var(--line);border-radius:4px}
+::-webkit-scrollbar-thumb:hover{background:var(--line-hi)}
+::selection{background:var(--gold);color:#0A0805}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+
+.app-header{
+  background:linear-gradient(180deg,#0B0906 0%,#0A0805 100%);
+  border-bottom:1px solid var(--line);
+  padding:14px 24px;display:flex;align-items:center;gap:16px;
+  position:sticky;top:0;z-index:120;width:100%;
+  box-shadow:0 10px 34px -18px rgba(0,0,0,.95);
+}
+.app-header::after{
+  content:'';position:absolute;left:0;right:0;bottom:-1px;height:1px;
+  background:linear-gradient(90deg,transparent,var(--gold),var(--gold-hi),var(--gold),transparent);
+  opacity:.55;
+}
+.brand{display:flex;align-items:center;gap:13px;min-width:0}
+.brand-mark{width:40px;height:40px;border-radius:11px;flex-shrink:0;
+  background:linear-gradient(140deg,var(--gold-hi),var(--gold-lo));
+  display:flex;align-items:center;justify-content:center;font-weight:800;color:#0D0904;font-size:16px;
+  box-shadow:0 4px 14px -4px rgba(200,145,47,.6)}
+.brand-txt{display:flex;flex-direction:column;min-width:0}
+.brand-name{font-size:15px;font-weight:800;letter-spacing:3.4px;line-height:1;
+  background:linear-gradient(92deg,var(--gold-lo),var(--gold-hi) 45%,var(--gold));
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.brand-sub{font-size:10px;color:var(--muted-2);letter-spacing:1.9px;text-transform:uppercase;margin-top:4px}
+.hd-actions{margin-left:auto;display:flex;align-items:center;gap:9px;flex-shrink:0}
+
+.wrap{max-width:1080px;margin:0 auto;padding:22px 20px 60px}
+
+.stepper{display:flex;gap:4px;margin-bottom:22px;background:var(--surface);
+  border-radius:13px;padding:5px;border:1px solid var(--line)}
+.stbtn{flex:1;padding:11px 6px;border:1px solid transparent;border-radius:9px;cursor:pointer;
+  font-size:12px;font-weight:600;background:transparent;color:var(--muted-2);
+  transition:.18s;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px}
+.stbtn:hover:not(.active){color:var(--muted);background:var(--surface-2)}
+.stbtn .stnum{width:19px;height:19px;border-radius:50%;border:1.5px solid currentColor;
+  display:inline-flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0}
+.stbtn.active{background:linear-gradient(180deg,#241C10,#1A140C);color:var(--gold-hi);
+  border-color:var(--line-hi);box-shadow:inset 0 1px 0 rgba(240,192,112,.14)}
+.stbtn.done{color:var(--ok)}
+.stbtn.done .stnum{background:var(--ok);border-color:var(--ok);color:#07130D;font-weight:800}
+.panel{display:none;animation:fade .28s ease}
+.panel.on{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+
+.card{background:linear-gradient(180deg,var(--surface),#100D08);
+  border:1px solid var(--line);border-radius:var(--radius);padding:20px 22px;margin-bottom:15px;
+  box-shadow:0 1px 0 rgba(240,192,112,.05) inset}
+.card-title{font-size:12px;font-weight:700;color:var(--gold-hi);margin-bottom:15px;
+  letter-spacing:1.5px;text-transform:uppercase;display:flex;align-items:center;gap:8px}
+.card-title small{font-size:10px;color:var(--muted-2);text-transform:none;font-weight:500;letter-spacing:0}
+.card-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--line),transparent)}
+.card-desc{font-size:11px;color:var(--muted-2);margin:-9px 0 14px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.field{display:flex;flex-direction:column;gap:6px;min-width:0}
+.lbl{font-size:10px;font-weight:700;color:var(--muted-2);text-transform:uppercase;letter-spacing:1.1px}
+input,select,textarea{background:var(--surface-2);border:1px solid var(--line);border-radius:9px;
+  padding:10px 12px;color:var(--text);font-size:13.5px;font-family:inherit;outline:none;width:100%;
+  transition:.16s}
+textarea{resize:vertical;min-height:64px;line-height:1.4}
+input::placeholder,textarea::placeholder{color:var(--muted-2)}
+input:hover,select:hover,textarea:hover{border-color:#463516}
+input:focus,select:focus,textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-glow)}
+input:invalid:not(:placeholder-shown){border-color:var(--prot)}
+select{appearance:none;cursor:pointer;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='11' height='7' viewBox='0 0 11 7'><path d='M1 1l4.5 4.5L10 1' stroke='%23A08C6A' stroke-width='1.6' fill='none' stroke-linecap='round'/></svg>");
+  background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
+option{background:#1B1610;color:var(--text)}
+.hint{font-size:10.5px;color:var(--muted-2);margin-top:2px}
+
+.chip-wrap{display:flex;flex-wrap:wrap;gap:7px;margin-top:3px}
+.chip{background:var(--surface-2);border:1px solid var(--line);border-radius:20px;padding:6px 14px;
+  font-size:12px;cursor:pointer;color:var(--muted);transition:.16s;user-select:none;font-family:inherit}
+.chip:hover{border-color:var(--line-hi);color:var(--text)}
+.chip.on{background:var(--gold-glow);border-color:var(--gold);color:var(--gold-hi);font-weight:600}
+.chip.on::before{content:'✓ ';font-size:10px}
+
+.range-row{display:flex;align-items:center;gap:10px}
+.range-row input[type=range]{flex:1;accent-color:var(--gold)}
+.rval{font-size:12.5px;font-weight:700;color:var(--gold-hi);min-width:44px;text-align:right;
+  font-variant-numeric:tabular-nums}
+
+.radio-row{display:flex;flex-wrap:wrap;gap:14px;margin-top:2px}
+.radio-opt{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--muted);cursor:pointer}
+.radio-opt input{width:auto;accent-color:var(--gold)}
+.radio-opt:hover{color:var(--text)}
+
+.btn-row{display:flex;gap:10px;justify-content:flex-end;margin-top:18px;flex-wrap:wrap}
+.btn{padding:11px 22px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;
+  border:1px solid var(--line);background:var(--surface-2);color:var(--text);font-family:inherit;
+  transition:.16s;display:inline-flex;align-items:center;gap:7px;justify-content:center}
+.btn:hover{background:var(--surface-3);border-color:var(--line-hi)}
+.btn.pri{background:linear-gradient(180deg,var(--gold),#A9761F);border-color:var(--gold-lo);
+  color:#100B03;font-weight:700;box-shadow:0 5px 18px -8px rgba(200,145,47,.85)}
+.btn.pri:hover{background:linear-gradient(180deg,var(--gold-hi),var(--gold));border-color:var(--gold)}
+.btn.ghost{background:transparent;color:var(--gold-hi);border-color:var(--line-hi)}
+.btn:disabled{opacity:.32;cursor:not-allowed;box-shadow:none}
+.btn.btn-sm{padding:8px 14px;font-size:12px}
+
+.divider{height:1px;background:linear-gradient(90deg,transparent,var(--line),transparent);margin:18px 0}
+.alert{border-radius:11px;padding:12px 15px;font-size:12.5px;margin-bottom:14px;
+  border:1px solid rgba(226,87,76,.3);background:rgba(226,87,76,.07);color:#F3B8B2;display:none}
+.alert.on{display:block}
+.note{border-radius:11px;padding:12px 15px;font-size:12px;margin-top:4px;margin-bottom:4px;
+  border:1px solid rgba(200,145,47,.28);background:rgba(200,145,47,.07);color:var(--muted)}
+.toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(90px);
+  background:var(--surface-3);border:1px solid var(--gold);color:var(--gold-hi);padding:12px 22px;
+  border-radius:11px;font-size:13px;font-weight:600;z-index:400;transition:transform .3s;
+  box-shadow:0 14px 40px -10px #000}
+.toast.on{transform:translateX(-50%) translateY(0)}
+
+.progress-mini{font-size:10px;color:var(--muted-2);letter-spacing:.6px;text-transform:uppercase;margin-bottom:14px}
+
+@media(max-width:720px){
+  .app-header{padding:10px 14px}
+  .brand-sub{display:none}
+  .wrap{padding:16px 12px 50px}
+  .g2,.g3,.g4{grid-template-columns:1fr}
+  .stbtn{font-size:0;gap:0;padding:11px 4px}
+  .stbtn .stnum{font-size:11px;width:24px;height:24px}
+  .card{padding:16px}
+}
+@media print{
+  .app-header,.stepper,.btn-row{display:none!important}
+  .panel{display:block!important}
+  body{background:#fff;color:#111}
+  .card{background:#fff;border:1px solid #ccc;box-shadow:none;break-inside:avoid}
+  .card-title{color:#7a5518}
+  input,select,textarea{background:#fff;border:1px solid #ccc;color:#111}
+  .chip{background:#fff;border:1px solid #ccc;color:#333}
+  .chip.on{background:#f2e6cf;border-color:#c8912f;color:#7a5518}
+}
+</style>
+
+<style id="jy-embed">
+  body{padding-bottom:10px !important}
+  html{overflow-x:hidden}
+</style>
+<script>
+(function(){
+  /* respaldo de almacenamiento si el visor bloquea localStorage */
+  try{ localStorage.setItem('__jyt','1'); localStorage.removeItem('__jyt'); }
+  catch(e){
+    try{
+      var P = (window.parent.__jyMemStore = window.parent.__jyMemStore || {});
+      Object.defineProperty(window,'localStorage',{configurable:true,value:{
+        getItem:function(k){ return P[k]==null?null:P[k]; },
+        setItem:function(k,v){ P[k]=String(v); },
+        removeItem:function(k){ delete P[k]; },
+        clear:function(){ Object.keys(P).forEach(function(k){delete P[k];}); },
+        key:function(i){ return Object.keys(P)[i]||null; },
+        get length(){ return Object.keys(P).length; }
+      }});
+    }catch(_){}
+  }
+  /* la cascara ajusta el alto del marco a la altura real del contenido */
+  function alto(){
+    var d=document.documentElement, b=document.body;
+    var h=Math.max(b.scrollHeight,d.scrollHeight,b.offsetHeight,d.offsetHeight);
+    try{ parent.postMessage({jyEmbed:true, accion:'alto', px:h+24}, '*'); }catch(e){}
+  }
+  window.addEventListener('load', function(){
+    alto(); setTimeout(alto,300); setTimeout(alto,1200);
+    try{ new ResizeObserver(alto).observe(document.body); }catch(e){ setInterval(alto,900); }
+    document.addEventListener('click', function(){ setTimeout(alto,120); setTimeout(alto,500); }, true);
+    document.addEventListener('change', function(){ setTimeout(alto,150); }, true);
+  });
+})();
+</script>
+
+<script>
+/* Puente de guardado con la cascara JYNTRA. */
+window.__jySerieCampos = function(){
+  var d = {vals:{}, chips:{}};
+  document.querySelectorAll('input,select,textarea').forEach(function(el){
+    if(!el.id) return;
+    if(el.type==='file') return;
+    d.vals[el.id] = (el.type==='checkbox') ? el.checked : el.value;
+  });
+  document.querySelectorAll('.chip-wrap').forEach(function(w){
+    var g = w.dataset.group; if(!g) return;
+    var marcados = [];
+    [].slice.call(w.querySelectorAll('.chip')).forEach(function(c,i){
+      if(c.classList.contains('on')) marcados.push(i);
+    });
+    d.chips[g] = marcados;
+  });
+  return d;
+};
+window.__jyRestauraCampos = function(d, saltar){
+  if(!d) return;
+  saltar = saltar || /^$/;
+  var v = d.vals || {};
+  Object.keys(v).forEach(function(id){
+    if(saltar.test(id)) return;
+    var el = document.getElementById(id); if(!el) return;
+    if(el.type==='checkbox') el.checked = !!v[id]; else el.value = v[id];
+  });
+  var c = d.chips || {};
+  Object.keys(c).forEach(function(g){
+    var w = document.querySelector('.chip-wrap[data-group="'+g+'"]'); if(!w) return;
+    var botones = w.querySelectorAll('.chip');
+    (c[g]||[]).forEach(function(i){
+      var b = botones[i];
+      if(b && !b.classList.contains('on')) b.click();
+    });
+  });
+};
+window.__jyMontaPuente = function(recolectar, restaurar){
+  var t=null;
+  function avisar(){
+    clearTimeout(t);
+    t = setTimeout(function(){
+      try{ parent.postMessage({jyEmbed:true, accion:'estado', datos:recolectar()},'*'); }catch(e){}
+    }, 500);
+  }
+  window.addEventListener('message', function(e){
+    if(!e.data || e.data.jyEmbed!==true) return;
+    if(e.data.accion==='cargar'){ try{ restaurar(e.data.datos); }catch(err){ console.warn(err); } }
+  });
+  window.addEventListener('load', function(){
+    document.addEventListener('input',  avisar, true);
+    document.addEventListener('change', avisar, true);
+    document.addEventListener('click',  function(ev){ if(ev.target.closest('button')) avisar(); }, true);
+    try{ parent.postMessage({jyEmbed:true, accion:'listo'},'*'); }catch(e){}
+  });
+};
+</script>
+
+<style>
+  .app-header{display:none !important}
+  .wrap{padding-top:4px !important;padding-left:0 !important;padding-right:0 !important;max-width:100% !important}
+  @media print{ .wrap{padding:0 !important} }
+</style>
+<script>
+window.__jyMontaPuente(
+  function(){ return window.__jySerieCampos(); },
+  function(d){
+    window.__jyRestauraCampos(d, /^hor_/);
+    ['f_nc','f_sx'].forEach(function(id){
+      var el=document.getElementById(id);
+      if(el) el.dispatchEvent(new Event('change',{bubbles:true}));
+    });
+    var v=(d&&d.vals)||{};
+    Object.keys(v).forEach(function(id){
+      if(!/^hor_/.test(id)) return;
+      var el=document.getElementById(id); if(el) el.value=v[id];
+    });
+    ['f_nom','f_ed','f_pe','f_ta','f_dep_principal'].forEach(function(id){
+      var el=document.getElementById(id);
+      if(el) el.dispatchEvent(new Event('input',{bubbles:true}));
+    });
+    document.querySelectorAll('input[type=range]').forEach(function(el){
+      el.dispatchEvent(new Event('input',{bubbles:true}));
+    });
+  }
+);
+</script>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="brand">
+    <div class="brand-mark">JP</div>
+    <div class="brand-txt">
+      <div class="brand-name">JINTRA PRO</div>
+      <div class="brand-sub">Anamnesis Nutricional &amp; Deportiva</div>
+    </div>
+  </div>
+  <div class="hd-actions">
+    <button class="btn btn-sm ghost" id="resetBtn" type="button" title="Reiniciar formulario">↺ Reiniciar</button>
+    <button class="btn btn-sm pri" id="printBtn" type="button">⬇ Imprimir / PDF</button>
+  </div>
+</header>
+
+<div class="wrap">
+  <nav class="stepper" role="tablist" aria-label="Etapas">
+    <button class="stbtn active" id="s0" data-step="0" role="tab"><span class="stnum">1</span>Datos generales</button>
+    <button class="stbtn" id="s1" data-step="1" role="tab"><span class="stnum">2</span>Hábitos y perfil deportivo</button>
+  </nav>
+
+  <!-- ══════════ PASO 0 · DATOS GENERALES ══════════ -->
+  <section class="panel on" id="p0">
+
+    <div class="card">
+      <h2 class="card-title">Datos del atleta</h2>
+      <div class="g2" style="margin-bottom:12px">
+        <div class="field" style="grid-column:1/-1">
+          <label class="lbl" for="f_nom">Nombre completo *</label>
+          <input id="f_nom" placeholder="Nombre del atleta" autocomplete="name" required>
+        </div>
+      </div>
+      <div class="g3">
+        <div class="field"><label class="lbl" for="f_sx">Sexo</label>
+          <select id="f_sx"><option value="M">Masculino</option><option value="F">Femenino</option></select>
+        </div>
+        <div class="field"><label class="lbl" for="f_ed">Edad (años) *</label>
+          <input id="f_ed" type="number" min="10" max="99" step="1" placeholder="25" required></div>
+        <div class="field"><label class="lbl" for="f_pe">Peso actual (kg) *</label>
+          <input id="f_pe" type="number" min="25" max="250" step="0.1" placeholder="70" required></div>
+      </div>
+      <div class="g3" style="margin-top:12px">
+        <div class="field"><label class="lbl" for="f_ta">Talla (cm) *</label>
+          <input id="f_ta" type="number" min="120" max="230" step="0.5" placeholder="170" required></div>
+        <div class="field"><label class="lbl" for="f_ci">Cintura (cm)</label>
+          <input id="f_ci" type="number" min="40" max="200" step="0.5" placeholder="80">
+          <div class="hint">Opcional · índice cintura-talla</div></div>
+        <div class="field"><label class="lbl" for="f_form">Fórmula de gasto basal</label>
+          <select id="f_form">
+            <option value="mifflin" selected>Mifflin-St Jeor (recomendada)</option>
+            <option value="harris">Harris-Benedict revisada</option>
+            <option value="katch">Katch-McArdle (requiere % graso)</option>
+            <option value="cunningham">Cunningham (masa magra, atletas)</option>
+          </select>
+        </div>
+      </div>
+      <div class="g3" style="margin-top:12px">
+        <div class="field"><label class="lbl" for="f_gc">% Graso estimado</label>
+          <input id="f_gc" type="number" min="3" max="60" step="0.5" placeholder="Opcional">
+          <div class="hint">Método: pliegues, bioimpedancia, DEXA...</div></div>
+        <div class="field"><label class="lbl" for="f_metodo_gc">Método de medición</label>
+          <select id="f_metodo_gc">
+            <option value="">Sin dato</option>
+            <option>Pliegues cutáneos</option><option>Bioimpedancia (BIA)</option>
+            <option>DEXA</option><option>Antropometría ISAK</option><option>Estimación visual</option>
+          </select>
+        </div>
+        <div class="field"><label class="lbl" for="f_peso_habitual">Peso habitual (últimos 6 meses)</label>
+          <input id="f_peso_habitual" placeholder="Ej: estable / +3 kg / -5 kg"></div>
+      </div>
+      <div class="alert" id="alert0"></div>
+    </div>
+
+    <div class="card">
+      <h2 class="card-title">Perfil deportivo</h2>
+      <div class="g2" style="margin-bottom:12px">
+        <div class="field"><label class="lbl" for="f_dep_principal">Deporte principal *</label>
+          <input id="f_dep_principal" placeholder="Ej: fútbol, atletismo, natación, crossfit..." required></div>
+        <div class="field"><label class="lbl" for="f_dep_secundario">Deporte(s) complementario(s)</label>
+          <input id="f_dep_secundario" placeholder="Si practica más de uno"></div>
+      </div>
+      <div class="g3" style="margin-bottom:12px">
+        <div class="field"><label class="lbl" for="f_nivel">Nivel competitivo</label>
+          <select id="f_nivel">
+            <option>Recreativo / bienestar</option>
+            <option>Amateur federado</option>
+            <option selected>Competitivo regional</option>
+            <option>Competitivo nacional</option>
+            <option>Semi-profesional</option>
+            <option>Profesional</option>
+            <option>Alto rendimiento / selección nacional</option>
+          </select>
+        </div>
+        <div class="field"><label class="lbl" for="f_anios">Años de práctica</label>
+          <input id="f_anios" type="number" min="0" max="60" step="1" placeholder="5"></div>
+        <div class="field"><label class="lbl" for="f_posicion">Posición / rol / especialidad</label>
+          <input id="f_posicion" placeholder="Ej: mediocampista, velocista 400m..."></div>
+      </div>
+      <div class="g3" style="margin-bottom:12px">
+        <div class="field"><label class="lbl" for="f_lado">Lado / pierna / mano dominante</label>
+          <select id="f_lado"><option>Derecha</option><option>Izquierda</option><option>Ambidiestro</option></select>
+        </div>
+        <div class="field"><label class="lbl" for="f_club">Club / equipo / institución</label>
+          <input id="f_club" placeholder="Opcional"></div>
+        <div class="field"><label class="lbl" for="f_entrenador">Entrenador / preparador físico</label>
+          <input id="f_entrenador" placeholder="Nombre de contacto (opcional)"></div>
+      </div>
+      <div class="g3">
+        <div class="field"><label class="lbl" for="f_fase">Fase de temporada actual</label>
+          <select id="f_fase">
+            <option>Pretemporada</option><option>Fase de competencia</option>
+            <option>Fase de mantenimiento</option><option>Transición / descanso activo</option>
+            <option>Recuperación de lesión</option>
+          </select>
+        </div>
+        <div class="field"><label class="lbl" for="f_competencia">Próxima competencia relevante</label>
+          <input id="f_competencia" placeholder="Nombre y fecha aproximada"></div>
+        <div class="field"><label class="lbl" for="f_obj_temporada">Objetivo principal de la temporada</label>
+          <input id="f_obj_temporada" placeholder="Ej: clasificar, bajar tiempo, subir categoría..."></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 class="card-title">Historial de lesiones y salud músculo-esquelética</h2>
+      <div class="field" style="margin-bottom:14px"><span class="lbl">Lesiones deportivas relevantes (histórico)</span>
+        <div class="chip-wrap" data-group="les">
+          <button type="button" class="chip">Esguince de tobillo</button>
+          <button type="button" class="chip">Lesión de rodilla (LCA/menisco)</button>
+          <button type="button" class="chip">Lesión de hombro</button>
+          <button type="button" class="chip">Fractura ósea</button>
+          <button type="button" class="chip">Desgarro / lesión muscular</button>
+          <button type="button" class="chip">Tendinopatía</button>
+          <button type="button" class="chip">Lesión lumbar / espalda</button>
+          <button type="button" class="chip">Conmoción cerebral</button>
+          <button type="button" class="chip">Fractura por estrés</button>
+          <button type="button" class="chip">Ninguna</button>
+        </div>
+      </div>
+      <div class="g2" style="margin-bottom:12px">
+        <div class="field"><label class="lbl" for="f_lesion_actual">¿Lesión o molestia actual?</label>
+          <select id="f_lesion_actual"><option>No</option><option>Sí, en recuperación</option><option>Sí, activa / limitante</option></select>
+        </div>
+        <div class="field"><label class="lbl" for="f_lesion_zona">Zona / detalle</label>
+          <input id="f_lesion_zona" placeholder="Describir si aplica"></div>
+      </div>
+      <div class="g2">
+        <div class="field"><label class="lbl" for="f_ortesis">Uso de fajas, ortesis o vendajes</label>
+          <select id="f_ortesis"><option>No</option><option>Ocasional</option><option>Frecuente</option></select>
+        </div>
+        <div class="field"><label class="lbl" for="f_fisio">Seguimiento con kinesiólogo / fisioterapeuta</label>
+          <select id="f_fisio"><option>No</option><option>Sí, preventivo</option><option>Sí, por rehabilitación activa</option></select>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" id="card_femenino" style="display:none">
+      <h2 class="card-title">Salud hormonal <small>(según sexo indicado)</small></h2>
+      <div class="g2" style="margin-bottom:12px">
+        <div class="field"><label class="lbl" for="f_ciclo">Ciclo menstrual</label>
+          <select id="f_ciclo">
+            <option>Regular</option><option>Irregular</option><option>Ausente (amenorrea)</option>
+            <option>Uso de anticonceptivos hormonales</option><option>Prefiere no responder</option>
+          </select>
+        </div>
+        <div class="field"><label class="lbl" for="f_ciclo_meses">Meses desde el último ciclo (si aplica)</label>
+          <input id="f_ciclo_meses" type="number" min="0" max="60" placeholder="Opcional"></div>
+      </div>
+      <div class="hint">Información relevante para evaluar riesgo de disponibilidad energética baja (RED-S) en deportistas.</div>
+    </div>
+
+    <div class="btn-row"><button class="btn pri" id="bn0" type="button" disabled>Siguiente →</button></div>
+  </section>
+
+  <!-- ══════════ PASO 1 · HÁBITOS Y PERFIL DEPORTIVO ══════════ -->
+  <section class="panel" id="p1">
+
+    <div class="card">
+      <h2 class="card-title">Carga de entrenamiento y periodización</h2>
+      <div class="g2" style="margin-bottom:12px">
+        <div class="field"><label class="lbl" for="f_af">Nivel de actividad general</label>
+          <select id="f_af">
+            <option value="1.2">Sedentario · sin ejercicio (×1.2)</option>
+            <option value="1.375">Leve · 1–3 días/sem (×1.375)</option>
+            <option value="1.55" selected>Moderado · 3–5 días/sem (×1.55)</option>
+            <option value="1.725">Activo · 6–7 días/sem (×1.725)</option>
+            <option value="1.9">Muy activo · 2 sesiones/día (×1.9)</option>
+          </select>
+        </div>
+        <div class="field"><label class="lbl" for="f_obj">Objetivo nutricional principal</label>
+          <select id="f_obj">
+            <option value="deficit">Perder grasa (−20% kcal)</option>
+            <option value="recomp">Recomposición (−5% kcal)</option>
+            <option value="mant" selected>Mantenimiento</option>
+            <option value="volumen">Ganar masa (+15% kcal)</option>
+            <option value="fuerza">Fuerza / potencia (+5% kcal)</option>
+            <option value="resist">Resistencia (+5% kcal)</option>
+          </select>
+        </div>
+      </div>
+      <div class="g3" style="margin-bottom:12px">
+        <div class="field"><label class="lbl" for="f_ent">Entrenamientos por semana</label>
+          <div class="range-row"><input type="range" min="0" max="14" value="5" id="f_ent"><div class="rval" id="vent">5</div></div>
+        </div>
+        <div class="field"><label class="lbl" for="f_dur_ses">Duración promedio por sesión (min)</label>
+          <div class="range-row"><input type="range" min="15" max="240" step="5" value="90" id="f_dur_ses"><div class="rval" id="vdur">90'</div></div>
+        </div>
+        <div class="field"><label class="lbl" for="f_dobles">Dobles sesiones por semana</label>
+          <div class="range-row"><input type="range" min="0" max="7" value="0" id="f_dobles"><div class="rval" id="vdob">0</div></div>
+        </div>
+      </div>
+      <div class="field" style="margin-bottom:14px"><span class="lbl">Tipo de entrenamiento predominante</span>
+        <div class="chip-wrap" data-group="tipoent">
+          <button type="button" class="chip">Fuerza / gimnasio</button>
+          <button type="button" class="chip">Resistencia aeróbica</button>
+          <button type="button" class="chip">HIIT / intervalos</button>
+          <button type="button" class="chip">Técnica / táctica</button>
+          <button type="button" class="chip">Velocidad / potencia</button>
+          <button type="button" class="chip">Flexibilidad / movilidad</button>
+          <button type="button" class="chip">Trabajo aeróbico de baja intensidad</button>
+        </div>
+      </div>
+      <div class="g2">
+        <div class="field"><label class="lbl" for="f_rpe">Percepción de esfuerzo promedio (RPE 1–10)</label>
+          <div class="range-row"><input type="range" min="1" max="10" value="6" id="f_rpe"><div class="rval" id="vrpe">6</div></div>
+        </div>
+        <div class="field"><label class="lbl" for="f_fatiga">Nivel de fatiga acumulada percibida</label>
+          <select id="f_fatiga"><option>Baja</option><option selected>Moderada</option><option>Alta</option><option>Muy alta / sobreentrenamiento sospechado</option></select>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 class="card-title">Horarios de comida</h2>
+      <div class="g2" style="margin-bottom:12px">
+        <div class="field"><label class="lbl" for="f_nc">Comidas al día</label>
+          <select id="f_nc">
+            <option value="3">3 comidas</option><option value="4" selected>4 comidas</option>
+            <option value="5">5 comidas</option><option value="6">6 comidas</option>
+          </select>
+        </div>
+        <div class="field"><label class="lbl" for="f_horario_ent">Horario habitual de entrenamiento</label>
+          <select id="f_horario_ent">
+            <option>Mañana</option><option>Mediodía</option><option>Tarde</option>
+            <option>Noche</option><option>Variable / rotativo</option>
+          </select>
+        </div>
+      </div>
+      <div class="g3" id="hors_grid"></div>
+    </div>
+
+    <div class="card">
+      <h2 class="card-title">Nutrición pre, intra y post-entrenamiento</h2>
+      <div class="field" style="margin-bottom:14px"><span class="lbl">¿Qué consume antes de entrenar/competir?</span>
+        <div class="chip-wrap" data-group="pre_ent">
+          <button type="button" class="chip">Comida completa</button>
+          <button type="button" class="chip">Fruta</button>
+          <button type="button" class="chip">Barra o snack energético</button>
+          <button type="button" class="chip">Café / cafeína</button>
+          <button type="button" class="chip">Nada, entrena en ayunas</button>
+          <button type="button" class="chip">Bebida deportiva</button>
+        </div>
+      </div>
+      <div class="g2" style="margin-bottom:14px">
+        <div class="field"><label class="lbl" for="f_tol_gi">Tolerancia gastrointestinal al comer antes de entrenar</label>
+          <select id="f_tol_gi"><option>Buena, sin molestias</option><option>Molestias leves ocasionales</option><option>Molestias frecuentes (náuseas, reflujo, dolor)</option></select>
+        </div>
+        <div class="field"><label class="lbl" for="f_hidr_ent">Hidratación durante el entrenamiento</label>
+          <select id="f_hidr_ent"><option>Solo agua</option><option>Agua + bebida deportiva</option><option>Bebida deportiva principalmente</option><option>Poca o nula ingesta durante el ejercicio</option></select>
+        </div>
+      </div>
+      <div class="field" style="margin-bottom:14px"><span class="lbl">Ayudas ergogénicas usadas durante el entrenamiento/competencia</span>
+        <div class="chip-wrap" data-group="ayudas_intra">
+          <button type="button" class="chip">Geles energéticos</button>
+          <button type="button" class="chip">Barras energéticas</button>
+          <button type="button" class="chip">Bebida deportiva con carbohidratos</button>
+          <button type="button" class="chip">Cafeína</button>
+          <button type="button" class="chip">Electrolitos / sales</button>
+          <button type="button" class="chip">Ninguna</button>
+        </div>
+      </div>
+      <div class="field"><label class="lbl" for="f_post_ent">Estrategia de alimentación post-entrenamiento</label>
+        <input id="f_post_ent" placeholder="Ej: batido de proteína, comida dentro de 1h, no hace nada específico..."></div>
+    </div>
+
+    <div class="card">
+      <h2 class="card-title">Hábitos de vida y recuperación</h2>
+      <div class="g3">
+        <div class="field"><label class="lbl" for="f_ag">Agua diaria (fuera del entrenamiento)</label>
+          <div class="range-row"><input type="range" min="0.5" max="6" step="0.25" value="2" id="f_ag"><div class="rval" id="vag">2 L</div></div>
+        </div>
+        <div class="field"><label class="lbl" for="f_sn">Horas de sueño</label>
+          <div class="range-row"><input type="range" min="4" max="10" step="0.5" value="7" id="f_sn"><div class="rval" id="vsn">7 h</div></div>
+        </div>
+        <div class="field"><label class="lbl" for="f_es">Nivel de estrés percibido (1–10)</label>
+          <div class="range-row"><input type="range" min="1" max="10" value="3" id="f_es"><div class="rval" id="ves">3</div></div>
+        </div>
+      </div>
+      <div class="g3" style="margin-top:12px">
+        <div class="field"><label class="lbl" for="f_calidad_sueno">Calidad de sueño percibida</label>
+          <select id="f_calidad_sueno"><option>Buena</option><option selected>Regular</option><option>Mala</option></select>
+        </div>
+        <div class="field"><label class="lbl" for="f_alc">Alcohol semanal</label>
+          <select id="f_alc"><option>No consume</option><option>Ocasional (1–2)</option><option>Moderado (3–7)</option><option>Frecuente (8+)</option></select>
+        </div>
+        <div class="field"><label class="lbl" for="f_tab">Tabaco / vapeo</label>
+          <select id="f_tab"><option>No</option><option>Ocasional</option><option>Diario</option></select>
+        </div>
+      </div>
+      <div class="g2" style="margin-top:12px">
+        <div class="field"><label class="lbl" for="f_viajes">Frecuencia de viajes por competencia</label>
+          <select id="f_viajes"><option>No viaja</option><option>Ocasional (mensual)</option><option>Frecuente (semanal/quincenal)</option><option>Con cambio de huso horario habitual</option></select>
+        </div>
+        <div class="field"><label class="lbl" for="f_recuperacion">Métodos de recuperación utilizados</label>
+          <input id="f_recuperacion" placeholder="Ej: masajes, crioterapia, sauna, estiramiento, ninguno"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 class="card-title">Suplementación deportiva</h2>
+      <div class="field" style="margin-bottom:14px"><span class="lbl">Suplementos actuales</span>
+        <div class="chip-wrap" data-group="supl">
+          <button type="button" class="chip">Proteína whey</button>
+          <button type="button" class="chip">Creatina</button>
+          <button type="button" class="chip">Cafeína</button>
+          <button type="button" class="chip">Beta-alanina</button>
+          <button type="button" class="chip">Bicarbonato de sodio</button>
+          <button type="button" class="chip">Nitratos / jugo de remolacha</button>
+          <button type="button" class="chip">BCAA / EAA</button>
+          <button type="button" class="chip">Multivitamínico</button>
+          <button type="button" class="chip">Omega-3</button>
+          <button type="button" class="chip">Vitamina D</button>
+          <button type="button" class="chip">Hierro</button>
+          <button type="button" class="chip">Electrolitos</button>
+          <button type="button" class="chip">Colágeno</button>
+          <button type="button" class="chip">Ninguno</button>
+        </div>
+      </div>
+      <div class="g2">
+        <div class="field"><label class="lbl" for="f_supl_otros">Otros suplementos / dosis</label>
+          <input id="f_supl_otros" placeholder="Detalle marca y dosis si aplica"></div>
+        <div class="field"><label class="lbl" for="f_antidoping">¿Sujeto a control antidopaje / conoce lista WADA?</label>
+          <select id="f_antidoping"><option>No aplica</option><option>Sí, testeado regularmente</option><option>Sí, pero no revisa suplementos con lista prohibida</option></select>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 class="card-title">Preferencias alimentarias</h2>
+      <div class="field" style="margin-bottom:14px"><span class="lbl">Alimentos favoritos</span>
+        <div class="chip-wrap" data-group="pref">
+          <button type="button" class="chip">Pollo</button><button type="button" class="chip">Salmón</button>
+          <button type="button" class="chip">Atún</button><button type="button" class="chip">Huevo</button>
+          <button type="button" class="chip">Lentejas</button><button type="button" class="chip">Arroz</button>
+          <button type="button" class="chip">Avena</button><button type="button" class="chip">Palta</button>
+          <button type="button" class="chip">Yogurt griego</button><button type="button" class="chip">Quinoa</button>
+        </div>
+      </div>
+      <div class="g2">
+        <div class="field"><label class="lbl" for="f_av">Alimentos a evitar</label>
+          <input id="f_av" placeholder="Indicar alimentos que no consume..."></div>
+        <div class="field"><label class="lbl" for="f_pat_ali">Patrón alimentario</label>
+          <select id="f_pat_ali"><option>Omnívoro</option><option>Vegetariano</option><option>Vegano</option><option>Sin gluten</option><option>Sin lactosa</option></select>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 class="card-title">Composición corporal, peso y relación con la alimentación</h2>
+      <div class="card-desc">Preguntas de tamizaje general, no diagnósticas. Ante señales de riesgo, derivar a evaluación profesional especializada.</div>
+      <div class="g2" style="margin-bottom:12px">
+        <div class="field"><label class="lbl" for="f_peso_comp">¿Compite por categoría de peso?</label>
+          <select id="f_peso_comp"><option>No</option><option>Sí</option></select>
+        </div>
+        <div class="field"><label class="lbl" for="f_peso_obj">Peso objetivo de competencia (kg)</label>
+          <input id="f_peso_obj" type="number" min="25" max="250" step="0.1" placeholder="Si aplica"></div>
+      </div>
+      <div class="field" style="margin-bottom:14px"><span class="lbl">Métodos usados para ajustar peso rápidamente (si aplica)</span>
+        <div class="chip-wrap" data-group="metodo_peso">
+          <button type="button" class="chip">Restricción de líquidos</button>
+          <button type="button" class="chip">Restricción calórica severa</button>
+          <button type="button" class="chip">Uso de sauna / traje térmico</button>
+          <button type="button" class="chip">Ejercicio extra deshidratante</button>
+          <button type="button" class="chip">Ayuno prolongado</button>
+          <button type="button" class="chip">No utiliza ningún método</button>
+        </div>
+      </div>
+      <div class="g2">
+        <div class="field"><label class="lbl" for="f_percepcion">Percepción sobre su peso/imagen corporal actual</label>
+          <select id="f_percepcion"><option>Cómodo/a con su peso actual</option><option>Le gustaría bajar de peso</option><option>Le gustaría subir de peso</option><option>Preocupación frecuente por el peso/imagen</option><option>Prefiere no responder</option></select>
+        </div>
+        <div class="field"><label class="lbl" for="f_relacion_comida">Relación general con la comida</label>
+          <select id="f_relacion_comida"><option>Tranquila / sin conflictos</option><option>Cierta rigidez o control alto</option><option>Episodios de sobreingesta</option><option>Prefiere conversarlo directamente con el profesional</option></select>
+        </div>
+      </div>
+    </div>
+
+    <div class="note">Esta anamnesis recopila información funcional para el diseño de un plan nutricional deportivo. No reemplaza una evaluación clínica ni psicológica profesional cuando existan señales de alerta.</div>
+
+    <div class="btn-row">
+      <button class="btn" type="button" data-goto="0">← Anterior</button>
+      <button class="btn pri" id="bnFinal" type="button">Finalizar anamnesis ✓</button>
+    </div>
+  </section>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+
+/* ── Estado de chips (grupos de selección múltiple) ─────────────── */
+const chipGroups = ['pat','ale','les','tipoent','pre_ent','ayudas_intra','supl','pref','metodo_peso'];
+const chips = {};
+chipGroups.forEach(g => chips[g] = []);
+
+document.querySelectorAll('.chip-wrap').forEach(wrap=>{
+  const g = wrap.dataset.group;
+  wrap.addEventListener('click', e=>{
+    const b = e.target.closest('.chip');
+    if(!b) return;
+    b.classList.toggle('on');
+    chips[g] = [...wrap.querySelectorAll('.chip.on')].map(c=>c.textContent.replace('✓ ',''));
+  });
+});
+
+/* ── Rangos con valor visible ────────────────────────────────────── */
+function bindRange(id, valId, suffix=''){
+  const inp = document.getElementById(id), out = document.getElementById(valId);
+  if(!inp || !out) return;
+  const upd = ()=> out.textContent = inp.value + suffix;
+  inp.addEventListener('input', upd);
+  upd();
+}
+bindRange('f_ent','vent');
+bindRange('f_dur_ses','vdur',"'");
+bindRange('f_dobles','vdob');
+bindRange('f_rpe','vrpe');
+bindRange('f_ag','vag',' L');
+bindRange('f_sn','vsn',' h');
+bindRange('f_es','ves');
+
+/* ── Horarios de comida dinámicos ───────────────────────────────── */
+const MEAL_NAMES = ['Desayuno','Media mañana','Almuerzo','Merienda','Cena','Colación'];
+const DEF_TIMES  = ['07:30','10:30','13:30','17:00','20:00','21:30'];
+function buildHorarios(){
+  const n = parseInt(document.getElementById('f_nc').value,10);
+  const grid = document.getElementById('hors_grid');
+  grid.innerHTML = '';
+  for(let i=0;i<n;i++){
+    const f = document.createElement('div');
+    f.className = 'field';
+    f.innerHTML = `<label class="lbl">${MEAL_NAMES[i] || 'Comida '+(i+1)}</label>
+      <input type="time" id="hor_${i}" value="${DEF_TIMES[i] || '12:00'}">`;
+    grid.appendChild(f);
+  }
+}
+document.getElementById('f_nc').addEventListener('change', buildHorarios);
+buildHorarios();
+
+/* ── Card femenina condicional ──────────────────────────────────── */
+function toggleFemCard(){
+  document.getElementById('card_femenino').style.display =
+    document.getElementById('f_sx').value === 'F' ? 'block' : 'none';
+}
+document.getElementById('f_sx').addEventListener('change', toggleFemCard);
+toggleFemCard();
+
+/* ── Validación mínima paso 0 ────────────────────────────────────── */
+function validarPaso0(){
+  const ok = val('f_nom') && val('f_ed') && val('f_pe') && val('f_ta') && val('f_dep_principal');
+  document.getElementById('bn0').disabled = !ok;
+}
+const val = id => (document.getElementById(id)?.value || '').trim();
+['f_nom','f_ed','f_pe','f_ta','f_dep_principal'].forEach(id=>{
+  document.getElementById(id).addEventListener('input', validarPaso0);
+});
+validarPaso0();
+
+/* ── Navegación entre pasos ─────────────────────────────────────── */
+function goto(step){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
+  document.getElementById('p'+step).classList.add('on');
+  document.querySelectorAll('.stbtn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('s'+step).classList.add('active');
+  if(step===1) document.getElementById('s0').classList.add('done');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+document.querySelectorAll('[data-goto]').forEach(b=>{
+  b.addEventListener('click', ()=> goto(b.dataset.goto));
+});
+document.getElementById('bn0').addEventListener('click', ()=> goto(1));
+document.querySelectorAll('.stbtn').forEach(b=>{
+  b.addEventListener('click', ()=>{
+    if(b.dataset.step === '1' && document.getElementById('bn0').disabled) return;
+    goto(b.dataset.step);
+  });
+});
+
+/* ── Toast ───────────────────────────────────────────────────────── */
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('on');
+  setTimeout(()=> t.classList.remove('on'), 2200);
+}
+
+/* ── Finalizar / Imprimir ───────────────────────────────────────── */
+document.getElementById('bnFinal').addEventListener('click', ()=>{
+  toast('Anamnesis completa. Puede imprimirla o exportarla a PDF.');
+});
+document.getElementById('printBtn').addEventListener('click', ()=>{
+  goto(0);
+  document.getElementById('p1').classList.add('on');
+  window.print();
+});
+
+/* ── Reiniciar ───────────────────────────────────────────────────── */
+document.getElementById('resetBtn').addEventListener('click', ()=>{
+  if(!confirm('¿Reiniciar todo el formulario?')) return;
+  document.querySelectorAll('input[type=text],input[type=number],input:not([type])').forEach(i=>i.value='');
+  document.querySelectorAll('.chip.on').forEach(c=>c.classList.remove('on'));
+  chipGroups.forEach(g=>chips[g]=[]);
+  document.querySelectorAll('select').forEach(s=> s.selectedIndex = 0);
+  buildHorarios();
+  toggleFemCard();
+  validarPaso0();
+  goto(0);
+});
+</script>
+</body>
+</html>
