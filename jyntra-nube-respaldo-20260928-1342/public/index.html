@@ -473,12 +473,10 @@ function preguntar(titulo, cuerpoHTML, opciones){
     bg.innerHTML = '<div class="modal" role="dialog" aria-modal="true">'
       + '<div class="modal-h"><div class="h2">'+esc(titulo)+'</div></div>'
       + '<div class="modal-b">'+(cuerpoHTML||'')+'</div>'
-      + '<div class="modal-f">'+(o.cancelar ? '<button class="btn" data-x="0">'+esc(o.cancelar)+'</button>' : '')
+      + '<div class="modal-f"><button class="btn" data-x="0">'+esc(o.cancelar)+'</button>'
       + '<button class="btn '+(o.peligro?'danger':'gold')+'" data-x="1">'+esc(o.ok)+'</button></div></div>';
     $('#modal-root').appendChild(bg);
     const cerrar = (v)=>{ bg.remove(); res(v); };
-    /* Enter dentro del formulario = botón principal (antes recargaba la página) */
-    bg.addEventListener('submit', e=>{ e.preventDefault(); const ok = bg.querySelector('[data-x="1"]'); if(ok) ok.click(); });
     bg.addEventListener('click', e=>{
       if(e.target===bg) return cerrar(false);
       const b = e.target.closest('[data-x]'); if(!b) return;
@@ -5177,7 +5175,6 @@ var elegido = null;
     '.jy22-acceso .btn.gold{background:var(--c);border-color:var(--c);color:var(--ct)}',
     '.jy22-acceso .btn.gold:hover{filter:brightness(1.1);background:var(--c);border-color:var(--c)}',
     '.jy22-acceso .inp:focus{border-color:var(--c)}',
-    '.jy22-acceso :focus-visible{outline-color:var(--c)}',
     '.jy22-acceso .jy22-vuelta .et{color:var(--c)}',
     '.jy22-acceso .jy22-vuelta button:hover{border-color:var(--c)}',
     '.jy22-acceso .gate-claim em{color:var(--c)}',
@@ -5196,53 +5193,10 @@ var elegido = null;
     '.jy22-adm-lista{list-style:none;margin:4px 0 0;padding:12px 0 0;border-top:1px solid var(--line-soft);display:flex;flex-direction:column;gap:7px}',
     '.jy22-adm-lista li{font-size:12px;color:var(--mute);display:flex;gap:8px;line-height:1.45}',
     '.jy22-adm-lista li::before{content:"";width:6px;height:6px;margin-top:6px;border-radius:50%;background:var(--c);flex:none}',
-    /* ojo para ver la contraseña */
-    '.jy-clave{position:relative;display:block}',
-    '.jy-clave .inp{padding-right:44px}',
-    '.jy-ojo{position:absolute;right:4px;top:50%;transform:translateY(-50%);width:36px;height:34px;display:grid;place-items:center;',
-    ' background:transparent;border:0;border-radius:6px;cursor:pointer;color:var(--mute,#9F9F9F);padding:0}',
-    '.jy-ojo:hover{color:var(--c,var(--rol-acc,#FFFFFF));background:rgba(255,255,255,.05)}',
-    '.jy-ojo:focus-visible{outline:2px solid var(--c,#FFFFFF);outline-offset:0}',
-    '.jy-ojo[aria-pressed="true"]{color:var(--c,var(--rol-acc,#FFFFFF))}',
-    '.jy-ojo svg{width:19px;height:19px}',
     '@media(max-width:640px){.jy22-portal{padding:24px 14px 80px}.jy22-card{min-height:0}}'
   ].join('');
   document.head.appendChild(st);
 })();
-
-/* ---------- 22.2b · ojo para ver la contraseña ---------- */
-var OJO_ABIERTO = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>';
-var OJO_CERRADO = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3l18 18"/><path d="M10.6 5.1A10.4 10.4 0 0112 5c6.4 0 10 7 10 7a17.6 17.6 0 01-3.2 4.1M6.6 6.6C3.9 8.4 2 12 2 12s3.6 7 10 7a9.8 9.8 0 004.4-1"/><path d="M9.9 9.9a3 3 0 004.2 4.2"/></svg>';
-function ojosClave(raiz){
-  Array.prototype.forEach.call((raiz || document).querySelectorAll('input[type="password"]'), function(inp){
-    if(inp.__ojo) return;
-    inp.__ojo = true;
-    var caja = document.createElement('span'); caja.className = 'jy-clave';
-    inp.parentNode.insertBefore(caja, inp); caja.appendChild(inp);
-    var b = document.createElement('button');
-    b.type = 'button'; b.className = 'jy-ojo'; b.setAttribute('aria-pressed','false');
-    b.setAttribute('aria-label','Mostrar contraseña'); b.title = 'Mostrar contraseña';
-    b.innerHTML = OJO_ABIERTO;
-    b.onclick = function(){
-      var ver = inp.type === 'password';
-      inp.type = ver ? 'text' : 'password';
-      b.innerHTML = ver ? OJO_CERRADO : OJO_ABIERTO;
-      b.setAttribute('aria-pressed', ver ? 'true' : 'false');
-      b.setAttribute('aria-label', ver ? 'Ocultar contraseña' : 'Mostrar contraseña'); b.title = b.getAttribute('aria-label');
-      inp.focus();
-      try{ var n = inp.value.length; inp.setSelectionRange(n, n); }catch(e){}
-    };
-    caja.appendChild(b);
-    /* al enviar se vuelve a ocultar (y el navegador puede guardarla bien) */
-    if(inp.form && !inp.form.__ojoEnvio){
-      inp.form.__ojoEnvio = true;
-      inp.form.addEventListener('submit', function(){
-        Array.prototype.forEach.call(inp.form.querySelectorAll('.jy-clave input'), function(x){ x.type = 'password'; });
-        Array.prototype.forEach.call(inp.form.querySelectorAll('.jy-ojo'), function(o){ o.innerHTML = OJO_ABIERTO; o.setAttribute('aria-pressed','false'); });
-      }, true);
-    }
-  });
-}
 
 /* ---------- 22.3 · la pantalla del portal ---------- */
 function portalHTML(){
@@ -5348,13 +5302,6 @@ ligarAcceso = function(){
   }
   var g = document.querySelector('[data-google]');
   if(g) g.onclick = function(){ if(window.__JY_NUBE_GOOGLE) window.__JY_NUBE_GOOGLE(g); };
-  ojosClave(document.getElementById('app'));
-  /* después de crear una contraseña nueva, el correo ya viene escrito */
-  try{
-    var fe = document.querySelector('#f-entrar');
-    var c0 = sessionStorage.getItem('jy.correo');
-    if(fe && fe.email && c0 && !fe.email.value){ fe.email.value = c0; sessionStorage.removeItem('jy.correo'); fe.clave.focus(); }
-  }catch(e){}
 };
 
 /* ---------- 22.5 · entrar = ir al archivo del perfil ---------- */
@@ -5386,8 +5333,7 @@ window.JY22 = {
   perfiles: PERFILES,
   irAPerfil: irAPerfil,
   elegir: function(r){ elegido = r; pintar(); },
-  elegido: function(){ return elegido; },
-  ojos: ojosClave
+  elegido: function(){ return elegido; }
 };
 
 try{ if(typeof pintar === 'function') pintar(); }catch(e){}
@@ -5948,9 +5894,6 @@ function mensajeAuth(err){
   if(/operation-not-allowed|configuration-not-found/.test(c)) return 'Ese método de acceso no está activado en Firebase (Authentication → Método de acceso).';
   if(/unauthorized-domain/.test(c))  return 'Este dominio no está autorizado para entrar con Google (Authentication → Configuración → Dominios autorizados).';
   if(/popup-blocked/.test(c))        return 'El navegador bloqueó la ventana de Google. Permite ventanas emergentes e intenta de nuevo.';
-  if(/invalid-action-code|expired-action-code/.test(c)) return 'Este enlace ya se usó o venció. Pide uno nuevo.';
-  if(/user-disabled/.test(c))        return 'Esta cuenta está desactivada.';
-  if(/missing-email/.test(c))        return 'Escribe tu correo.';
   return 'No se pudo completar (' + (c || 'error') + ').';
 }
 function limpiarCache(){
@@ -6037,7 +5980,6 @@ function huella(txt){
       .catch(function(){ return null; });
   }catch(e){ return Promise.resolve(null); }
 }
-function huellaDisponible(){ return !!(window.crypto && crypto.subtle && window.TextEncoder); }
 function esCorreoAdmin(correo){
   return huella(correo).then(function(h){ return h === null ? true : h === ADMIN_HUELLA; });  // sin cripto: deciden las reglas
 }
@@ -6218,21 +6160,12 @@ function ajustesInterfaz(){
     a.onclick = function(){
       preguntar('Recuperar contraseña',
         '<form class="stack"><div class="field"><label>Tu correo</label><input class="inp" name="email" type="email" value="'
-        + esc(fe.email.value || '') + '"></div><p class="hint" style="margin:0">Te enviaremos un correo con un enlace para crear una contraseña nueva. El enlace sirve una sola vez y vence en 1 hora.</p></form>',
+        + esc(fe.email.value || '') + '"></div><p class="hint" style="margin:0">Te enviaremos un enlace para crear una contraseña nueva.</p></form>',
         {ok:'Enviar enlace'}).then(function(r){
           if(!r || !r.email) return;
-          var correo = String(r.email).trim().toLowerCase();
-          if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo)) return toast('Ese correo no es válido.', 'bad');
-          esCorreoAdmin(correo).then(function(esAdm){
-            if(esAdm && huellaDisponible()) return toast('Esa cuenta entra con Google: no usa contraseña de JYNTRA.', 'warn');
-            return B.auth.recuperar(correo).then(function(){
-              preguntar('Revisa tu correo',
-                '<div class="stack" style="gap:10px"><p style="margin:0">Si <b>' + esc(correo) + '</b> tiene una cuenta en JYNTRA, '
-                + 'en unos minutos te llegará un correo con el enlace para crear tu contraseña nueva.</p>'
-                + '<p class="hint" style="margin:0">¿No aparece? Revisa «Spam» o «Promociones». El enlace sirve una sola vez y vence en 1 hora.</p></div>',
-                {ok:'Entendido', cancelar:null});
-            });
-          }).catch(function(err){ toast(mensajeAuth(err),'bad'); });
+          B.auth.recuperar(String(r.email).trim().toLowerCase())
+            .then(function(){ toast('Listo. Revisa tu correo (y la carpeta de spam).','ok'); })
+            .catch(function(err){ toast(mensajeAuth(err),'bad'); });
         });
     };
   }
@@ -6299,163 +6232,6 @@ function ajustesInterfaz(){
 }
 
 pintar();
-})();
-
-/* ================================================================
-   §25 · ENLACES DEL CORREO — contraseña nueva y verificación
-   ----------------------------------------------------------------
-   Los correos de Firebase (recuperar contraseña, verificar correo)
-   traen un enlace con ?mode=…&oobCode=…. Si en la consola de Firebase
-   la «URL de acción» apunta a https://jintra-db.web.app/ , el enlace
-   abre ESTA pantalla, con la marca JYNTRA, en vez de la página
-   genérica de Firebase. Si no, la de Firebase también funciona.
-   ================================================================ */
-(function(){
-'use strict';
-var q; try{ q = new URLSearchParams(location.search); }catch(e){ return; }
-var modo = q.get('mode'), oob = q.get('oobCode');
-if(!modo || !oob) return;
-var N = window.JYNUBE;
-if(!N || !N.backend || !N.backend.auth || !N.backend.auth.leerCodigo) return;
-var A = N.backend.auth;
-
-(function estilos(){
-  var st = document.createElement('style'); st.id = 'jy25-css';
-  st.textContent = [
-    '.jy25-caja{background:var(--panel);border:1px solid var(--line-soft);border-top:3px solid var(--jy-acc);border-radius:10px;',
-    ' padding:22px 22px 24px;box-shadow:0 22px 50px -30px var(--jy-acc)}',
-    '.jy25-caja .h2{margin:6px 0 4px}',
-    '.jy25-caja .sub{margin:0 0 16px}',
-    '.jy25-medidor{height:4px;border-radius:4px;background:var(--line);overflow:hidden}',
-    '.jy25-medidor span{display:block;height:100%;width:0;background:var(--bad);transition:width .2s,background .2s}',
-    '.jy25-icono{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;font-size:22px;margin-bottom:8px}',
-    '.jy25-icono.ok{background:rgba(127,183,126,.14);color:var(--ok);border:1px solid rgba(127,183,126,.45)}',
-    '.jy25-icono.mal{background:rgba(221,44,55,.12);color:var(--jy-acc-hi);border:1px solid rgba(221,44,55,.45)}'
-  ].join('');
-  document.head.appendChild(st);
-})();
-
-var estado = { paso:'cargando', correo:'' };
-var activo = true;
-var pintarBase = pintar;
-pintar = function(){ return activo ? dibujar() : pintarBase(); };
-
-function limpiarUrl(){ try{ history.replaceState(null, '', location.pathname + (location.hash || '')); }catch(e){} }
-function salirDePantalla(correo){
-  activo = false; limpiarUrl();
-  if(correo){ try{ sessionStorage.setItem('jy.correo', correo); }catch(e){} }
-  pintarBase();
-}
-function mensaje(err){
-  var c = (err && err.code) || '';
-  if(/invalid-action-code|expired-action-code/.test(c)) return 'Este enlace ya se usó o venció.';
-  if(/weak-password/.test(c))  return 'La contraseña debe tener al menos 6 caracteres.';
-  if(/user-disabled/.test(c))  return 'Esta cuenta está desactivada.';
-  if(/user-not-found/.test(c)) return 'La cuenta de este enlace ya no existe.';
-  if(/network/.test(c))        return 'Sin conexión a internet.';
-  return 'No se pudo completar (' + (c || 'error') + ').';
-}
-function nivel(k){
-  var p = 0;
-  if(k.length >= 6) p++;
-  if(k.length >= 10) p++;
-  if(/[a-z]/.test(k) && /[A-Z]/.test(k)) p++;
-  if(/\d/.test(k)) p++;
-  if(/[^A-Za-z0-9]/.test(k)) p++;
-  if(k.length < 6) return { n:0, t:'Muy corta: mínimo 6 caracteres', c:'var(--bad)', w:12 };
-  if(p <= 2) return { n:1, t:'Aceptable', c:'var(--warn)', w:40 };
-  if(p === 3) return { n:2, t:'Buena', c:'var(--ok)', w:70 };
-  return { n:3, t:'Fuerte', c:'var(--ok)', w:100 };
-}
-
-function marco(html){
-  return '<div class="jy22-portal"><div class="jy22-in" style="width:min(440px,100%)">'
-   + '<div class="jy22-marca" style="display:flex;justify-content:center;margin-bottom:18px">' + logoCompleto(96) + '</div>'
-   + '<div class="jy25-caja" id="jy25">' + html + '</div></div></div>';
-}
-
-function dibujar(){
-  var app = document.getElementById('app'); if(!app) return;
-  var pasoPintado = app.getAttribute('data-jy25');
-  if(pasoPintado === estado.paso) return;          // ya está en pantalla: no se borra lo escrito
-  app.setAttribute('data-jy25', estado.paso);
-  document.body.removeAttribute('data-rol');
-  var h = '';
-  if(estado.paso === 'cargando'){
-    h = '<div class="eyebrow">JYNTRA</div><div class="h2">Revisando el enlace…</div>';
-  } else if(estado.paso === 'clave'){
-    h = '<div class="eyebrow">Recuperar acceso</div>'
-      + '<div class="h2">Crea tu contraseña nueva</div>'
-      + '<p class="sub">Para la cuenta <b>' + esc(estado.correo) + '</b></p>'
-      + '<form id="f-nueva" class="stack" autocomplete="on">'
-      +   '<input type="email" name="username" autocomplete="username" value="' + esc(estado.correo) + '" style="display:none">'
-      +   '<div class="field"><label>Contraseña nueva</label><input class="inp" name="clave" type="password" autocomplete="new-password" minlength="6" required placeholder="Mínimo 6 caracteres"></div>'
-      +   '<div class="jy25-medidor"><span></span></div><div class="hint" id="jy25-nivel" style="margin-top:-6px">Usa letras, números y algún símbolo.</div>'
-      +   '<div class="field"><label>Repite la contraseña</label><input class="inp" name="clave2" type="password" autocomplete="new-password" minlength="6" required></div>'
-      +   '<button class="btn gold" type="submit" style="justify-content:center">Guardar contraseña</button>'
-      + '</form>';
-  } else if(estado.paso === 'clave-lista'){
-    h = '<div class="jy25-icono ok">✓</div>'
-      + '<div class="h2">Contraseña actualizada</div>'
-      + '<p class="sub">Ya puedes entrar a JYNTRA con tu contraseña nueva. Por seguridad, las sesiones abiertas en otros equipos se cerrarán.</p>'
-      + '<button class="btn gold" type="button" data-jy25="entrar" style="justify-content:center;width:100%">Ir a entrar</button>';
-  } else if(estado.paso === 'correo-listo'){
-    h = '<div class="jy25-icono ok">✓</div>'
-      + '<div class="h2">' + (modo === 'recoverEmail' ? 'Correo restablecido' : 'Correo verificado') + '</div>'
-      + '<p class="sub">' + (modo === 'recoverEmail'
-          ? 'Tu cuenta vuelve a usar <b>' + esc(estado.correo) + '</b>. Te recomendamos cambiar tu contraseña.'
-          : 'Listo, <b>' + esc(estado.correo) + '</b> quedó verificado.') + '</p>'
-      + '<button class="btn gold" type="button" data-jy25="entrar" style="justify-content:center;width:100%">Ir a JYNTRA</button>';
-  } else {
-    h = '<div class="jy25-icono mal">!</div>'
-      + '<div class="h2">Enlace no válido</div>'
-      + '<p class="sub">' + esc(estado.error || 'Este enlace ya se usó o venció.') + ' '
-      + (modo === 'resetPassword' ? 'Pide uno nuevo con «¿Olvidaste tu contraseña?».' : '') + '</p>'
-      + '<button class="btn gold" type="button" data-jy25="entrar" style="justify-content:center;width:100%">Volver a JYNTRA</button>';
-  }
-  app.innerHTML = marco(h);
-  ligar();
-}
-
-function ligar(){
-  var ir = document.querySelector('[data-jy25="entrar"]');
-  if(ir) ir.onclick = function(){
-    salirDePantalla(estado.paso === 'clave-lista' ? estado.correo : null);
-  };
-  var f = document.getElementById('f-nueva');
-  if(!f) return;
-  if(window.JY22 && JY22.ojos) JY22.ojos(f);
-  var barra = f.querySelector('.jy25-medidor span'), texto = document.getElementById('jy25-nivel');
-  f.clave.addEventListener('input', function(){
-    var n = nivel(f.clave.value);
-    barra.style.width = n.w + '%'; barra.style.background = n.c; texto.textContent = n.t;
-  });
-  setTimeout(function(){ try{ f.clave.focus(); }catch(e){} }, 50);
-  f.onsubmit = function(e){
-    e.preventDefault();
-    var k = f.clave.value, k2 = f.clave2.value;
-    if(k.length < 6) return toast('La contraseña debe tener al menos 6 caracteres.', 'bad');
-    if(k !== k2) return toast('Las dos contraseñas no coinciden.', 'bad');
-    var b = f.querySelector('button[type="submit"]'); b.disabled = true; b.style.opacity = '.6';
-    A.nuevaClave(oob, k).then(function(){
-      estado.paso = 'clave-lista'; dibujar();
-    }).catch(function(err){
-      b.disabled = false; b.style.opacity = '';
-      if(/invalid-action-code|expired-action-code/.test((err && err.code) || '')){ estado.paso = 'mal'; estado.error = mensaje(err); return dibujar(); }
-      toast(mensaje(err), 'bad');
-    });
-  };
-}
-
-dibujar();
-A.leerCodigo(modo, oob).then(function(correo){
-  estado.correo = correo || '';
-  estado.paso = modo === 'resetPassword' ? 'clave' : 'correo-listo';
-  if(modo !== 'resetPassword' && A.actual && A.actual()){ try{ A.refrescar().catch(function(){}); }catch(e){} }
-  dibujar();
-}).catch(function(err){
-  estado.paso = 'mal'; estado.error = mensaje(err); dibujar();
-});
 })();
 
 })();

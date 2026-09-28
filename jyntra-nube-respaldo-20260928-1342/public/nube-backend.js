@@ -15,9 +15,6 @@
                                     sesión que muere al cerrar el navegador)
      auth.proveedor()             → Promise<'google.com'|'password'|null>
      auth.eliminar()              → Promise   (borra la cuenta recién creada)
-     auth.leerCodigo(modo, oob)   → Promise<correo>  (enlace del correo: revisa y,
-                                    si es verificar/recuperar correo, lo aplica)
-     auth.nuevaClave(oob, clave)  → Promise   (fija la contraseña nueva)
      set(ruta, datos)             → Promise
      del(ruta)                    → Promise
      escuchar(consulta, ok, mal)  → función para dejar de escuchar
@@ -88,27 +85,7 @@ window.JYNUBE_BACKENDS.firebase = function (cfg) {
       },
       eliminar : function () { return auth.currentUser ? F.deleteUser(auth.currentUser) : Promise.resolve(); },
       salir    : function () { return F.signOut(auth); },
-      /* correo real de Firebase. Si el enlace del correo apunta a Firebase (plantilla
-         sin cambiar), su página muestra «Continuar» y vuelve a JYNTRA. */
-      recuperar: function (c) {
-        var vuelta = { url: location.origin + '/', handleCodeInApp: false };
-        return F.sendPasswordResetEmail(auth, c, vuelta).catch(function (e) {
-          /* dirección de prueba no autorizada como «vuelta»: se envía igual, sin vuelta */
-          if (/unauthorized-continue-uri|invalid-continue-uri|missing-continue-uri/.test(e && e.code || '')) return F.sendPasswordResetEmail(auth, c);
-          throw e;
-        });
-      },
-      leerCodigo: function (modo, oob) {
-        if (modo === 'resetPassword') return F.verifyPasswordResetCode(auth, oob);
-        if (modo === 'verifyEmail') return F.checkActionCode(auth, oob).then(function (i) {
-          return F.applyActionCode(auth, oob).then(function () { return (i.data && i.data.email) || ''; });
-        });
-        if (modo === 'recoverEmail') return F.checkActionCode(auth, oob).then(function (i) {
-          return F.applyActionCode(auth, oob).then(function () { return (i.data && i.data.email) || ''; });
-        });
-        var e = new Error('modo desconocido'); e.code = 'auth/invalid-action-code'; return Promise.reject(e);
-      },
-      nuevaClave: function (oob, k) { return F.confirmPasswordReset(auth, oob, k); },
+      recuperar: function (c) { return F.sendPasswordResetEmail(auth, c); },
       verificar: function () {
         return auth.currentUser ? F.sendEmailVerification(auth.currentUser) : Promise.resolve();
       },
@@ -203,8 +180,6 @@ window.JYNUBE_BACKENDS.mock = function (cfg) {
       eliminar : function () { return post('/auth/eliminar', {}).then(function () { tok = null; usr = null; guardarSesion(); setTimeout(emitir, 0); }); },
       salir    : function () { tok = null; usr = null; guardarSesion(); setTimeout(emitir, 0); return Promise.resolve(); },
       recuperar: function (c) { return post('/auth/recuperar', { email: c }); },
-      leerCodigo: function (modo, oob) { return post('/auth/codigo', { modo: modo, oob: oob }).then(function (j) { return j.email; }); },
-      nuevaClave: function (oob, k) { return post('/auth/nuevaclave', { oob: oob, pass: k }); },
       verificar: function () { return post('/auth/verificar', {}); },
       refrescar: function () { return post('/auth/yo', {}).then(function (j) { usr = j.usr; guardarSesion(); return usr; }); },
       actual   : function () { return usr; }

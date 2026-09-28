@@ -112,20 +112,3 @@ Para cambiarlos: en `public/index.html`, bloque «colores de perfil» (`--r-alum
 
 «¿Olvidaste tu contraseña?» está en Alumno, Profesor y Nutricionista. El Administrador no tiene
 contraseña en JYNTRA: su acceso es su cuenta de Google.
-
-El correo lo envía Firebase de verdad (desde noreply@jintra-db.firebaseapp.com). Para que lleve
-la marca JYNTRA y su enlace abra la pantalla propia «Crea tu contraseña nueva» (sección §25 de
-index.html), en la consola de Firebase — DESPUÉS de publicar esta versión:
-
-1. ⚙ Configuración del proyecto → General → Nombre público: `JYNTRA`.
-2. Authentication → Plantillas → Restablecimiento de contraseña → ✏:
-   nombre del remitente `JYNTRA`, asunto `Crea tu contraseña nueva de JYNTRA`, mensaje en español.
-3. En esa misma plantilla: «Personalizar URL de acción» → `https://jintra-db.web.app/` (vale para todas las plantillas).
-4. Idioma de las plantillas: Español.
-
-Si el paso 3 no se hace, el enlace abre la página genérica de Firebase, que igual funciona.
-
-## Ver la contraseña
-
-Todos los campos de contraseña tienen un ojo para mostrarla u ocultarla. Al enviar el formulario
-vuelve a ocultarse sola.
