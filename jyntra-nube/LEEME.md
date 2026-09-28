@@ -54,3 +54,36 @@ En el navegador (F12 → Consola) escribe `JYNUBE.estado()` y copia el resultado
 - El administrador no lee datos de salud. Solo `jyntra.holding.tec@gmail.com`, con el correo verificado, puede ser administrador.
 - Nadie puede cambiarse el rol a sí mismo.
 - Un vínculo activo nace solo de una solicitud aceptada o de una invitación aceptada.
+
+## Fase 2 · app instalable y sin dependencias externas
+
+- `manifest.webmanifest`, `sw.js` e `iconos/`: la app se instala en el celular y abre sin conexión.
+  El trabajador `sw.js` usa primero la red (siempre la versión nueva) y, si no hay red, la última copia.
+- `public/vendor/`: todas las librerías viven en el proyecto (Firebase, Chart.js, jsPDF, html2canvas,
+  Font Awesome, Tailwind compilado para la cineantropometría y el Perfil del atleta precompilado).
+  Solo las tipografías siguen viniendo de Google Fonts.
+
+### Si modificas el Perfil del atleta o las clases de la cineantropometría
+
+El código fuente está en `fuentes/`. Para regenerar lo que va en `public/vendor/`:
+
+```powershell
+cd "C:\Users\jyntr\Downloads\Jyntra apps\jyntra-nube\fuentes"
+npm install        # solo la primera vez
+npm run compilar
+```
+
+## Identidad visual (logo y paleta)
+
+| Color | Código | Uso |
+|---|---|---|
+| Blanco | `#FFFFFF` | logo, títulos, letras destacadas |
+| Negro | `#171717` | fondo general |
+| Rojo | `#DD2C37` | botones principales, menú activo, indicadores, alertas |
+| Blanco 2 | `#EEF1F3` | texto de lectura |
+
+Tarjetas y bordes usan grises neutros derivados del negro. Solo se conservan los colores con significado
+(verde = guardado/correcto, ámbar = advertencia y los colores de proteínas, carbohidratos y grasas).
+
+El logo está en `fuentes/logo/`: el original y versiones vectoriales (SVG) del logo completo, el símbolo
+y la palabra, en blanco y en negro, listas para la web, la Play Store o impresión.
