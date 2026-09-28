@@ -1,0 +1,30 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Función auxiliar: verifica si el usuario está autenticado
+    function usuarioAutenticado() {
+      return request.auth != null;
+    }
+
+    // Función auxiliar: verifica si el documento pertenece al usuario actual
+    function esPropietario(userId) {
+      return usuarioAutenticado() && request.auth.uid == userId;
+    }
+
+    // Colección de Perfiles / Entrenadores / Atletas
+    match /usuarios/{userId} {
+      allow read, write: if esPropietario(userId);
+
+      // Subcolecciones de atletas (anamnesis, antropometría, nutrición)
+      match /{coleccionSecundaria}/{documentoId} {
+        allow read, write: if esPropietario(userId);
+      }
+    }
+
+    // Regla global por defecto para usuarios autenticados
+    match /{document=**} {
+      allow read, write: if usuarioAutenticado();
+    }
+  }
+}

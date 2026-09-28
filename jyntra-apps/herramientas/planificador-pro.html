@@ -1,0 +1,1793 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<script src="./_puente.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JYNTRA — Planificador de Entrenamiento</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root{
+    --bg:#1c1a17; --panel:#252220; --panel-2:#2d2a26; --line:#423c34;
+    --gold:#c99a52; --gold-light:#e6c184; --gold-dark:#8f6a34;
+    --text:#f3ece0; --muted:#a89d8a; --danger:#c0654f;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:'Segoe UI',Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased;}
+/* ============ BARRA DE ENLACE CON LA CÁSCARA JYNTRA ============ */
+.jy-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 14px;
+  padding:11px 14px;border:1px solid rgba(198,161,90,.35);border-radius:12px;
+  background:linear-gradient(180deg,rgba(198,161,90,.10),rgba(198,161,90,.02));}
+.jy-bar .jy-chip{font:600 10px/1 'Segoe UI',sans-serif;letter-spacing:.16em;text-transform:uppercase;
+  color:#C6A15A;border:1px solid rgba(198,161,90,.45);border-radius:999px;padding:5px 9px;}
+.jy-bar b{font-size:14px;color:var(--text);}
+.jy-bar em{font-style:normal;font-size:12px;opacity:.65;}
+.jy-bar .jy-spacer{flex:1;}
+.jy-bar input{background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.14);border-radius:9px;
+  padding:8px 10px;color:inherit;font:inherit;font-size:13px;min-width:230px;}
+.jy-bar input:focus{outline:none;border-color:#C6A15A;}
+.jy-guardar{background:linear-gradient(180deg,#E2C27E,#C6A15A);border:1px solid #C6A15A;color:#161310;
+  border-radius:10px;padding:9px 16px;font:700 12.5px/1 'Segoe UI',sans-serif;letter-spacing:.04em;cursor:pointer;}
+.jy-guardar:hover{filter:brightness(1.07);}
+.jy-guardar:disabled{opacity:.5;cursor:not-allowed;}
+.jy-ok{color:#5fbf7a;font-size:12px;}
+
+  h1,h2,h3,.mark-text{font-family:'Arial Narrow',Impact,'Segoe UI',sans-serif;font-weight:800;letter-spacing:0.04em;text-transform:uppercase;margin:0;}
+
+  .brand{display:flex;align-items:center;gap:14px;}
+  .brand svg{display:block;flex-shrink:0;}
+  .brand-text{display:flex;flex-direction:column;line-height:1;}
+  .brand-text .mark-text{font-size:26px;color:var(--gold-light);letter-spacing:0.12em;}
+  .brand-text .sub{font-size:10.5px;color:var(--muted);letter-spacing:0.2em;text-transform:uppercase;margin-top:4px;}
+
+  header.top{padding:26px 32px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:rgba(28,26,23,0.96);backdrop-filter:blur(6px);z-index:50;}
+  main{max-width:1100px;margin:0 auto;padding:32px 24px 90px;}
+  .lede{margin:6px 0 30px;color:var(--muted);font-size:14.5px;max-width:660px;}
+
+  .legend{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 26px;}
+  .legend span{font-size:10px;color:var(--muted);border:1px solid var(--line);padding:5px 10px;border-radius:20px;}
+
+  /* tabs */
+  .tabs-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:20px;}
+  .tabs{display:flex;gap:2px;border:1px solid var(--line);border-radius:10px;overflow:hidden;}
+  .tab-btn{position:relative;display:flex;align-items:center;}
+  .tab{padding:12px 22px;cursor:pointer;background:var(--panel);color:var(--muted);font-family:'Arial Narrow',sans-serif;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;font-size:12.5px;border:none;transition:all .15s ease;white-space:nowrap;}
+  .tab.active{background:var(--gold);color:#211d16;}
+  .tab:not(.active):hover{color:var(--gold-light);}
+  .tab-close{position:absolute;top:2px;right:3px;font-size:9px;color:inherit;opacity:.6;cursor:pointer;}
+  .tab-close:hover{opacity:1;color:var(--danger);}
+  #add-session-btn{font-family:'Arial Narrow',sans-serif;font-weight:800;letter-spacing:.06em;text-transform:uppercase;font-size:12px;padding:11px 18px;border-radius:8px;border:1px dashed var(--gold-dark);background:transparent;color:var(--gold-light);cursor:pointer;}
+  #add-session-btn:hover{background:rgba(201,154,82,0.08);}
+  #add-session-btn:disabled{opacity:.35;cursor:not-allowed;}
+
+  /* session config bar */
+  .session-config{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-end;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin-bottom:22px;}
+  .config-field{display:flex;flex-direction:column;gap:5px;min-width:200px;flex:1;}
+  .config-field label{font-size:9.5px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;}
+  .config-field input,.config-field select{background:var(--panel-2);border:1px solid var(--line);color:var(--text);border-radius:6px;padding:9px 10px;font-size:13px;font-family:inherit;}
+  .config-field input:focus,.config-field select:focus{outline:none;border-color:var(--gold);}
+  .modalidad-hint{font-size:10.5px;color:var(--gold-dark);}
+  .counter{font-size:12.5px;color:var(--muted);letter-spacing:.05em;align-self:center;}
+  .counter b{color:var(--gold-light);}
+
+  /* slot card */
+  .slot-card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:10px;transition:border-color .15s ease,box-shadow .15s ease;}
+  .slot-card.has-superserie{border-color:var(--sg-color);box-shadow:inset 4px 0 0 var(--sg-color);}
+  .slot-top{display:grid;grid-template-columns:24px 112px 1fr 1fr 1.2fr 30px;gap:10px;align-items:end;}
+  .grupo-select{font-size:11px !important;}
+
+  /* ---------- súper series ---------- */
+  #grupos-manager{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:18px;}
+  .gm-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px;}
+  .gm-title{font-family:'Arial Narrow',sans-serif;font-weight:800;letter-spacing:.06em;text-transform:uppercase;font-size:11.5px;color:var(--muted);}
+  .gm-title small{display:block;font-family:inherit;font-weight:400;text-transform:none;letter-spacing:0;color:#7d7666;font-size:10.5px;margin-top:3px;}
+  .gm-list{display:flex;flex-wrap:wrap;gap:10px;}
+  .gm-chip{display:flex;align-items:center;gap:6px;background:var(--panel-2);border:1px solid var(--line);border-radius:20px;padding:5px 8px 5px 6px;}
+  .gm-color{width:22px;height:22px;padding:0;border:none;border-radius:50%;background:none;cursor:pointer;flex-shrink:0;}
+  .gm-color::-webkit-color-swatch-wrapper{padding:0;border-radius:50%;}
+  .gm-color::-webkit-color-swatch{border:none;border-radius:50%;}
+  .gm-name{width:130px;background:transparent;border:none;border-bottom:1px solid transparent;color:var(--text);font-size:11.5px;padding:2px 3px;}
+  .gm-name:focus{outline:none;border-bottom:1px solid var(--gold);}
+  .gm-count{font-size:9.5px;color:var(--muted);white-space:nowrap;}
+  .gm-del{background:transparent;border:none;color:var(--muted);cursor:pointer;font-size:11px;padding:2px 4px;}
+  .gm-del:hover{color:var(--danger);}
+  .gm-empty{font-size:11.5px;color:var(--muted);}
+  .ss-connector{display:flex;width:fit-content;align-items:center;gap:6px;margin:-6px auto -2px;padding:3px 12px;background:var(--sg-color);color:#1b1712;font-family:'Arial Narrow',sans-serif;font-weight:800;font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;border-radius:20px;position:relative;z-index:2;}
+  .slot-top .idx{color:var(--gold);font-weight:800;font-size:13px;font-family:'Arial Narrow',sans-serif;padding-bottom:9px;}
+  .cell{display:flex;flex-direction:column;}
+  .field-label{font-size:9px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;display:block;margin-bottom:3px;}
+  select,input,textarea{width:100%;background:var(--panel-2);border:1px solid var(--line);color:var(--text);border-radius:6px;padding:8px 8px;font-size:12.5px;font-family:inherit;}
+  select:focus,input:focus,textarea:focus{outline:none;border-color:var(--gold);}
+  input::placeholder,textarea::placeholder{color:#6f6858;}
+  .chip{font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--gold-dark);background:rgba(201,154,82,0.12);border:1px solid rgba(201,154,82,0.35);padding:2px 7px;border-radius:20px;width:fit-content;margin-top:4px;}
+  .remove-slot{background:transparent;border:1px solid var(--line);color:var(--muted);border-radius:6px;height:34px;cursor:pointer;font-size:14px;}
+  .remove-slot:hover{color:var(--danger);border-color:var(--danger);}
+
+  /* los 4 campos numéricos en 2x2 y el GIF a la derecha ocupando ambas filas */
+  .slot-mid{display:grid;grid-template-columns:1fr 1fr 190px;gap:10px;margin-top:10px;align-items:start;}
+  .gif-box{grid-column:3;grid-row:1 / span 2;display:flex;flex-direction:column;align-items:center;gap:4px;}
+  .gif-box img{width:100%;height:132px;object-fit:contain;background:#191715;border-radius:8px;border:1px solid var(--line);cursor:pointer;}
+  .gif-btn{width:100%;height:132px;border-radius:8px;border:1px dashed var(--gold-dark);background:transparent;color:var(--gold-light);font-size:10px;letter-spacing:.05em;text-transform:uppercase;cursor:pointer;}
+  .gif-btn:hover{background:rgba(201,154,82,0.08);}
+
+  .gif-box .gif-name{font-size:8.5px;color:var(--muted);text-align:center;line-height:1.2;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+
+  /* ---------- biblioteca de GIFs ---------- */
+  .lib-open{font-family:'Arial Narrow',sans-serif;font-weight:800;letter-spacing:.06em;text-transform:uppercase;font-size:11.5px;padding:10px 16px;border-radius:8px;border:1px solid var(--gold-dark);background:transparent;color:var(--gold-light);cursor:pointer;}
+  .lib-open:hover{background:rgba(201,154,82,0.08);}
+  .lib-open .count{color:var(--gold);font-weight:800;}
+
+  .modal{position:fixed;inset:0;background:rgba(10,9,8,.82);backdrop-filter:blur(3px);z-index:200;display:none;align-items:flex-start;justify-content:center;padding:40px 16px;overflow-y:auto;}
+  .modal.open{display:flex;}
+  .modal-box{background:var(--panel);border:1px solid var(--line);border-radius:12px;width:100%;max-width:900px;padding:22px 24px 26px;}
+  .modal-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:16px;}
+  .modal-head h3{font-size:17px;color:var(--gold-light);}
+  .modal-head p{margin:6px 0 0;font-size:12px;color:var(--muted);max-width:560px;}
+  .modal-close{background:transparent;border:1px solid var(--line);color:var(--muted);border-radius:6px;width:32px;height:32px;cursor:pointer;font-size:14px;flex-shrink:0;}
+  .modal-close:hover{color:var(--danger);border-color:var(--danger);}
+
+  .drop-zone{border:1.5px dashed var(--gold-dark);border-radius:10px;padding:22px 16px;text-align:center;color:var(--muted);font-size:12.5px;cursor:pointer;transition:background .15s ease,border-color .15s ease;}
+  .drop-zone b{color:var(--gold-light);}
+  .drop-zone.hover{background:rgba(201,154,82,0.1);border-color:var(--gold);}
+  .drop-zone small{display:block;margin-top:6px;font-size:10.5px;color:#7d7666;}
+
+  .lib-tools{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0 6px;align-items:center;}
+  .lib-tools input[type="search"]{flex:1;min-width:180px;}
+  .mini-btn{font-family:'Arial Narrow',sans-serif;font-weight:800;letter-spacing:.05em;text-transform:uppercase;font-size:11px;padding:9px 14px;border-radius:7px;border:1px solid var(--gold-dark);background:transparent;color:var(--gold-light);cursor:pointer;white-space:nowrap;}
+  .mini-btn:hover{background:rgba(201,154,82,0.08);}
+  .mini-btn.solid{background:var(--gold);color:#211d16;border-color:var(--gold);}
+  .mini-btn.warn{border-color:var(--danger);color:var(--danger);}
+
+  .lib-status{font-size:11.5px;color:var(--muted);margin:10px 0 0;min-height:16px;}
+  .lib-status.ok{color:var(--gold-light);}
+  .lib-status.bad{color:var(--danger);}
+
+  .lib-scroll{max-height:46vh;overflow-y:auto;margin-top:16px;padding:4px 2px;}
+  .lib-group-head{display:flex;align-items:baseline;gap:9px;margin:16px 0 9px;padding-bottom:5px;border-bottom:1px solid var(--line);}
+  .lib-scroll > .lib-group-head:first-child{margin-top:0;}
+  .lib-group-head .g-tag{font-family:'Arial Narrow',sans-serif;font-weight:800;font-size:10px;letter-spacing:.08em;background:var(--gold);color:#211d16;padding:2px 7px;border-radius:4px;}
+  .lib-group-head .g-name{font-family:'Arial Narrow',sans-serif;font-weight:800;text-transform:uppercase;letter-spacing:.06em;font-size:12.5px;color:var(--gold-light);}
+  .lib-group-head .g-n{font-size:10.5px;color:var(--muted);}
+  .lib-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:12px;}
+  .filter-chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;}
+  .fchip{font-size:10px;letter-spacing:.06em;text-transform:uppercase;padding:5px 11px;border-radius:20px;border:1px solid var(--line);background:transparent;color:var(--muted);cursor:pointer;font-family:'Arial Narrow',sans-serif;font-weight:800;}
+  .fchip:hover{color:var(--gold-light);border-color:var(--gold-dark);}
+  .fchip.on{background:var(--gold);color:#211d16;border-color:var(--gold);}
+  .lib-item select{font-size:9.5px;padding:4px 5px;border-radius:5px;}
+  .lib-item{background:var(--panel-2);border:1px solid var(--line);border-radius:9px;padding:8px;display:flex;flex-direction:column;gap:6px;cursor:pointer;transition:border-color .15s ease;position:relative;}
+  .lib-item:hover{border-color:var(--gold);}
+  .lib-item.assigned{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold) inset;}
+  .lib-item img{width:100%;height:92px;object-fit:contain;background:#191715;border-radius:6px;}
+  .lib-item .nm{font-size:10.5px;color:var(--text);line-height:1.25;word-break:break-word;}
+  .lib-item .src-tag{font-size:8.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--gold-dark);}
+  .lib-item .del{position:absolute;top:5px;right:5px;background:rgba(28,26,23,.85);border:1px solid var(--line);color:var(--muted);border-radius:5px;width:20px;height:20px;font-size:10px;line-height:1;cursor:pointer;}
+  .lib-item .del:hover{color:var(--danger);border-color:var(--danger);}
+  .lib-empty{grid-column:1/-1;text-align:center;color:var(--muted);font-size:12.5px;padding:26px 10px;}
+
+  .paste-area{display:none;margin-top:14px;}
+  .paste-area.open{display:block;}
+  .paste-area textarea{min-height:96px;font-size:12px;font-family:'Courier New',monospace;}
+  .paste-area .hint{font-size:10.5px;color:var(--muted);margin:8px 0 10px;line-height:1.5;}
+  .paste-area .hint code{color:var(--gold-light);}
+
+  .slot-obs{margin-top:10px;display:grid;grid-template-columns:1fr 190px;gap:10px;align-items:end;}
+  .slot-obs textarea{resize:vertical;min-height:44px;font-size:12px;}
+
+  /* ---------- marcar como realizado ---------- */
+  .done-btn{width:100%;height:44px;border-radius:8px;border:1px solid var(--gold-dark);background:transparent;
+    color:var(--gold-light);font-family:'Arial Narrow',sans-serif;font-weight:800;letter-spacing:.08em;
+    text-transform:uppercase;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;
+    gap:8px;transition:background .18s ease,color .18s ease,border-color .18s ease,transform .1s ease;}
+  .done-btn .tick{width:17px;height:17px;border-radius:50%;border:1.5px solid currentColor;display:flex;
+    align-items:center;justify-content:center;font-size:10px;line-height:1;flex-shrink:0;}
+  .done-btn:hover{background:rgba(201,154,82,0.12);}
+  .done-btn:active{transform:scale(0.97);}
+  .done-btn.done{background:var(--gold);border-color:var(--gold);color:#211d16;}
+  .done-btn.done .tick{background:#211d16;color:var(--gold);border-color:#211d16;}
+  .done-btn.just{animation:pop .45s ease;}
+  @keyframes pop{
+    0%{transform:scale(1);box-shadow:0 0 0 0 rgba(201,154,82,.55);}
+    45%{transform:scale(1.06);box-shadow:0 0 0 9px rgba(201,154,82,0);}
+    100%{transform:scale(1);box-shadow:0 0 0 0 rgba(201,154,82,0);}
+  }
+  .slot-card.done{border-color:var(--gold-dark);box-shadow:inset 3px 0 0 var(--gold);}
+  .slot-card.done .slot-top .idx{color:var(--gold-light);}
+
+  /* ---------- barra de avance de la sesión ---------- */
+  .progress{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:13px 18px;margin-bottom:16px;
+    display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
+  .progress .p-label{font-family:'Arial Narrow',sans-serif;font-weight:800;letter-spacing:.08em;text-transform:uppercase;
+    font-size:11.5px;color:var(--muted);white-space:nowrap;}
+  .progress .p-label b{color:var(--gold-light);font-size:14px;}
+  .p-rail{flex:1;min-width:150px;height:9px;border-radius:20px;background:var(--panel-2);border:1px solid var(--line);overflow:hidden;}
+  .p-fill{height:100%;width:0;border-radius:20px;background:linear-gradient(90deg,var(--gold-dark),var(--gold-light));
+    transition:width .35s cubic-bezier(.3,.9,.4,1);}
+  .p-msg{font-size:11px;color:var(--gold-dark);letter-spacing:.05em;text-transform:uppercase;
+    font-family:'Arial Narrow',sans-serif;font-weight:800;white-space:nowrap;}
+  .p-msg.full{color:var(--gold);}
+  @media (prefers-reduced-motion:reduce){
+    .p-fill{transition:none;} .done-btn.just{animation:none;}
+  }
+
+  .add-slot-row{display:flex;justify-content:center;margin:14px 0 6px;}
+  #add-slot-btn{font-family:'Arial Narrow',sans-serif;font-weight:800;letter-spacing:.06em;text-transform:uppercase;font-size:12.5px;padding:11px 24px;border-radius:8px;border:1px dashed var(--gold-dark);background:transparent;color:var(--gold-light);cursor:pointer;}
+  #add-slot-btn:hover{background:rgba(201,154,82,0.08);}
+  #add-slot-btn:disabled{opacity:.35;cursor:not-allowed;}
+
+  .actions{display:flex;gap:12px;margin:30px 0 10px;flex-wrap:wrap;}
+  button.primary,button.secondary{font-family:'Arial Narrow',sans-serif;font-weight:800;letter-spacing:.08em;text-transform:uppercase;font-size:13px;padding:13px 26px;border-radius:8px;border:none;cursor:pointer;transition:transform .1s ease, opacity .15s ease;}
+  button.primary{background:var(--gold);color:#211d16;}
+  button.primary:hover{opacity:.9;}
+  button.secondary{background:transparent;border:1px solid var(--gold-dark);color:var(--gold-light);}
+  button.secondary:hover{background:rgba(201,154,82,0.08);}
+  button:active{transform:scale(0.98);}
+
+  /* sheet */
+  #sheet-wrap{display:none;margin-top:50px;}
+  #sheet-wrap.visible{display:block;}
+  #sheet{background:#efe8d8;color:#231f1a;border-radius:4px;padding:38px 40px 30px;box-shadow:0 20px 60px rgba(0,0,0,.5);}
+  .sheet-head{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:3px solid #231f1a;padding-bottom:14px;margin-bottom:18px;}
+  .sheet-head .brand-text .mark-text{color:#231f1a;}
+  .sheet-head .brand-text .sub{color:#5c5648;}
+  .sheet-fields{display:flex;gap:26px;font-size:11px;color:#5c5648;text-transform:uppercase;letter-spacing:.06em;}
+  .sheet-fields .line{border-bottom:1px solid #8c8570;min-width:120px;display:inline-block;margin-left:6px;}
+  .sheet-session-title-row{display:flex;align-items:center;gap:10px;margin:22px 0 10px;}
+  .sheet-session-title{font-family:'Arial Narrow',sans-serif;font-weight:800;letter-spacing:.06em;text-transform:uppercase;font-size:16px;background:#231f1a;color:#c99a52;display:inline-block;padding:6px 16px;border-radius:4px;}
+  .sheet-modalidad{font-size:10.5px;color:#5c5648;text-transform:uppercase;letter-spacing:.05em;}
+  table.sheet-table{width:100%;border-collapse:collapse;margin-bottom:6px;}
+  table.sheet-table th{font-size:9.5px;text-transform:uppercase;letter-spacing:.05em;text-align:left;color:#5c5648;border-bottom:1.5px solid #231f1a;padding:6px 6px;}
+  table.sheet-table td{font-size:12px;padding:8px 6px;border-bottom:1px solid #cfc7b0;vertical-align:middle;}
+  table.sheet-table td.ex-name{font-weight:700;}
+  table.sheet-table td.ex-tag{font-size:9.5px;color:#8f6a34;text-transform:uppercase;letter-spacing:.04em;font-weight:400;}
+  table.sheet-table td.ex-obs{font-size:10.5px;color:#5c5648;font-style:italic;font-weight:400;}
+  table.sheet-table td.ex-ss{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;margin-top:2px;}
+  table.sheet-table tr.ss-row td:first-child{border-left:4px solid var(--sg-color);}
+  table.sheet-table td.blank{color:#8c8570;}
+  table.sheet-table td.thumb img{width:62px;height:62px;object-fit:contain;background:#e4dcc8;border-radius:4px;border:1px solid #cfc7b0;}
+  .sheet-foot{display:flex;justify-content:space-between;align-items:center;margin-top:20px;padding-top:12px;border-top:1px solid #8c8570;font-size:10px;color:#5c5648;letter-spacing:.05em;text-transform:uppercase;}
+  .sheet-actions{display:flex;gap:12px;margin:22px 0;}
+
+  @media print{
+    body *{visibility:hidden;}
+    #sheet, #sheet *{visibility:visible;}
+    #sheet{position:absolute;top:0;left:0;width:100%;box-shadow:none;border-radius:0;}
+    header.top,.actions,.sheet-actions,.legend,.tabs-row,.session-config,.add-slot-row,#grupos-manager{display:none !important;}
+  }
+  @media (max-width:820px){
+    .slot-top{grid-template-columns:1fr 1fr;grid-auto-flow:row;}
+    .slot-top .idx{grid-column:1/3;}
+    .slot-top .cell-grupo{grid-column:1/3;}
+    .slot-mid{grid-template-columns:1fr 1fr;}
+    .gif-box{grid-column:1 / -1;grid-row:auto;}
+    .gif-box img,.gif-btn{height:190px;}
+    .slot-obs{grid-template-columns:1fr;}
+    .done-btn{height:48px;}
+    header.top{padding:18px;}
+    main{padding:20px 14px 70px;}
+  }
+
+.nota-otro{opacity:.72;cursor:default;background:rgba(255,255,255,.02)}
+.nota-otro:focus{outline:none}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="brand">
+    <svg width="34" height="40" viewBox="0 0 100 120" fill="none">
+      <path d="M78 4 L78 66 C78 84 68 92 54 100 L30 114 L30 92 L48 81 C56 76 58 71 58 62 L58 34 L26 54 L26 30 L78 4 Z" fill="#c99a52"/>
+    </svg>
+    <div class="brand-text">
+      <span class="mark-text">Jyntra</span>
+      <span class="sub">Planificador de Entrenamiento</span>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div>
+    <h2 style="font-size:22px;color:var(--gold-light);">Arma tu planificación</h2>
+    <p class="lede">Elegí grupo muscular, implemento y ejercicio: el GIF aparece solo. Sumá o quitá ejercicios, elegí una modalidad de volumen para predeterminar series y repeticiones, y planificá hasta 4 sesiones con nombre propio.</p>
+  </div>
+
+  <div class="legend">
+    <span>PEC · Pectoral</span>
+    <span>ESP · Espalda</span>
+    <span>TRA · Trapecio</span>
+    <span>TRI · Tríceps</span>
+    <span>BIC · Bíceps</span>
+    <span>ANT · Antebrazo</span>
+    <span>ABD · Abdomen y core</span>
+    <span>QUA · Cuádriceps</span>
+    <span>ISQ · Isquiotibiales</span>
+    <span>GLU · Glúteos</span>
+    <span>PAN · Pantorrillas</span>
+    <span id="catalogo-count"></span>
+  </div>
+
+  <div class="jy-bar" id="jy-bar">
+    <span class="jy-chip">JYNTRA</span>
+    <b id="jy-alumno-label">Sin alumno seleccionado</b>
+    <em id="jy-alumno-datos"></em>
+    <span class="jy-spacer"></span>
+    <input type="text" id="jy-rutina-nombre" placeholder="Nombre del entrenamiento (ej: Mesociclo 1)">
+    <button type="button" class="jy-guardar" id="jy-guardar-btn">Guardar en la ficha del alumno</button>
+    <span class="jy-ok" id="jy-estado"></span>
+  </div>
+
+  <div class="tabs-row">
+    <div class="tabs" id="tabs"></div>
+    <button id="add-session-btn">+ Agregar sesión</button>
+    <button class="lib-open" id="fullbody-btn" title="Rellena la sesión con una rutina de cuerpo completo según la modalidad elegida">Autocompletar full body</button>
+    <button class="lib-open" id="open-library-btn">Biblioteca de GIFs · <span class="count" id="lib-count">0</span></button>
+  </div>
+
+  <div class="session-config">
+    <div class="config-field">
+      <label>Nombre de la sesión</label>
+      <input type="text" id="session-name" placeholder="Ej: Empuje / Tren superior">
+    </div>
+    <div class="config-field">
+      <label>Modalidad de entrenamiento</label>
+      <select id="session-modalidad"></select>
+      <span class="modalidad-hint" id="modalidad-hint"></span>
+    </div>
+    <div class="counter">Ejercicios: <b id="count-label">0/4</b></div>
+  </div>
+
+  <div class="progress">
+    <span class="p-label">Avance de la sesión <b id="p-count">0/0</b></span>
+    <div class="p-rail"><div class="p-fill" id="p-fill"></div></div>
+    <span class="p-msg" id="p-msg"></span>
+  </div>
+
+  <div id="grupos-manager"></div>
+
+  <div id="slots"></div>
+
+  <div class="add-slot-row">
+    <button id="add-slot-btn">+ Agregar ejercicio</button>
+  </div>
+
+  <div class="actions">
+    <button class="primary" id="generate-btn">Generar planilla →</button>
+    <button type="button" class="jy-guardar" id="jy-guardar-btn2">Guardar en la ficha del alumno</button>
+  </div>
+
+  <div id="sheet-wrap">
+    <div class="sheet-actions">
+      <button class="primary" id="print-btn">Imprimir</button>
+      <button class="secondary" id="pdf-btn">Descargar PDF</button>
+    </div>
+
+    <div id="sheet">
+      <div class="sheet-head">
+        <div class="brand">
+          <svg width="30" height="36" viewBox="0 0 100 120" fill="none">
+            <path d="M78 4 L78 66 C78 84 68 92 54 100 L30 114 L30 92 L48 81 C56 76 58 71 58 62 L58 34 L26 54 L26 30 L78 4 Z" fill="#231f1a"/>
+          </svg>
+          <div class="brand-text">
+            <span class="mark-text">Jyntra</span>
+            <span class="sub">Planilla de Entrenamiento</span>
+          </div>
+        </div>
+        <div class="sheet-fields">
+          <div>Alumno<span class="line" id="jy-sheet-alumno"></span></div>
+          <div>Fecha<span class="line"></span></div>
+        </div>
+      </div>
+
+      <div id="sheet-sessions"></div>
+
+      <div class="sheet-foot">
+        <span>Jyntra — Entrenamiento con estructura</span>
+        <span id="sheet-date"></span>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- ============ BIBLIOTECA DE GIFS ============ -->
+<div class="modal" id="library-modal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <div>
+        <h3 id="lib-title">Biblioteca de GIFs</h3>
+        <p id="lib-sub">Cargá tus GIFs una vez y quedan disponibles para todos los ejercicios. Hacé clic en uno para asignarlo.</p>
+      </div>
+      <button class="modal-close" id="lib-close" title="Cerrar">✕</button>
+    </div>
+
+    <div class="drop-zone" id="drop-zone">
+      Arrastrá tus GIFs acá o <b>hacé clic para elegir archivos</b>
+      <small>Quedan guardados dentro de la app, funcionan sin conexión y salen en el PDF.</small>
+    </div>
+    <input type="file" id="file-input" accept="image/gif,image/*" multiple hidden>
+
+    <div class="lib-tools">
+      <input type="search" id="lib-search" placeholder="Buscar por nombre...">
+      <button class="mini-btn" id="toggle-paste-btn">Pegar enlaces</button>
+      <button class="mini-btn" id="automatch-btn">Asignar por nombre</button>
+      <button class="mini-btn" id="reclass-btn">Reclasificar</button>
+      <button class="mini-btn" id="export-lib-btn">Exportar biblioteca</button>
+      <button class="mini-btn" id="import-lib-btn">Importar</button>
+      <button class="mini-btn warn" id="wipe-lib-btn">Vaciar biblioteca</button>
+      <input type="file" id="import-input" accept="application/json,.json" hidden>
+    </div>
+
+    <div class="filter-chips" id="filter-chips"></div>
+
+    <div class="paste-area" id="paste-area">
+      <p class="hint">
+        Una línea por GIF. Acepta enlaces de Google Drive (<code>/file/d/ID/view</code>), enlaces directos (GitHub raw, jsDelivr, tu servidor) y el formato <code>Nombre del ejercicio | enlace</code>.<br>
+        Para que un enlace de Drive se vea, el archivo tiene que estar compartido como «cualquier persona con el enlace».
+      </p>
+      <textarea id="paste-input" placeholder="Press de banca con barra | https://drive.google.com/file/d/1AbC.../view&#10;https://raw.githubusercontent.com/usuario/repo/main/sentadilla.gif"></textarea>
+      <div class="lib-tools" style="margin-top:10px;">
+        <button class="mini-btn solid" id="add-links-btn">Agregar a la biblioteca</button>
+      </div>
+    </div>
+
+    <p class="lib-status" id="lib-status"></p>
+    <div class="lib-scroll" id="lib-scroll"></div>
+
+    <div class="lib-tools" style="margin-top:18px;">
+      <button class="mini-btn warn" id="clear-assign-btn">Quitar GIF del ejercicio</button>
+      <button class="mini-btn solid" id="export-tool-btn">Descargar herramienta con los GIFs</button>
+      <button class="mini-btn" id="lib-done-btn" style="margin-left:auto;">Listo</button>
+    </div>
+  </div>
+</div>
+
+<script id="gif-seed" type="application/json">{"lib":[],"map":[]}</script>
+
+<script>
+/* ---------------- CATÁLOGO DE EJERCICIOS JYNTRA ----------------
+   Generado desde la biblioteca de GIFs en Google Drive.
+   Cada entrada: n = nombre, g = grupo muscular, i = implemento,
+   lat = lateralidad, pos = posición, id = archivo del GIF en Drive.        */
+const CATALOGO = [{"id":"1Z9U-JNTyb8fGS_PoW0mi-Ll58NrxMf0S","n":"Press de banca con barra","g":"Pectoral","i":"Barra"},{"id":"1S1f6l4ssRWzgPiH-KmV7e1Jl_YnIqYuK","n":"Press de banca declinado con barra","g":"Pectoral","i":"Barra"},{"id":"1_oak2-T9wR4hSUT-5N2BDf9ERrql-mif","n":"Press de banca inclinado con barra","g":"Pectoral","i":"Barra"},{"id":"12dqBvsIat6jvBbqEI68n5UBnFGBsd58h","n":"Apertura con mancuernas en banco inclinado","g":"Pectoral","i":"Mancuernas"},{"id":"11JROHv29x39ltVLAwls7dM5qPOW4gZTr","n":"Apertura con mancuernas en banco plano","g":"Pectoral","i":"Mancuernas"},{"id":"1_grYqyX6O6GKqYsKBBkJr10trnmKUxIU","n":"Press de pecho con mancuernas","g":"Pectoral","i":"Mancuernas"},{"id":"1kO268uEmZQrVic-YZf1_KjwCVUO7Pwu8","n":"Press declinado con mancuernas","g":"Pectoral","i":"Mancuernas"},{"id":"1ksC5tD014R2Eu0-z127-C_jKpTQzLiJV","n":"Press inclinado con mancuernas","g":"Pectoral","i":"Mancuernas"},{"id":"1NeiQHD9ziwDUHLwYlvaIxF6OFgxx0ze6","n":"Pull over con mancuerna en banco plano","g":"Pectoral","i":"Mancuernas"},{"id":"1dJx8A0vPd_K1phXE9uCF8w3NZP_qfhWH","n":"Apertura de pecho en polea","g":"Pectoral","i":"Polea"},{"id":"1y1x-MEr8ntyWlw0ZXGn803ftrw4DA-E4","n":"Cruce en polea alta","g":"Pectoral","i":"Polea"},{"id":"1SZddGWvOps-HIK9WOqzmZ_6dlM8PTNHZ","n":"Cruce en polea baja","g":"Pectoral","i":"Polea"},{"id":"1t3oaL7IT_RKnSeJRuz8LKiddn_HAvFrp","n":"Press de pecho en polea","g":"Pectoral","i":"Polea"},{"id":"1Pp3f9EgaGgI_26JxPmHlWR2664IlenWR","n":"Press de pecho inclinado en polea","g":"Pectoral","i":"Polea"},{"id":"11T254hgvJ_BaPIGfLRxDCdmvHtvoKQ3Z","n":"Apertura de pecho en máquina","g":"Pectoral","i":"Máquina"},{"id":"1ej7bggunqEm_je-nZNWltJ_nDcwijMmG","n":"Press de pecho en máquina articulada","g":"Pectoral","i":"Máquina"},{"id":"1XPaEJvBj-hXcbxcexCdEkkBieApqmyDk","n":"Press de pecho inclinado en máquina articulada","g":"Pectoral","i":"Máquina"},{"id":"1PrCnzd5uPh1lZA6eGN5TfFI1WyVxOjuA","n":"Press inclinado en máquina Smith","g":"Pectoral","i":"Máquina"},{"id":"12UJtBt7ePeezF7OT1Atm5a_VuEnVpBEy","n":"Press plano en máquina Smith","g":"Pectoral","i":"Máquina"},{"id":"1CLlPtn_F34mEo5rZBKzGAPXh8ptLBGZR","n":"Fondos de pecho con lastre","g":"Pectoral","i":"Peso corporal"},{"id":"1vu5zVSi0vLLyx02uXHCOjb5eMNxNIbIf","n":"Fondos de pecho en paralelas","g":"Pectoral","i":"Peso corporal"},{"id":"1jtfww3bmhvk4aDrUiT_W8XwY6OdtSXln","n":"Push up","g":"Pectoral","i":"Peso corporal"},{"id":"1QT86524P3kwRIFdAN_ukw6V4ixCXVxv8","n":"Push up con apoyo de rodillas","g":"Pectoral","i":"Peso corporal"},{"id":"1AqjRF1Cb_aRDO7RZCNoPsFM7RJkD6Cp3","n":"Push up con pies elevados","g":"Pectoral","i":"Peso corporal"},{"id":"1mr6EgJfLc9WhSMjheN1KERFUWv9R5wHo","n":"Pull over con barra en banco plano","g":"Espalda","i":"Barra"},{"id":"1-g5Z0wTGWgeOhweDieJvcyELuNb7pWqx","n":"Remo cerrado en landmine","g":"Espalda","i":"Barra"},{"id":"1G64yTfDGY0XRK-YKA3bEWx1nJBcexhZG","n":"Remo con barra","g":"Espalda","i":"Barra"},{"id":"1IbsvpUlZgL14NJ58KqOPlGfIAw61tq2v","n":"Remo con barra en supino","g":"Espalda","i":"Barra"},{"id":"1nonip9wH1tTfGhSWWoQseLIdElV0-2_K","n":"Remo en barra T","g":"Espalda","i":"Barra"},{"id":"1y3jq9xexgsJ0Cbt9aO4296IzsxPYF7Az","n":"Remo con mancuerna unilateral","g":"Espalda","i":"Mancuernas"},{"id":"1h83lNcZbMT5fO8L01hW5EuBF5V2k-i5_","n":"Remo con mancuernas apoyado en banco","g":"Espalda","i":"Mancuernas"},{"id":"1SGvg5F5dXYHkKnFtewfo3LKsoG5By1l9","n":"Remo con mancuernas en banco inclinado","g":"Espalda","i":"Mancuernas"},{"id":"1bwwGG9X7DTuf1ZDXaXpZy4fHohi3Qluo","n":"Jalón al pecho con agarre ancho","g":"Espalda","i":"Polea"},{"id":"1QKVu9WDmJvX54ybb_8vyGXZmJSUhA-47","n":"Jalón al pecho supino","g":"Espalda","i":"Polea"},{"id":"1vberV_OUqaSW_u-8GvAV5f2oTWHT5WtG","n":"Jalón unilateral en polea","g":"Espalda","i":"Polea"},{"id":"1FQad7ThfZ91lB4wewkoKQJkQIFqZjV8K","n":"Pull over en polea alta","g":"Espalda","i":"Polea"},{"id":"1_mYMlxNuHSKDSH4woSGFU_8gAO4kWt9G","n":"Remo sentado en polea con agarre ancho","g":"Espalda","i":"Polea"},{"id":"1MhCkMFWUHgo5WAhfPHMv_4Nuag5WL43C","n":"Remo sentado en polea con agarre cerrado","g":"Espalda","i":"Polea"},{"id":"1JQ3RPMByB60dHudeSBr0Hetc8U8QEE5G","n":"Dominada asistida en máquina","g":"Espalda","i":"Máquina"},{"id":"1eXNuPRHHAziERatxow4eza4g32Nt5mIQ","n":"Hiperextensión en banco romano","g":"Espalda","i":"Máquina"},{"id":"1G99L9fmtQ5_Rk6hO1b2ARwW79Onzw-AR","n":"Jalón al pecho en máquina","g":"Espalda","i":"Máquina"},{"id":"1fTzjauaV3v_GvJnMAdwtmB2IzocjO1P3","n":"Remo en máquina articulada","g":"Espalda","i":"Máquina"},{"id":"1ICQRk-VXBQkZ9I0unU7gusWsrGCnKZ5f","n":"Remo neutro en máquina articulada","g":"Espalda","i":"Máquina"},{"id":"12Fi59vaUiFHBYYnrU8s4os5mRsPXrSMw","n":"Remo con banda elástica","g":"Espalda","i":"Bandas"},{"id":"1zIBJYQ6hStK6xYqvoNkrahzF19SaF53U","n":"Dominada con lastre","g":"Espalda","i":"Peso corporal"},{"id":"1Pypxbcae8Z4-Qf9xFnG6UGSvFwFSy8G5","n":"Dominada neutra","g":"Espalda","i":"Peso corporal"},{"id":"17jf4H4pXoJo7qZZWTpGXybRFRFv_N-HX","n":"Dominada prono","g":"Espalda","i":"Peso corporal"},{"id":"1mb55qdcGOFAVjal7_mtfefU4LXl9KD24","n":"Dominada supino","g":"Espalda","i":"Peso corporal"},{"id":"1VyP_GLAxclTbbgcBXDI1H5POJvw2SFyA","n":"Remo invertido","g":"Espalda","i":"Peso corporal"},{"id":"1oXzVGCFYVZbYEy6hbt1d719Iqc7jlWGi","n":"Superman","g":"Espalda","i":"Peso corporal"},{"id":"12jjQSfFKnX97ViWFDmQ3eMfkF85KZrsc","n":"Encogimiento de hombros con barra","g":"Trapecio","i":"Barra"},{"id":"1zXVDDtUVs6-TuK5Fkn3CXjsAEYbnXezI","n":"Remo al mentón con barra","g":"Trapecio","i":"Barra"},{"id":"1FPfRw2CurnSZNgeotitB14_YhfZFh3a7","n":"Encogimiento de hombros con mancuernas","g":"Trapecio","i":"Mancuernas"},{"id":"1VmfijqpeDxlxi5cD3CF6xdlnjnWqD_gG","n":"Encogimiento de hombros sentado con mancuernas","g":"Trapecio","i":"Mancuernas"},{"id":"1Ce-ogEtyercWHYILYBp-tZBsxKYQjWcr","n":"Remo al pecho con mancuernas","g":"Trapecio","i":"Mancuernas"},{"id":"1JF6Kl0qXmrZ0X9NeCdxWRXIFX2o8lHzx","n":"Encogimiento de hombros en polea","g":"Trapecio","i":"Polea"},{"id":"1eqAbCpXbIWgmVGQTcekBrISg3YFG-Di6","n":"Face pull en polea","g":"Trapecio","i":"Polea"},{"id":"18KhMDFgo7MG3C6mDF8EBz-b9gE9cRAVN","n":"Remo al mentón en polea","g":"Trapecio","i":"Polea"},{"id":"1NUUl73gTk9FcfjXR65Niah4abQK88NsV","n":"Encogimiento de hombros en máquina","g":"Trapecio","i":"Máquina"},{"id":"1rbbWsimf_nLsxD6WpD8AedKUwxOyIjdj","n":"Encogimiento de hombros en Smith","g":"Trapecio","i":"Máquina"},{"id":"1fu1m-850wFcVr6KnX-QPO6h9GsIcVNEm","n":"Pec deck inverso","g":"Trapecio","i":"Máquina"},{"id":"1JaFWI-CZThA8tvAJocEB_oB9QoBcauFp","n":"Remo con banda con agarre ancho","g":"Trapecio","i":"Bandas"},{"id":"1arDP_RzR0GkWyxMAv37b6q-qZ5bub0Gh","n":"Extensión de tríceps sobre la cabeza con barra","g":"Tríceps","i":"Barra"},{"id":"1G5WLZ9sjdI5nHEteXc5Hgv4bFrwyCSGl","n":"Press cerrado con barra","g":"Tríceps","i":"Barra"},{"id":"1UkNCktK6bRBuM01Ah_UnbZSN3voW8ocM","n":"Press francés con barra Z","g":"Tríceps","i":"Barra"},{"id":"1bMU33VrUC28_Hng-xwRJoVGjNYFSxt5I","n":"Extensión sobre la cabeza con mancuerna","g":"Tríceps","i":"Mancuernas"},{"id":"1SVHjW4GHud9ASlZFIIX3Fmh8K2c-KcWa","n":"Patada de tríceps con mancuernas","g":"Tríceps","i":"Mancuernas"},{"id":"1c8QydBnQEsLnDvzrQH8a60o4CoaBnYGg","n":"Press francés con mancuernas","g":"Tríceps","i":"Mancuernas"},{"id":"1RPij1iaD-zh9rdUd2kb1wG5MqNfijVlg","n":"Extensión de tríceps en polea con cuerda","g":"Tríceps","i":"Polea"},{"id":"1i0S8Nx2kYMfEPbfBOwbhsDnL8nDJVDL2","n":"Extensión de tríceps en polea prono","g":"Tríceps","i":"Polea"},{"id":"1L7HH7cRCC64tZqeoPIkNufn9VfPfr-3O","n":"Extensión de tríceps en polea supino unilateral","g":"Tríceps","i":"Polea"},{"id":"1yNvkZCrcKyHX9sqAPoEu0h0nJi3skC3z","n":"Patada de tríceps en polea","g":"Tríceps","i":"Polea"},{"id":"1jbZjj5zSoKR8KSHc7tVCPBdvAaX_fOfn","n":"Extensión de tríceps en máquina","g":"Tríceps","i":"Máquina"},{"id":"1Y8iH7qs0U0gbwntIyWeqok4eFewqivlg","n":"Extensión de tríceps con banda elástica","g":"Tríceps","i":"Bandas"},{"id":"1d5P1R1g9OOMGwlsZ3x31M4dGYWep5dcv","n":"Fondos de tríceps asistidos","g":"Tríceps","i":"Peso corporal"},{"id":"1_UMnQKqESRMhPdSaOpd20yDbLscNTsZJ","n":"Fondos de tríceps en banco","g":"Tríceps","i":"Peso corporal"},{"id":"18Tz-XhhJNlCGIdBIrhLgF8iicRz2fd-j","n":"Fondos de tríceps en paralelas","g":"Tríceps","i":"Peso corporal"},{"id":"1X1axIxiams98GuLy6hXKQ0rC9PjVFDmm","n":"Curl araña con barra","g":"Bíceps","i":"Barra"},{"id":"10_9HCNYljhhBCffjRyRvhzMk4BASaYD3","n":"Curl con barra","g":"Bíceps","i":"Barra"},{"id":"1aepxrR6MupzX2wIdaX7QT7bq8oSXwkXR","n":"Curl con barra EZ","g":"Bíceps","i":"Barra"},{"id":"1a0mV5Qa-L-gN56dG4SiQD_QSCKQNX_5B","n":"Curl scott de pie con barra","g":"Bíceps","i":"Barra"},{"id":"1UQwuj_WnXzF0LJf8SbV59bPDLqMPcqwu","n":"Curl con mancuernas","g":"Bíceps","i":"Mancuernas"},{"id":"15h5Z-Sf6-iH4B8OG0plsEWvrfP63oSz2","n":"Curl concentrado con mancuerna","g":"Bíceps","i":"Mancuernas"},{"id":"1ioALljkIaDsx83VkN9zmRD8hoHvAtlgM","n":"Curl inverso con mancuernas","g":"Bíceps","i":"Mancuernas"},{"id":"1gZm4ojtKKzMd-mgtC21-pj2ayFiPlqRt","n":"Curl martillo con mancuernas","g":"Bíceps","i":"Mancuernas"},{"id":"11tCjZeznvEK_92k_P90-K1XPws8rAntO","n":"Curl predicador con mancuernas","g":"Bíceps","i":"Mancuernas"},{"id":"1KMH9W7nLeTJjh0E466CSBgSoIl6imloj","n":"Curl zottman con mancuernas","g":"Bíceps","i":"Mancuernas"},{"id":"1E2Pjck_JXVSX9U5ZT2I-6HsTnEIa34lq","n":"Curl bayesian en polea","g":"Bíceps","i":"Polea"},{"id":"13Ia7QKsfZ1a3TKR9tKAV9pAd-t96_sJR","n":"Curl de bíceps en polea","g":"Bíceps","i":"Polea"},{"id":"1IPm2kI0gr7Izhm1SG9De6w1jScCR2KcY","n":"Curl martillo en polea baja","g":"Bíceps","i":"Polea"},{"id":"1Z_TYgv0llpjdCEvy4RZgPEyoVKB_rRyW","n":"Curl de bíceps en máquina scott","g":"Bíceps","i":"Máquina"},{"id":"10SFmv2x-VHlgUKDq5J-FeSVWziK9NDAC","n":"Curl de muñeca con barra","g":"Antebrazo","i":"Barra"},{"id":"10MEQph1O87SFK02lLxjepx9wyU6ms2F_","n":"Extensión de muñeca con barra","g":"Antebrazo","i":"Barra"},{"id":"1HFXe4XoNAELLYhAU8zIo3xvvB7EleZ7b","n":"Curl de muñeca con mancuernas","g":"Antebrazo","i":"Mancuernas"},{"id":"1njiHZjVIH1RKhOuQqgE82JOldlDC9AUk","n":"Curl de muñeca invertido con mancuernas","g":"Antebrazo","i":"Mancuernas"},{"id":"1bdmlTGnvTJztUIbmTTeXhhqRambfJzn3","n":"Pronación de antebrazo","g":"Antebrazo","i":"Mancuernas"},{"id":"1cFYfAWrg8eiBuW9r9Et9cMeGZUrlrgnu","n":"Trabajo de agarre con mango","g":"Antebrazo","i":"Mancuernas"},{"id":"1fQmaSzNUbtKpCAYtu5to9CZp-CoJjaUZ","n":"Crunch en polea alta","g":"Abdomen y core","i":"Polea"},{"id":"1deCFs3fw1gUz_uU61AJVpRiVSiok1aSW","n":"Oblicuos en polea baja","g":"Abdomen y core","i":"Polea"},{"id":"1tB5H4XuZxZRwHNLJOQ7tGhkHXSUpwTCx","n":"Crunch en máquina","g":"Abdomen y core","i":"Máquina"},{"id":"1X981ZYup1Gt7tj0GvnPY1G6Pu-3ph5Qc","n":"Abdominal convencional","g":"Abdomen y core","i":"Peso corporal"},{"id":"1pNm2AhP7JMNnftLUzxF5kxTdDSQgCIUY","n":"Abdominal en bicicleta","g":"Abdomen y core","i":"Peso corporal"},{"id":"1lMwEY3KrK8lgm5wZS_OnuYHXk8zfAMU2","n":"Crunch con disco","g":"Abdomen y core","i":"Peso corporal"},{"id":"1O2twqLtAWReApLvQevHN4B10RjOZt7CY","n":"Crunch inverso","g":"Abdomen y core","i":"Peso corporal"},{"id":"18DXn3Dw402tsXcE6AcTtj0CwPbo-9at0","n":"Elevación de piernas en banco","g":"Abdomen y core","i":"Peso corporal"},{"id":"14SD3IeMq6mQjh9cE_BI25GuGPE2fo-xi","n":"Elevación de rodillas colgado","g":"Abdomen y core","i":"Peso corporal"},{"id":"1GgR1_ksRigXKOjk6X_DnFo-l5lKUMC3y","n":"Escalador cruzado","g":"Abdomen y core","i":"Peso corporal"},{"id":"1_7Kw6oB09g68lCigN-a5KNizoFOQvRfo","n":"Giro ruso","g":"Abdomen y core","i":"Peso corporal"},{"id":"1p4L_hYq6jyye-TnlHVtrITYPBoHxOX_S","n":"Plancha frontal","g":"Abdomen y core","i":"Peso corporal"},{"id":"1_omMtdLLnGni7cOr9uCUbcF-Aa3Zg-Vg","n":"Plancha lateral","g":"Abdomen y core","i":"Peso corporal"},{"id":"1OGliDNd75JujyQWyRSU2zoH4V19NN-d2","n":"Rueda abdominal de pie","g":"Abdomen y core","i":"Peso corporal"},{"id":"1IZxNb9KalsRg0QWXsPWquWenqxV97H7_","n":"Rueda abdominal de rodillas","g":"Abdomen y core","i":"Peso corporal"},{"id":"1hFlauFiFQl9UVtGTJLHlU_xmWVNJpkBt","n":"Estocada con barra","g":"Cuádriceps","i":"Barra"},{"id":"1Tcm5NQWZ-F2Z_tTZHqNQz7VXwSNC7Gdh","n":"Sentadilla búlgara con barra","g":"Cuádriceps","i":"Barra"},{"id":"1iISW6tBm0464tDaCFhrN3Gv6_1hkhcnc","n":"Sentadilla frontal con barra","g":"Cuádriceps","i":"Barra"},{"id":"1c27wLfI3945KhU9iKPuOc6Z2DdTG7gw3","n":"Sentadilla libre con barra","g":"Cuádriceps","i":"Barra"},{"id":"1o3N-voQrtyMKPMctvnWQUKkSmzP10Jz-","n":"Step up en banco con barra","g":"Cuádriceps","i":"Barra"},{"id":"1apf11Mci43G1E6o9aMsJ6WHWmzpsyl_i","n":"Estocada con mancuernas","g":"Cuádriceps","i":"Mancuernas"},{"id":"1Fr64itxUqksRWr5BEjfRH_5fl8eGSs3C","n":"Sentadilla búlgara con mancuernas","g":"Cuádriceps","i":"Mancuernas"},{"id":"1ZN4OAT38Vr9VWMmelbmq6fMr1sptSLla","n":"Sentadilla sumo con mancuerna","g":"Cuádriceps","i":"Mancuernas"},{"id":"1KCoRm1G38eEPaKqSONbGmvPyg_qSzGFl","n":"Extensión de cuádriceps en máquina","g":"Cuádriceps","i":"Máquina"},{"id":"1uMTMNgzD2rMAHDY55izXJVzknohBn9UG","n":"Prensa de piernas 45°","g":"Cuádriceps","i":"Máquina"},{"id":"1JTARSfY_grfqeSkld0-g68j0gbzVugz6","n":"Prensa de piernas horizontal","g":"Cuádriceps","i":"Máquina"},{"id":"1A0I6k1Cgtp03Tr7_ki_4fqq32PkB25ka","n":"Sentadilla hack","g":"Cuádriceps","i":"Máquina"},{"id":"1DcBZsQOl5pSOUTcC7eW97cN-ElsaL8iH","n":"Sentadilla profunda en Smith","g":"Cuádriceps","i":"Máquina"},{"id":"1hp70nNC6k--A1akrfWXQ06c2igcNUWZM","n":"Estocada libre","g":"Cuádriceps","i":"Peso corporal"},{"id":"13rzqvtdWwEyLnyGQrmVhct2aG1IuxH46","n":"Pistol squat","g":"Cuádriceps","i":"Peso corporal"},{"id":"1VZluvbSalqvlDgpntiH4fc-1_T5JdLXn","n":"Sentadilla búlgara sin implementos","g":"Cuádriceps","i":"Peso corporal"},{"id":"1UFs9cXS2MwXN8UGskK72yyb3D1fObA0l","n":"Sentadilla profunda libre","g":"Cuádriceps","i":"Peso corporal"},{"id":"1Q-3jb55wFTSILaUFo0Yuv8WrxuB8iCkm","n":"Buenos días con barra","g":"Isquiotibiales","i":"Barra"},{"id":"1WSBdEzwTuAW0acdN_W4uiUximrBnRhAp","n":"Peso muerto con barra hexagonal","g":"Isquiotibiales","i":"Barra"},{"id":"1vQkcjSoIHmqTN_i8Myf4JVPFTyYzgXXq","n":"Peso muerto convencional con barra","g":"Isquiotibiales","i":"Barra"},{"id":"1LEuJ5rAVTXS6tv1rEsKHybpvVm-Xj_qY","n":"Peso muerto rumano con barra","g":"Isquiotibiales","i":"Barra"},{"id":"1xB3XX8S-ivG9gLK13qnYQPFyvb6lZrq5","n":"Peso muerto sumo con barra","g":"Isquiotibiales","i":"Barra"},{"id":"12xW9NuwaMmMJ9szqUnw9Wg4SsHi5l3tm","n":"Peso muerto rumano con mancuernas","g":"Isquiotibiales","i":"Mancuernas"},{"id":"1hwo-B-7weD77VOiMRuky72OH2ocSHenh","n":"Peso muerto rumano unilateral con mancuerna","g":"Isquiotibiales","i":"Mancuernas"},{"id":"1frzcW-8dft0hUMpptLfKe2on5Yti8QSU","n":"Curl femoral en polea baja","g":"Isquiotibiales","i":"Polea"},{"id":"1ns2vahG4oUxXYslXBm_5bnNVDg-U0c3w","n":"Curl femoral acostado","g":"Isquiotibiales","i":"Máquina"},{"id":"1v2imIys083tgkNjPpuOYxB_zuVtB1r1S","n":"Curl femoral sentado","g":"Isquiotibiales","i":"Máquina"},{"id":"1UTKey0HFZDFa4tzR2xaJNyhUukTrY9b0","n":"Curl nórdico en máquina","g":"Isquiotibiales","i":"Máquina"},{"id":"1zr7wS0CeDcnNhg4hro4Yb2E2Fz0VwyGt","n":"Peso muerto rumano en Smith","g":"Isquiotibiales","i":"Máquina"},{"id":"1p4CO3at0JNzgsJbrwpGBykKVHUZFENAm","n":"Hip thrust con barra","g":"Glúteos","i":"Barra"},{"id":"1bE59xhfcRTMTGYJoVkYXiLFRtvcjGIwB","n":"Hip thrust con mancuerna","g":"Glúteos","i":"Mancuernas"},{"id":"1YVUndRc0ZhiStFl3-HWXqsJytvwXazis","n":"Abducción de cadera en polea","g":"Glúteos","i":"Polea"},{"id":"1VHklvCHEmCFlgPiinICqR81ZmQno2ut1","n":"Aducción de cadera en polea","g":"Glúteos","i":"Polea"},{"id":"1LhT-qjzYXarRXVKsY1KhfqhyyUxOCJos","n":"Patada de glúteo en polea","g":"Glúteos","i":"Polea"},{"id":"1I6Xt1BudqS8aAfNHR2CC_wONbYaSIv-A","n":"Abductores en máquina","g":"Glúteos","i":"Máquina"},{"id":"1iyh2LOL7ppGdaQTDS62RQpAMQinxOr5d","n":"Aductores en máquina","g":"Glúteos","i":"Máquina"},{"id":"1G4Iz6E_wY44hzCyjwUY3FqpFh8lJW7O-","n":"Hip thrust en Smith","g":"Glúteos","i":"Máquina"},{"id":"1gommIqutHt6ADBR5Ggj_UKm_45BuWsiN","n":"Hiperextensión inversa","g":"Glúteos","i":"Máquina"},{"id":"1FRCXcn2xxWSxieyydE17lbsw89ofc7a2","n":"Patada de glúteo en máquina","g":"Glúteos","i":"Máquina"},{"id":"15V_rTFFh3fUPXouiqQIQ_S-7XdFl7AmA","n":"Patada de glúteo con banda elástica","g":"Glúteos","i":"Bandas"},{"id":"1ghgahZVaGB7xV10wOfJ8WPf6kuFYdITo","n":"Patada de glúteo sin carga","g":"Glúteos","i":"Peso corporal"},{"id":"1tX2vlR1YVaTYAI6q_YbnDTGbzE4haTxw","n":"Puente de glúteos","g":"Glúteos","i":"Peso corporal"},{"id":"1a38c6tuXV78AjhL_hwJCMdp5uCdllyzh","n":"Puente de glúteos a una pierna","g":"Glúteos","i":"Peso corporal"},{"id":"117UJlTOvw4PnCo4X2kbJ_NPPA7VDKiIO","n":"Elevación de talones con mancuernas","g":"Pantorrillas","i":"Mancuernas"},{"id":"1tbPqJQQ01653xDaRJVbMM34Cka531PkZ","n":"Elevación de talones sentado con mancuernas","g":"Pantorrillas","i":"Mancuernas"},{"id":"1TLTe5BOMuHg3-AUXCKlim8ypeYajZDcy","n":"Elevación de talones en polea","g":"Pantorrillas","i":"Polea"},{"id":"1dkKuYfGeW5SqsNVoZ13p_zml4itwWwQK","n":"Elevación de talones de pie en máquina","g":"Pantorrillas","i":"Máquina"},{"id":"1H6rCKQX6-p-InYNE3uYKUGRUn14sesFE","n":"Elevación de talones en prensa","g":"Pantorrillas","i":"Máquina"},{"id":"1_RDnXBKzwGTEB9C4m8-YN4U8TYNowaEz","n":"Elevación de talones en Smith","g":"Pantorrillas","i":"Máquina"},{"id":"1tKl-5hrTlKGc1zpazEn7WBnAWKbnlLgH","n":"Elevación de talones sentado en máquina","g":"Pantorrillas","i":"Máquina"},{"id":"14KccK8s04dbmS154TzgN_sUq17X3zKqe","n":"Elevación de talones a una pierna","g":"Pantorrillas","i":"Peso corporal"},{"id":"1P2Ca7n-hnHoZRm8Uhs8HVVwhKQstyZ4n","n":"Elevación de talones de pie","g":"Pantorrillas","i":"Peso corporal"},{"id":"1FEnOxIub411CsxIxs8kXiypUS_lKueSb","n":"Elevación de talones en escalón","g":"Pantorrillas","i":"Peso corporal"}];
+
+const TAGS = {"Pectoral": "PEC", "Espalda": "ESP", "Trapecio": "TRA", "Tríceps": "TRI", "Bíceps": "BIC", "Antebrazo": "ANT", "Abdomen y core": "ABD", "Cuádriceps": "QUA", "Isquiotibiales": "ISQ", "Glúteos": "GLU", "Pantorrillas": "PAN"};
+
+/* EJES se arma solo: grupo muscular -> implemento -> ejercicios */
+const EJES = (() => {
+  const out = {};
+  CATALOGO.forEach(e => {
+    if (!out[e.g]) out[e.g] = { tag: TAGS[e.g] || "??", grupos: {} };
+    if (!out[e.g].grupos[e.i]) out[e.g].grupos[e.i] = [];
+    out[e.g].grupos[e.i].push(e.n);
+  });
+  return out;
+})();
+
+/* nombre de ejercicio -> ficha del catálogo */
+const FICHA = (() => { const m = {}; CATALOGO.forEach(e => m[e.n] = e); return m; })();
+
+/* GIF que vive en Drive para ese ejercicio */
+function gifDeDrive(ejercicio){
+  const f = FICHA[ejercicio];
+  return f && f.id ? "https://lh3.googleusercontent.com/d/" + f.id + "=w640" : null;
+}
+
+const EJE_NAMES = Object.keys(EJES);
+
+const MODALIDADES = {
+  "": { label:"Personalizado (manual)", series:"", reps:"", descanso:"" },
+  "fuerza": { label:"Fuerza — baja rep / alta carga", series:"4-5", reps:"4-6", descanso:"120" },
+  "hipertrofia": { label:"Hipertrofia — volumen medio", series:"3-4", reps:"8-12", descanso:"75" },
+  "resistencia": { label:"Resistencia / Definición", series:"2-3", reps:"15-20", descanso:"40" }
+};
+
+/* Rutinas de cuerpo completo por modalidad: [grupo, implemento, ejercicio] */
+const FULLBODY = {
+ "fuerza": [
+  [
+   "Cuádriceps",
+   "Barra",
+   "Sentadilla libre con barra"
+  ],
+  [
+   "Isquiotibiales",
+   "Barra",
+   "Peso muerto rumano con barra"
+  ],
+  [
+   "Pectoral",
+   "Barra",
+   "Press de banca con barra"
+  ],
+  [
+   "Espalda",
+   "Barra",
+   "Remo con barra"
+  ],
+  [
+   "Glúteos",
+   "Barra",
+   "Hip thrust con barra"
+  ],
+  [
+   "Tríceps",
+   "Barra",
+   "Press cerrado con barra"
+  ],
+  [
+   "Bíceps",
+   "Barra",
+   "Curl con barra"
+  ],
+  [
+   "Abdomen y core",
+   "Peso corporal",
+   "Crunch con disco"
+  ]
+ ],
+ "hipertrofia": [
+  [
+   "Cuádriceps",
+   "Máquina",
+   "Prensa de piernas 45°"
+  ],
+  [
+   "Isquiotibiales",
+   "Máquina",
+   "Curl femoral acostado"
+  ],
+  [
+   "Pectoral",
+   "Mancuernas",
+   "Press de pecho con mancuernas"
+  ],
+  [
+   "Espalda",
+   "Polea",
+   "Jalón al pecho con agarre ancho"
+  ],
+  [
+   "Glúteos",
+   "Máquina",
+   "Hip thrust en Smith"
+  ],
+  [
+   "Tríceps",
+   "Polea",
+   "Extensión de tríceps en polea con cuerda"
+  ],
+  [
+   "Bíceps",
+   "Mancuernas",
+   "Curl con mancuernas"
+  ],
+  [
+   "Abdomen y core",
+   "Polea",
+   "Crunch en polea alta"
+  ]
+ ],
+ "resistencia": [
+  [
+   "Cuádriceps",
+   "Peso corporal",
+   "Sentadilla profunda libre"
+  ],
+  [
+   "Isquiotibiales",
+   "Polea",
+   "Curl femoral en polea baja"
+  ],
+  [
+   "Pectoral",
+   "Peso corporal",
+   "Push up"
+  ],
+  [
+   "Espalda",
+   "Peso corporal",
+   "Remo invertido"
+  ],
+  [
+   "Glúteos",
+   "Peso corporal",
+   "Puente de glúteos"
+  ],
+  [
+   "Tríceps",
+   "Peso corporal",
+   "Fondos de tríceps en banco"
+  ],
+  [
+   "Bíceps",
+   "Polea",
+   "Curl de bíceps en polea"
+  ],
+  [
+   "Abdomen y core",
+   "Peso corporal",
+   "Plancha frontal"
+  ]
+ ],
+ "": [
+  [
+   "Cuádriceps",
+   "Barra",
+   "Sentadilla libre con barra"
+  ],
+  [
+   "Isquiotibiales",
+   "Mancuernas",
+   "Peso muerto rumano con mancuernas"
+  ],
+  [
+   "Pectoral",
+   "Mancuernas",
+   "Press de pecho con mancuernas"
+  ],
+  [
+   "Espalda",
+   "Polea",
+   "Jalón al pecho con agarre ancho"
+  ],
+  [
+   "Glúteos",
+   "Mancuernas",
+   "Hip thrust con mancuerna"
+  ],
+  [
+   "Tríceps",
+   "Polea",
+   "Extensión de tríceps en polea con cuerda"
+  ],
+  [
+   "Bíceps",
+   "Mancuernas",
+   "Curl con mancuernas"
+  ],
+  [
+   "Abdomen y core",
+   "Peso corporal",
+   "Plancha frontal"
+  ]
+ ]
+};
+
+const MAX_SESSIONS = 4;
+const MAX_SLOTS = 12;
+const MIN_SLOTS = 1;
+const BASE_SLOTS = 4;
+
+function emptySlot(){ return {eje:"",grupo:"",ejercicio:"",series:"",reps:"",peso:"",descanso:"",obs:"",obsAlumno:"",hecho:false,grupoId:""}; }
+function newSession(n){ return {nombre:`Sesión ${n}`, modalidad:"", ejercicios:Array.from({length:BASE_SLOTS}, emptySlot), grupos:{}}; }
+
+/* ---------------- súper series (bi-series, tri-series sin descanso) ---------------- */
+const SS_PALETTE = ["#5fbf7a","#a06fe0","#4f9fe0","#e0a24f","#e05f8e","#4fd1c5","#e0c94f","#8f6ae0"];
+function nextGroupId(s){
+  const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  for (const L of letters){ if (!s.grupos[L]) return L; }
+  return "G" + Date.now();
+}
+function nextColor(s){ return SS_PALETTE[Object.keys(s.grupos).length % SS_PALETTE.length]; }
+function crearGrupo(s){
+  const gid = nextGroupId(s);
+  s.grupos[gid] = { nombre: `Súper serie ${gid}`, color: nextColor(s) };
+  return gid;
+}
+
+let sessionsData = [newSession(1), newSession(2)];
+let currentSession = 0;
+let gifMap = {};   // nombre de ejercicio -> id de la biblioteca (o URL suelta, formato viejo)
+let gifLib = [];   // [{id, name, src, kind}]
+
+/* ---------------- almacenamiento (IndexedDB + respaldos) ---------------- */
+const DB_NAME = "jyntra-gifs", DB_STORE = "kv";
+function idb(){
+  return new Promise((res,rej) => {
+    if (!window.indexedDB) return rej(new Error("sin indexedDB"));
+    const req = indexedDB.open(DB_NAME, 1);
+    req.onupgradeneeded = () => { if(!req.result.objectStoreNames.contains(DB_STORE)) req.result.createObjectStore(DB_STORE); };
+    req.onsuccess = () => res(req.result);
+    req.onerror = () => rej(req.error);
+  });
+}
+async function dbGet(key){
+  try{
+    const db = await idb();
+    return await new Promise((res,rej) => {
+      const r = db.transaction(DB_STORE,"readonly").objectStore(DB_STORE).get(key);
+      r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error);
+    });
+  }catch(e){
+    try{ const v = localStorage.getItem(DB_NAME+":"+key); return v ? JSON.parse(v) : undefined; }catch(_){ return undefined; }
+  }
+}
+async function dbSet(key, value){
+  /* espejo hacia la cáscara JYNTRA, para que la biblioteca no se pierda */
+  try{
+    if(window.parent && window.parent !== window)
+      window.parent.postMessage({jyntra:true, accion:'gifs', clave:key, valor:value}, '*');
+  }catch(e){}
+  try{
+    const db = await idb();
+    await new Promise((res,rej) => {
+      const r = db.transaction(DB_STORE,"readwrite").objectStore(DB_STORE).put(value, key);
+      r.onsuccess = () => res(); r.onerror = () => rej(r.error);
+    });
+    return true;
+  }catch(e){
+    try{ localStorage.setItem(DB_NAME+":"+key, JSON.stringify(value)); return true; }
+    catch(_){ return false; }
+  }
+}
+
+/* GIFs horneados dentro del archivo por «Descargar herramienta con los GIFs» */
+function readSeed(){
+  try{
+    const el = document.getElementById("gif-seed");
+    if (!el) return null;
+    const data = JSON.parse(el.textContent || "{}");
+    return Array.isArray(data.lib) && data.lib.length ? data : null;
+  }catch(e){ return null; }
+}
+
+const VERSION_CATALOGO = "v9-fullbody";
+
+async function loadGifData(){
+  // biblioteca y asignaciones — si la app JYNTRA la tiene guardada, esa manda
+  const JYG = (window.__JY_CTX && window.__JY_CTX.gifs) || null;
+  gifLib = (JYG && JYG.lib) || (await dbGet("lib")) || [];
+  gifMap = (JYG && JYG.map) || (await dbGet("map")) || {};
+
+  // al estrenar el catálogo se descartan los GIFs sueltos de versiones anteriores
+  const marca = await dbGet("catalogo-version");
+  if (marca !== VERSION_CATALOGO){
+    gifLib = []; gifMap = {};
+    await dbSet("catalogo-version", VERSION_CATALOGO);
+    await saveGifData();
+  }
+
+  // los GIFs que vienen dentro del archivo se suman a lo que ya haya en el equipo
+  const seed = readSeed();
+  if (seed){
+    let nuevos = 0;
+    seed.lib.forEach(g => {
+      const before = gifLib.length;
+      const item = addToLib(g.name, g.src, g.kind || "archivo", g.eje);
+      if (gifLib.length > before) nuevos++;
+      // reencaminar las asignaciones al id local
+      if (seed.map) Object.entries(seed.map).forEach(([ex,ref]) => { if (ref === g.id && !gifMap[ex]) gifMap[ex] = item.id; });
+    });
+    if (nuevos) await saveGifData();
+  }
+  // los ítems guardados antes de la clasificación no tienen grupo muscular
+  let faltaEje = false;
+  gifLib.forEach(g => { if (!g.eje){ g.eje = detectEje(g.name); faltaEje = true; } });
+  if (faltaEje) await saveGifData();
+
+  // migración desde la versión anterior (window.storage con URLs sueltas)
+  if (!gifLib.length && !Object.keys(gifMap).length){
+    try{
+      const r = await window.storage.get('gifs-map', false);
+      const old = r ? JSON.parse(r.value) : {};
+      Object.entries(old).forEach(([ex,url]) => {
+        const item = addToLib(nameFromUrl(url) || ex, url, "enlace");
+        gifMap[ex] = item.id;
+      });
+      if (Object.keys(gifMap).length) await saveGifData();
+    }catch(e){ /* no había datos previos */ }
+  }
+}
+async function saveGifData(){
+  const okLib = await dbSet("lib", gifLib);
+  const okMap = await dbSet("map", gifMap);
+  return okLib && okMap;
+}
+
+/* ---------------- biblioteca: alta, búsqueda, resolución ---------------- */
+function uid(){ return "g" + Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+
+function nameFromUrl(url){
+  try{
+    const clean = String(url).split("?")[0].split("#")[0];
+    const last = clean.substring(clean.lastIndexOf("/")+1);
+    return decodeURIComponent(last).replace(/\.(gif|png|jpe?g|webp|mp4)$/i,"").replace(/[-_]+/g," ").trim();
+  }catch(e){ return ""; }
+}
+
+/* Convierte un enlace de Google Drive en una URL que el navegador puede mostrar */
+function driveDirect(url){
+  const m = String(url).match(/\/file\/d\/([-\w]{20,})/)
+         || String(url).match(/[?&]id=([-\w]{20,})/)
+         || String(url).match(/\/d\/([-\w]{20,})/);
+  if (!m) return null;
+  return "https://lh3.googleusercontent.com/d/" + m[1] + "=w640";
+}
+function driveFallback(url){
+  const m = String(url).match(/lh3\.googleusercontent\.com\/d\/([-\w]{20,})/);
+  return m ? "https://drive.google.com/thumbnail?id=" + m[1] + "&sz=w640" : null;
+}
+
+function addToLib(name, src, kind, eje){
+  const dup = gifLib.find(g => g.src === src);
+  if (dup) return dup;
+  const nm = (name||"Sin nombre").trim();
+  const item = { id: uid(), name: nm, src, kind: kind||"enlace", eje: eje || detectEje(nm) };
+  gifLib.push(item);
+  return item;
+}
+
+/* Devuelve la URL del GIF asignado a un ejercicio (soporta el formato viejo) */
+function resolveGif(exercise){
+  if (!exercise) return null;
+  const ref = gifMap[exercise];
+  if (!ref) return null;
+  const item = gifLib.find(g => g.id === ref);
+  if (item) return item.src;
+  return /^(https?:|data:)/.test(ref) ? ref : null;
+}
+/* El GIF de un ejercicio: primero el que cargó el usuario, si no el de Drive */
+function gifDe(ejercicio){ return resolveGif(ejercicio) || gifDeDrive(ejercicio); }
+function resolveGifName(exercise){
+  const ref = gifMap[exercise];
+  const item = gifLib.find(g => g.id === ref);
+  return item ? item.name : "";
+}
+
+/* Normalización para emparejar nombres de archivo con nombres de ejercicio */
+function norm(s){
+  return String(s).toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+    .replace(/\.(gif|png|jpe?g|webp|mp4)$/,"")
+    .replace(/[^a-z0-9]+/g," ").trim();
+}
+const STOPWORDS = new Set(["de","del","la","el","en","con","a","y","los","las","por"]);
+function tokens(s){ return norm(s).split(" ").filter(t => t.length > 2 && !STOPWORDS.has(t)); }
+function matchScore(a,b){
+  const A = tokens(a), B = tokens(b);
+  if (!A.length || !B.length) return 0;
+  if (norm(a) === norm(b)) return 1;
+  const hits = A.filter(t => B.includes(t)).length;
+  return hits / Math.max(A.length, B.length);
+}
+function allExerciseNames(){
+  const out = [];
+  Object.values(EJES).forEach(e => Object.values(e.grupos).forEach(list => list.forEach(x => out.push(x))));
+  return out;
+}
+/* Devuelve [{ejercicio, eje}] de todo el catálogo */
+function allExercisePairs(){
+  const out = [];
+  Object.entries(EJES).forEach(([eje,e]) => Object.values(e.grupos).forEach(list => list.forEach(x => out.push({ejercicio:x, eje}))));
+  return out;
+}
+
+/* ---------------- clasificación por grupo muscular ---------------- */
+const SIN_CLASIFICAR = "Sin clasificar";
+/* peso 3 = término inequívoco, 1 = pista débil */
+const EJE_KEYWORDS = {
+  "Pantorrillas":   {3:["pantorrilla","gemelo","gemelos","soleo","talon","talones"], 1:["escalon","plantar"]},
+  "Antebrazo":      {3:["antebrazo","muneca","munecas","pronador","pronacion","empunadura","braquial","zottman"], 1:["agarre","mango"]},
+  "Abdomen y core": {3:["abdominal","abdominales","abs","crunch","oblicuo","plancha","core","giro ruso","rueda abdominal","escalador"], 1:["bicicleta","elevacion de piernas","elevacion de rodillas"]},
+  "Trapecio":       {3:["trapecio","encogimiento","encogerse","face pull","remo al menton","pec deck inverso","cruciforme inversa"], 1:["remo al pecho","remo alto"]},
+  "Espalda":        {3:["dominada","dominadas","jalon","pull down","pulldown","pull over","dorsal","dorsales","remo","espalda","superman","hiperextension en banco"], 1:["landmine","barra t","invertido"]},
+  "Glúteos":        {3:["gluteo","gluteos","hip thrust","empuje de cadera","elevacion de cadera","elevacion pelvica","puente","aductor","abductor","aduccion","abduccion","hiperextension inversa"], 1:["patada","cadera"]},
+  "Isquiotibiales": {3:["peso muerto","rumano","isquio","isquios","femoral","curl nordico","buenos dias"], 1:["rdl","mesa flexora"]},
+  "Cuádriceps":     {3:["sentadilla","squat","cuadricep","cuadriceps","prensa de piernas","hack","estocada","zancada","bulgara","pistol","step up"], 1:["prensa","split"]},
+  "Pectoral":       {3:["pecho","pectoral","press de banca","banca","push up","apertura","cruce","cross over","peck deck"], 1:["press plano","press inclinado","press declinado","paralelas"]},
+  "Tríceps":        {3:["triceps","tricesp","catana","press frances","close grip","press cerrado","diamante"], 1:["patada de triceps","fondos","copa"]},
+  "Bíceps":         {3:["biceps","bicep","bayesian","predicador","scott","scot","scort","arana","curl martillo","martillo"], 1:["curl","concentrado","inverso"]}
+};
+function scoreEje(text){
+  const t = " " + norm(text) + " ";
+  const scores = {};
+  Object.entries(EJE_KEYWORDS).forEach(([eje,w]) => {
+    let sc = 0;
+    Object.entries(w).forEach(([peso,words]) => {
+      words.forEach(k => { if (t.includes(" " + norm(k) + " ") || t.includes(norm(k))) sc += (+peso); });
+    });
+    scores[eje] = sc;
+  });
+  return scores;
+}
+/* Deduce el grupo muscular de un GIF: primero por ejercicio del catálogo, después por palabras clave */
+function detectEje(name){
+  let best = null, bestScore = 0;
+  allExercisePairs().forEach(pair => {
+    const sc = matchScore(name, pair.ejercicio);
+    if (sc > bestScore){ bestScore = sc; best = pair; }
+  });
+  if (best && bestScore >= 0.5) return best.eje;
+  const scores = scoreEje(name);
+  let eje = null, top = 0;
+  Object.entries(scores).forEach(([k,v]) => { if (v > top){ top = v; eje = k; } });
+  return top >= 3 ? eje : SIN_CLASIFICAR;
+}
+function ejeTag(eje){ return EJES[eje] ? EJES[eje].tag : "??"; }
+
+/* ---------------- helpers ---------------- */
+function grupoOptions(eje){ return eje ? Object.keys(EJES[eje].grupos) : []; }
+function ejercicioOptions(eje,grupo){ return (eje && grupo) ? EJES[eje].grupos[grupo] : []; }
+
+/* ---------------- tabs ---------------- */
+function renderTabs(){
+  const tabsEl = document.getElementById("tabs");
+  tabsEl.innerHTML = "";
+  sessionsData.forEach((s,i) => {
+    const wrap = document.createElement("div");
+    wrap.className = "tab-btn";
+    const btn = document.createElement("button");
+    btn.className = "tab" + (i===currentSession ? " active" : "");
+    btn.textContent = s.nombre || `Sesión ${i+1}`;
+    btn.addEventListener("click", () => { currentSession = i; renderAll(); });
+    wrap.appendChild(btn);
+    if (i >= 2){
+      const close = document.createElement("span");
+      close.className = "tab-close";
+      close.textContent = "✕";
+      close.title = "Eliminar sesión";
+      close.addEventListener("click",(e) => {
+        e.stopPropagation();
+        sessionsData.splice(i,1);
+        if (currentSession >= sessionsData.length) currentSession = sessionsData.length-1;
+        renderAll();
+      });
+      wrap.appendChild(close);
+    }
+    tabsEl.appendChild(wrap);
+  });
+  const addBtn = document.getElementById("add-session-btn");
+  addBtn.disabled = sessionsData.length >= MAX_SESSIONS;
+}
+
+/* ---------------- config bar ---------------- */
+function renderConfig(){
+  const s = sessionsData[currentSession];
+  const nameInput = document.getElementById("session-name");
+  nameInput.value = s.nombre;
+
+  const modSel = document.getElementById("session-modalidad");
+  modSel.innerHTML = Object.entries(MODALIDADES).map(([k,v]) =>
+    `<option value="${k}" ${s.modalidad===k?"selected":""}>${v.label}</option>`).join("");
+
+  const hint = document.getElementById("modalidad-hint");
+  const m = MODALIDADES[s.modalidad];
+  hint.textContent = s.modalidad ? `Series ${m.series} · Reps ${m.reps} · Descanso ${m.descanso}s` : "";
+}
+
+/* ---------------- slots ---------------- */
+function renderSlots(){
+  const slotsEl = document.getElementById("slots");
+  slotsEl.innerHTML = "";
+  const s = sessionsData[currentSession];
+  let filled = 0;
+
+  s.ejercicios.forEach((slot,i) => {
+    if (slot.ejercicio) filled++;
+    const grp = slot.grupoId ? s.grupos[slot.grupoId] : null;
+    const card = document.createElement("div");
+    card.className = "slot-card" + (slot.hecho ? " done" : "") + (grp ? " has-superserie" : "");
+    if (grp) card.style.setProperty("--sg-color", grp.color);
+
+    // conector visual: si este ejercicio comparte súper serie con el anterior, no van con descanso entre sí
+    if (i > 0 && slot.grupoId && s.ejercicios[i-1].grupoId === slot.grupoId){
+      const conn = document.createElement("div");
+      conn.className = "ss-connector";
+      conn.style.setProperty("--sg-color", grp.color);
+      conn.textContent = `Sin descanso · ${grp.nombre}`;
+      slotsEl.appendChild(conn);
+    }
+
+    const gif = gifDe(slot.ejercicio);
+
+    card.innerHTML = `
+      <div class="slot-top">
+        <div class="idx">${i+1}</div>
+        <div class="cell cell-grupo">
+          <span class="field-label">Súper serie</span>
+          <select class="grupo-select" data-field="grupoId" data-idx="${i}" ${grp?`style="border-color:${grp.color};color:${grp.color};"`:""}>
+            <option value="">— Ninguna —</option>
+            ${Object.entries(s.grupos).map(([gid,g]) => `<option value="${gid}" ${slot.grupoId===gid?"selected":""}>${g.nombre}</option>`).join("")}
+            <option value="__new__">+ Nueva súper serie</option>
+          </select>
+        </div>
+        <div class="cell">
+          <span class="field-label">Eje</span>
+          <select data-field="eje" data-idx="${i}">
+            <option value="">—</option>
+            ${EJE_NAMES.map(e => `<option value="${e}" ${slot.eje===e?"selected":""}>${e}</option>`).join("")}
+          </select>
+        </div>
+        <div class="cell">
+          <span class="field-label">Implemento</span>
+          <select data-field="grupo" data-idx="${i}" ${!slot.eje?"disabled":""}>
+            <option value="">—</option>
+            ${grupoOptions(slot.eje).map(g => `<option value="${g}" ${slot.grupo===g?"selected":""}>${g}</option>`).join("")}
+          </select>
+        </div>
+        <div class="cell">
+          <span class="field-label">Ejercicio</span>
+          <select data-field="ejercicio" data-idx="${i}" ${!slot.grupo?"disabled":""}>
+            <option value="">—</option>
+            ${ejercicioOptions(slot.eje,slot.grupo).map(x => `<option value="${x}" ${slot.ejercicio===x?"selected":""}>${x}</option>`).join("")}
+          </select>
+          ${slot.eje?`<span class="chip">${EJES[slot.eje].tag}</span>`:""}
+        </div>
+        <button class="remove-slot" data-remove="${i}" title="Quitar ejercicio">✕</button>
+      </div>
+
+      <div class="slot-mid">
+        <div class="cell"><span class="field-label">Series</span><input type="text" placeholder="3-4" data-field="series" data-idx="${i}" value="${slot.series}"></div>
+        <div class="cell"><span class="field-label">Reps</span><input type="text" placeholder="8-12" data-field="reps" data-idx="${i}" value="${slot.reps}"></div>
+        <div class="cell"><span class="field-label">Peso</span><input type="text" placeholder="kg" data-field="peso" data-idx="${i}" value="${slot.peso}"></div>
+        <div class="cell"><span class="field-label">Desc.</span><input type="text" placeholder="seg" data-field="descanso" data-idx="${i}" value="${slot.descanso}"></div>
+        <div class="gif-box">
+          <span class="field-label">GIF</span>
+          ${gif
+            ? `<img src="${gif}" data-gif="${i}" title="Clic para cambiar" onerror="this.onerror=null;fixGifSrc(this)">
+               <span class="gif-name">${resolveGifName(slot.ejercicio) || "Drive"}</span>`
+            : `<button class="gif-btn" data-gif="${i}" ${!slot.ejercicio?"disabled":""}>Elegir GIF</button>`}
+        </div>
+      </div>
+
+      <div class="slot-obs">
+        <div class="cell">
+          <span class="field-label">Nota del profesor</span>
+          <textarea placeholder="Notas técnicas, cuidados, variantes..." data-field="obs" data-idx="${i}">${slot.obs}</textarea>
+        </div>
+        <div class="cell">
+          <span class="field-label">Nota del alumno</span>
+          <textarea class="nota-otro" readonly placeholder="Aquí aparece lo que te escriba tu alumno.">${slot.obsAlumno||""}</textarea>
+        </div>
+        <button class="done-btn ${slot.hecho?'done':''}" data-done="${i}"
+                title="${slot.hecho?'Marcado como realizado':'Marcar como realizado'}"
+                aria-pressed="${slot.hecho?'true':'false'}">
+          <span class="tick">${slot.hecho?'✓':''}</span>${slot.hecho?'Realizado':'Marcar hecho'}
+        </button>
+      </div>
+    `;
+    slotsEl.appendChild(card);
+  });
+
+  document.getElementById("count-label").textContent = `${filled}/${s.ejercicios.length}`;
+
+  slotsEl.querySelectorAll("select").forEach(el => el.addEventListener("change", handleFieldChange));
+  slotsEl.querySelectorAll('input[data-field="series"],input[data-field="reps"],input[data-field="peso"],input[data-field="descanso"],textarea[data-field="obs"],textarea[data-field="obsAlumno"]').forEach(el => {
+    el.addEventListener("input", updateSlotFieldLight);
+  });
+  slotsEl.querySelectorAll("[data-remove]").forEach(btn => btn.addEventListener("click", handleRemoveSlot));
+  slotsEl.querySelectorAll("[data-done]").forEach(btn => btn.addEventListener("click", handleDone));
+  slotsEl.querySelectorAll("[data-gif]").forEach(el => el.addEventListener("click", handleGifClick));
+
+  document.getElementById("add-slot-btn").disabled = s.ejercicios.length >= MAX_SLOTS;
+  renderProgress();
+}
+
+/* ---------------- gestor de súper series de la sesión activa ---------------- */
+function renderGruposManager(){
+  const wrap = document.getElementById("grupos-manager");
+  if (!wrap) return;
+  const s = sessionsData[currentSession];
+  const gids = Object.keys(s.grupos);
+
+  wrap.innerHTML = `
+    <div class="gm-head">
+      <span class="gm-title">Súper series de esta sesión<small>Uní ejercicios en bi-series o tri-series sin descanso. Asignalos desde el selector de cada tarjeta.</small></span>
+      <button type="button" id="gm-add-btn" class="mini-btn">+ Nueva súper serie</button>
+    </div>
+    <div class="gm-list">
+      ${gids.length ? gids.map(gid => {
+        const g = s.grupos[gid];
+        const n = s.ejercicios.filter(x => x.grupoId === gid).length;
+        return `
+        <div class="gm-chip" data-gid="${gid}">
+          <input type="color" class="gm-color" data-gid="${gid}" value="${g.color}" title="Color de esta súper serie">
+          <input type="text" class="gm-name" data-gid="${gid}" value="${g.nombre}" placeholder="Nombre">
+          <span class="gm-count">${n} ej.</span>
+          <button type="button" class="gm-del" data-gid="${gid}" title="Eliminar súper serie">✕</button>
+        </div>`;
+      }).join("") : `<span class="gm-empty">Sin súper series todavía. Creá una para juntar ejercicios sin descanso entre sí, o elegí "+ Nueva súper serie" directo desde una tarjeta.</span>`}
+    </div>
+  `;
+
+  wrap.querySelectorAll(".gm-color").forEach(el => el.addEventListener("input", e => {
+    const gid = e.target.dataset.gid;
+    s.grupos[gid].color = e.target.value;
+    renderSlots();
+  }));
+  wrap.querySelectorAll(".gm-name").forEach(el => el.addEventListener("change", e => {
+    const gid = e.target.dataset.gid;
+    s.grupos[gid].nombre = e.target.value.trim() || s.grupos[gid].nombre;
+    renderSlots();
+    renderGruposManager();
+  }));
+  wrap.querySelectorAll(".gm-del").forEach(btn => btn.addEventListener("click", e => {
+    const gid = e.target.dataset.gid;
+    delete s.grupos[gid];
+    s.ejercicios.forEach(x => { if (x.grupoId === gid) x.grupoId = ""; });
+    renderSlots();
+    renderGruposManager();
+  }));
+  const addBtn = document.getElementById("gm-add-btn");
+  if (addBtn) addBtn.addEventListener("click", () => { crearGrupo(s); renderGruposManager(); });
+}
+
+/* Series, reps, peso, descanso y observaciones: solo actualiza el dato,
+   sin redibujar la tarjeta, para que se pueda escribir de corrido sin
+   que el cursor salte o se pierda el foco */
+function updateSlotFieldLight(e){
+  const idx = +e.target.dataset.idx;
+  const field = e.target.dataset.field;
+  sessionsData[currentSession].ejercicios[idx][field] = e.target.value;
+}
+
+function handleFieldChange(e){
+  const idx = +e.target.dataset.idx;
+  const field = e.target.dataset.field;
+  const s = sessionsData[currentSession];
+  const slot = s.ejercicios[idx];
+
+  if (field === "grupoId"){
+    slot.grupoId = e.target.value === "__new__" ? crearGrupo(s) : e.target.value;
+    renderGruposManager();
+    renderSlots();
+    return;
+  }
+
+  slot[field] = e.target.value;
+  if (field === "eje"){ slot.grupo=""; slot.ejercicio=""; }
+  if (field === "grupo"){ slot.ejercicio=""; }
+  renderSlots();
+}
+
+/* Marcar / desmarcar un ejercicio como realizado, sin redibujar la tarjeta
+   (así no se pierde lo que el alumno esté escribiendo en observaciones) */
+function handleDone(e){
+  const btn = e.currentTarget;
+  const idx = +btn.dataset.done;
+  const slot = sessionsData[currentSession].ejercicios[idx];
+  slot.hecho = !slot.hecho;
+
+  btn.classList.toggle("done", slot.hecho);
+  btn.setAttribute("aria-pressed", slot.hecho ? "true" : "false");
+  btn.title = slot.hecho ? "Marcado como realizado" : "Marcar como realizado";
+  btn.innerHTML = `<span class="tick">${slot.hecho ? "✓" : ""}</span>` + (slot.hecho ? "Realizado" : "Marcar hecho");
+  btn.closest(".slot-card").classList.toggle("done", slot.hecho);
+
+  if (slot.hecho){
+    btn.classList.remove("just");
+    void btn.offsetWidth;
+    btn.classList.add("just");
+  }
+  renderProgress();
+  /* El marcado viaja al profesor: sin esto se perdía al cerrar.
+     Se agrupa medio segundo para no emitir un registro por clic. */
+  clearTimeout(window.__jyMarcaTmr);
+  window.__jyMarcaTmr = setTimeout(function(){
+    if (typeof window.jyGuardarRutina === "function") window.jyGuardarRutina();
+  }, 500);
+}
+
+/* Avance de la sesión: cuántos ejercicios asignados ya se hicieron */
+function renderProgress(){
+  const s = sessionsData[currentSession];
+  const asignados = s.ejercicios.filter(x => x.ejercicio);
+  const hechos = asignados.filter(x => x.hecho).length;
+  const total = asignados.length;
+  const pct = total ? Math.round(hechos / total * 100) : 0;
+
+  document.getElementById("p-count").textContent = `${hechos}/${total}`;
+  document.getElementById("p-fill").style.width = pct + "%";
+
+  const msg = document.getElementById("p-msg");
+  msg.classList.toggle("full", total > 0 && hechos === total);
+  msg.textContent =
+    total === 0            ? "Sin ejercicios cargados" :
+    hechos === 0           ? "A empezar" :
+    hechos === total       ? "¡Sesión completa!" :
+    hechos >= total * 0.5  ? `Vas por la mitad · ${pct}%` :
+                             `${pct}% listo`;
+}
+
+function handleRemoveSlot(e){
+  const idx = +e.currentTarget.dataset.remove;
+  const s = sessionsData[currentSession];
+  if (s.ejercicios.length <= MIN_SLOTS) return;
+  s.ejercicios.splice(idx,1);
+  renderSlots();
+}
+
+function handleGifClick(e){
+  const idx = +e.currentTarget.dataset.gif;
+  const slot = sessionsData[currentSession].ejercicios[idx];
+  if (!slot.ejercicio) return;
+  openLibrary(slot.ejercicio, slot.eje);
+}
+
+/* Si el enlace de Drive no carga por la vía principal, prueba la miniatura */
+function fixGifSrc(img){
+  const alt = driveFallback(img.getAttribute("src"));
+  if (alt){ img.src = alt; } else { img.style.display = "none"; }
+}
+
+/* ================= BIBLIOTECA DE GIFS: interfaz ================= */
+let pickerTarget = null;   // ejercicio al que se le va a asignar el GIF (null = solo administrar)
+let ejeFilter = "";        // filtro de grupo muscular en la biblioteca
+
+const modalEl   = () => document.getElementById("library-modal");
+const gridEl    = () => document.getElementById("lib-scroll");
+const statusEl  = () => document.getElementById("lib-status");
+
+function setStatus(msg, tone){
+  const el = statusEl();
+  el.textContent = msg || "";
+  el.className = "lib-status" + (tone ? " " + tone : "");
+}
+
+function openLibrary(exercise, ejeDelSlot){
+  pickerTarget = exercise || null;
+  ejeFilter = ejeDelSlot && EJES[ejeDelSlot] ? ejeDelSlot : "";
+  document.getElementById("lib-title").textContent = pickerTarget ? `GIF para: ${pickerTarget}` : "Biblioteca de GIFs";
+  document.getElementById("lib-sub").textContent = pickerTarget
+    ? "Elegí un GIF de la biblioteca o cargá uno nuevo. Queda asignado a este ejercicio en todas las sesiones."
+    : "Cargá tus GIFs una vez y quedan disponibles para todos los ejercicios. Hacé clic en uno para asignarlo.";
+  document.getElementById("clear-assign-btn").style.display = pickerTarget ? "" : "none";
+  setStatus("");
+  renderLibrary();
+  modalEl().classList.add("open");
+}
+function closeLibrary(){
+  modalEl().classList.remove("open");
+  pickerTarget = null;
+  renderSlots();
+}
+
+function renderFilterChips(){
+  const wrap = document.getElementById("filter-chips");
+  const counts = {};
+  gifLib.forEach(g => { const e = g.eje || SIN_CLASIFICAR; counts[e] = (counts[e]||0)+1; });
+  const groups = [...EJE_NAMES, SIN_CLASIFICAR].filter(e => counts[e]);
+  wrap.innerHTML = [`<button class="fchip ${ejeFilter?'':'on'}" data-f="">Todos · ${gifLib.length}</button>`]
+    .concat(groups.map(e => `<button class="fchip ${ejeFilter===e?'on':''}" data-f="${e}">${ejeTag(e)!=='??'?ejeTag(e)+' · ':''}${e} · ${counts[e]}</button>`))
+    .join("");
+  wrap.querySelectorAll("[data-f]").forEach(b => b.addEventListener("click", () => {
+    ejeFilter = b.dataset.f; renderLibrary();
+  }));
+}
+
+function renderLibrary(){
+  const q = norm(document.getElementById("lib-search").value || "");
+  const grid = gridEl();
+  document.getElementById("lib-count").textContent = gifLib.length;
+  renderFilterChips();
+
+  let list = gifLib;
+  if (q) list = list.filter(g => norm(g.name).includes(q));
+  if (ejeFilter) list = list.filter(g => (g.eje || SIN_CLASIFICAR) === ejeFilter);
+
+  if (!list.length){
+    grid.innerHTML = `<div class="lib-grid"><div class="lib-empty">${gifLib.length
+      ? "Ningún GIF coincide con ese filtro."
+      : "Todavía no hay GIFs. Arrastrá archivos arriba o pegá enlaces."}</div></div>`;
+    return;
+  }
+
+  const assignedId = pickerTarget ? gifMap[pickerTarget] : null;
+  const ejeOptions = (sel) => [...EJE_NAMES, SIN_CLASIFICAR]
+    .map(e => `<option value="${e}" ${sel===e?'selected':''}>${e}</option>`).join("");
+
+  const card = g => `
+    <div class="lib-item ${g.id===assignedId?'assigned':''}" data-pick="${g.id}" title="${g.name}">
+      <button class="del" data-del="${g.id}" title="Eliminar de la biblioteca">✕</button>
+      <img src="${g.src}" alt="${g.name}" loading="lazy" onerror="this.onerror=null;fixGifSrc(this)">
+      <span class="nm">${g.name}</span>
+      <select data-eje="${g.id}" title="Grupo muscular">${ejeOptions(g.eje || SIN_CLASIFICAR)}</select>
+      <span class="src-tag">${g.kind}</span>
+    </div>`;
+
+  // agrupado por grupo muscular
+  const order = [...EJE_NAMES, SIN_CLASIFICAR];
+  grid.innerHTML = order.map(eje => {
+    const items = list.filter(g => (g.eje || SIN_CLASIFICAR) === eje);
+    if (!items.length) return "";
+    return `<div class="lib-group-head">
+        ${ejeTag(eje)!=='??' ? `<span class="g-tag">${ejeTag(eje)}</span>` : ''}
+        <span class="g-name">${eje}</span>
+        <span class="g-n">${items.length} GIF${items.length>1?'s':''}</span>
+      </div>
+      <div class="lib-grid">${items.map(card).join("")}</div>`;
+  }).join("");
+
+  grid.querySelectorAll("[data-eje]").forEach(sel => {
+    sel.addEventListener("click", e => e.stopPropagation());
+    sel.addEventListener("change", async e => {
+      e.stopPropagation();
+      const g = gifLib.find(x => x.id === sel.dataset.eje);
+      if (g){ g.eje = sel.value; await saveGifData(); renderLibrary(); setStatus(`"${g.name}" movido a ${sel.value}.`, "ok"); }
+    });
+  });
+
+  grid.querySelectorAll("[data-pick]").forEach(el => el.addEventListener("click", async (e) => {
+    if (e.target.dataset.del) return;
+    const id = el.dataset.pick;
+    if (pickerTarget){
+      gifMap[pickerTarget] = id;
+      await saveGifData();
+      closeLibrary();
+    } else {
+      const name = prompt("Asignar este GIF al ejercicio (escribí el nombre exacto):", "");
+      if (!name) return;
+      gifMap[name.trim()] = id;
+      await saveGifData();
+      setStatus(`Asignado a "${name.trim()}".`, "ok");
+      renderLibrary();
+    }
+  }));
+
+  grid.querySelectorAll("[data-del]").forEach(btn => btn.addEventListener("click", async (e) => {
+    e.stopPropagation();
+    const id = btn.dataset.del;
+    gifLib = gifLib.filter(g => g.id !== id);
+    Object.keys(gifMap).forEach(k => { if (gifMap[k] === id) delete gifMap[k]; });
+    await saveGifData();
+    renderLibrary();
+    setStatus("GIF eliminado de la biblioteca.", "");
+  }));
+}
+
+/* ---- carga de archivos locales ---- */
+function readFileAsDataURL(file){
+  return new Promise((res,rej) => {
+    const r = new FileReader();
+    r.onload = () => res(r.result);
+    r.onerror = () => rej(r.error);
+    r.readAsDataURL(file);
+  });
+}
+async function ingestFiles(fileList){
+  const files = Array.from(fileList).filter(f => /^image\//.test(f.type));
+  if (!files.length){ setStatus("Esos archivos no son imágenes.", "bad"); return; }
+  setStatus(`Cargando ${files.length} archivo(s)...`);
+  let added = 0, heavy = 0, dup = 0;
+  for (const f of files){
+    try{
+      if (f.size > 4 * 1024 * 1024) heavy++;
+      const data = await readFileAsDataURL(f);
+      const before = gifLib.length;
+      addToLib(nameFromUrl(f.name) || f.name, data, "archivo");
+      if (gifLib.length > before) added++; else dup++;
+    }catch(e){ /* archivo ilegible, se salta */ }
+  }
+  const ok = await saveGifData();
+  renderLibrary();
+  setStatus(
+    `${added} GIF(s) agregados.` +
+    (dup ? ` ${dup} ya estaban en la biblioteca.` : "") +
+    (heavy ? ` ${heavy} pesan más de 4 MB: conviene optimizarlos antes de cargarlos.` : "") +
+    (ok ? "" : " No se pudieron guardar de forma permanente: el navegador se quedó sin espacio."),
+    ok ? "ok" : "bad"
+  );
+}
+
+/* ---- alta por enlaces pegados ---- */
+async function ingestLinks(text){
+  const lines = String(text).split("\n").map(l => l.trim()).filter(Boolean);
+  if (!lines.length){ setStatus("Pegá al menos un enlace.", "bad"); return; }
+  let added = 0, skipped = 0, drive = 0;
+  lines.forEach(line => {
+    let name = "", url = line;
+    if (line.includes("|")){
+      const parts = line.split("|");
+      name = parts[0].trim();
+      url = parts.slice(1).join("|").trim();
+    }
+    const d = driveDirect(url);
+    if (d){ url = d; drive++; }
+    if (!/^https?:\/\//i.test(url)){ skipped++; return; }
+    const before = gifLib.length;
+    addToLib(name || nameFromUrl(url) || "GIF", url, d ? "drive" : "enlace");
+    if (gifLib.length > before) added++; else skipped++;
+  });
+  await saveGifData();
+  document.getElementById("paste-input").value = "";
+  renderLibrary();
+  setStatus(
+    `${added} enlace(s) agregados${drive ? ` (${drive} de Drive)` : ""}.` +
+    (skipped ? ` ${skipped} línea(s) sin enlace válido.` : "") +
+    (drive ? " Si no se ven, revisá que estén compartidos como «cualquier persona con el enlace»." : ""),
+    added ? "ok" : "bad"
+  );
+}
+
+/* ---- asignación automática por nombre ---- */
+async function autoMatch(){
+  const names = allExerciseNames();
+  let hits = 0;
+  gifLib.forEach(g => {
+    let best = null, bestScore = 0;
+    names.forEach(n => {
+      const s = matchScore(g.name, n);
+      if (s > bestScore){ bestScore = s; best = n; }
+    });
+    if (best && bestScore >= 0.5 && !gifMap[best]){ gifMap[best] = g.id; hits++; }
+  });
+  await saveGifData();
+  renderLibrary();
+  setStatus(hits
+    ? `${hits} ejercicio(s) quedaron con GIF por coincidencia de nombre. Los que ya tenían uno no se tocaron.`
+    : "Ningún nombre de archivo se parece lo suficiente a un ejercicio del listado. Asignalos a mano.",
+    hits ? "ok" : "");
+}
+
+/* ---- reclasificar todo por grupo muscular ---- */
+async function reclassify(){
+  let moved = 0, sueltos = 0;
+  gifLib.forEach(g => {
+    const e = detectEje(g.name);
+    if (e !== g.eje){ g.eje = e; moved++; }
+    if (e === SIN_CLASIFICAR) sueltos++;
+  });
+  await saveGifData();
+  renderLibrary();
+  setStatus(
+    `${moved} GIF(s) reubicados por nombre.` +
+    (sueltos ? ` ${sueltos} quedaron sin clasificar: asignales el grupo con el desplegable de cada tarjeta.` : ""),
+    "ok");
+}
+
+/* ---- descargar la herramienta con los GIFs adentro ---- */
+function bytesLegibles(n){
+  if (n < 1024) return n + " B";
+  if (n < 1024*1024) return (n/1024).toFixed(0) + " KB";
+  return (n/(1024*1024)).toFixed(1) + " MB";
+}
+function exportTool(){
+  const externos = gifLib.filter(g => !/^data:/.test(g.src)).length;
+  setStatus("Armando el archivo...");
+  try{
+    const clone = document.documentElement.cloneNode(true);
+
+    // dejar la copia en estado inicial
+    const wipe = id => { const el = clone.querySelector("#"+id); if (el) el.innerHTML = ""; };
+    ["slots","tabs","sheet-sessions","lib-scroll","filter-chips"].forEach(wipe);
+    const modal = clone.querySelector("#library-modal"); if (modal) modal.classList.remove("open");
+    const sheet = clone.querySelector("#sheet-wrap"); if (sheet) sheet.classList.remove("visible");
+    const paste = clone.querySelector("#paste-area"); if (paste) paste.classList.remove("open");
+    const st = clone.querySelector("#lib-status"); if (st){ st.textContent = ""; st.className = "lib-status"; }
+    clone.querySelectorAll("textarea").forEach(t => t.textContent = "");
+    clone.querySelectorAll('input[type="search"],input[type="text"]').forEach(i => i.removeAttribute("value"));
+
+    // hornear la biblioteca dentro del archivo
+    const seed = clone.querySelector("#gif-seed");
+    const payload = JSON.stringify({ lib: gifLib, map: gifMap }).replace(/</g, "\\u003c");
+    if (seed) seed.textContent = payload;
+
+    const html = "<!DOCTYPE html>\n" + clone.outerHTML;
+    const blob = new Blob([html], {type:"text/html;charset=utf-8"});
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "jyntra-planificador-con-gifs.html";
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+
+    setStatus(
+      `Listo: ${bytesLegibles(blob.size)} con ${gifLib.length} GIF(s) adentro. Ese archivo funciona solo, en cualquier equipo y sin conexión.` +
+      (externos ? ` Ojo: ${externos} son enlaces externos, esos siguen necesitando internet.` : ""),
+      "ok");
+  }catch(e){
+    setStatus("No se pudo armar el archivo. Si la biblioteca es muy pesada, probá con «Exportar biblioteca» (JSON).", "bad");
+  }
+}
+
+/* ---- exportar / importar la biblioteca ---- */
+function exportLibrary(){
+  const blob = new Blob([JSON.stringify({lib:gifLib, map:gifMap}, null, 2)], {type:"application/json"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "jyntra-biblioteca-gifs.json";
+  a.click();
+  URL.revokeObjectURL(a.href);
+  setStatus("Biblioteca exportada. Ese archivo la reconstruye en cualquier equipo.", "ok");
+}
+async function importLibrary(file){
+  try{
+    const data = JSON.parse(await file.text());
+    const incoming = Array.isArray(data.lib) ? data.lib : [];
+    incoming.forEach(g => { if (g.src) addToLib(g.name, g.src, g.kind || "enlace", g.eje); });
+    if (data.map) Object.entries(data.map).forEach(([ex,ref]) => {
+      const src = (incoming.find(g => g.id === ref) || {}).src;
+      const local = src ? gifLib.find(g => g.src === src) : null;
+      if (local) gifMap[ex] = local.id;
+    });
+    await saveGifData();
+    renderLibrary();
+    setStatus(`Biblioteca importada: ${incoming.length} GIF(s).`, "ok");
+  }catch(e){ setStatus("Ese archivo no es una biblioteca válida.", "bad"); }
+}
+
+/* ---- eventos del modal ---- */
+document.getElementById("open-library-btn").addEventListener("click", () => openLibrary(null));
+document.getElementById("lib-close").addEventListener("click", closeLibrary);
+document.getElementById("lib-done-btn").addEventListener("click", closeLibrary);
+modalEl().addEventListener("click", (e) => { if (e.target === modalEl()) closeLibrary(); });
+document.addEventListener("keydown", (e) => { if (e.key === "Escape" && modalEl().classList.contains("open")) closeLibrary(); });
+
+const dz = document.getElementById("drop-zone");
+const fileInput = document.getElementById("file-input");
+dz.addEventListener("click", () => fileInput.click());
+fileInput.addEventListener("change", (e) => { if (e.target.files.length) ingestFiles(e.target.files); e.target.value = ""; });
+["dragenter","dragover"].forEach(ev => dz.addEventListener(ev, (e) => { e.preventDefault(); dz.classList.add("hover"); }));
+["dragleave","drop"].forEach(ev => dz.addEventListener(ev, (e) => { e.preventDefault(); dz.classList.remove("hover"); }));
+dz.addEventListener("drop", (e) => { if (e.dataTransfer.files.length) ingestFiles(e.dataTransfer.files); });
+
+document.getElementById("lib-search").addEventListener("input", renderLibrary);
+document.getElementById("toggle-paste-btn").addEventListener("click", () => {
+  document.getElementById("paste-area").classList.toggle("open");
+});
+document.getElementById("add-links-btn").addEventListener("click", () => ingestLinks(document.getElementById("paste-input").value));
+document.getElementById("automatch-btn").addEventListener("click", autoMatch);
+document.getElementById("reclass-btn").addEventListener("click", reclassify);
+document.getElementById("export-tool-btn").addEventListener("click", exportTool);
+document.getElementById("wipe-lib-btn").addEventListener("click", async () => {
+  if (!gifLib.length){ setStatus("La biblioteca ya está vacía.", ""); return; }
+  const n = gifLib.length;
+  gifLib = []; gifMap = {};
+  await saveGifData();
+  renderLibrary();
+  setStatus(`Biblioteca vaciada: ${n} GIF(s) eliminados. Los ejercicios siguen mostrando su GIF de Drive.`, "ok");
+});
+document.getElementById("export-lib-btn").addEventListener("click", exportLibrary);
+document.getElementById("import-lib-btn").addEventListener("click", () => document.getElementById("import-input").click());
+document.getElementById("import-input").addEventListener("change", (e) => { if (e.target.files[0]) importLibrary(e.target.files[0]); e.target.value = ""; });
+document.getElementById("clear-assign-btn").addEventListener("click", async () => {
+  if (!pickerTarget) return;
+  delete gifMap[pickerTarget];
+  await saveGifData();
+  closeLibrary();
+});
+
+document.getElementById("add-slot-btn").addEventListener("click", () => {
+  const s = sessionsData[currentSession];
+  if (s.ejercicios.length >= MAX_SLOTS) return;
+  const slot = emptySlot();
+  if (s.modalidad){
+    const m = MODALIDADES[s.modalidad];
+    slot.series = m.series; slot.reps = m.reps; slot.descanso = m.descanso;
+  }
+  s.ejercicios.push(slot);
+  renderSlots();
+});
+
+document.getElementById("session-name").addEventListener("input", (e) => {
+  sessionsData[currentSession].nombre = e.target.value || `Sesión ${currentSession+1}`;
+  renderTabs();
+});
+
+document.getElementById("session-modalidad").addEventListener("change", (e) => {
+  const s = sessionsData[currentSession];
+  s.modalidad = e.target.value;
+  if (s.modalidad){
+    const m = MODALIDADES[s.modalidad];
+    s.ejercicios.forEach(slot => { slot.series = m.series; slot.reps = m.reps; slot.descanso = m.descanso; });
+  }
+  renderConfig();
+  renderSlots();
+});
+
+document.getElementById("add-session-btn").addEventListener("click", () => {
+  if (sessionsData.length >= MAX_SESSIONS) return;
+  sessionsData.push(newSession(sessionsData.length+1));
+  currentSession = sessionsData.length-1;
+  renderAll();
+});
+
+document.getElementById("fullbody-btn").addEventListener("click", () => {
+  const s = sessionsData[currentSession];
+  const rutina = FULLBODY[s.modalidad] || FULLBODY[""];
+  const m = s.modalidad ? MODALIDADES[s.modalidad] : { series:"3", reps:"10", descanso:"60" };
+  s.grupos = {};
+  s.ejercicios = rutina.map(([eje, grupo, ejercicio]) => ({
+    eje, grupo, ejercicio,
+    series: m.series || "3", reps: m.reps || "10", peso: "",
+    descanso: m.descanso || "60", obs: "", hecho: false, grupoId: ""
+  }));
+  if (!s.nombre || /^Sesión \d+$/.test(s.nombre)){
+    s.nombre = "Full body";
+    document.getElementById("session-name").value = s.nombre;
+    renderTabs();
+  }
+  renderGruposManager();
+  renderSlots();
+  document.getElementById("slots").scrollIntoView({behavior:"smooth", block:"start"});
+});
+
+function renderAll(){ renderTabs(); renderConfig(); renderGruposManager(); renderSlots(); }
+
+/* ---------------- SHEET GENERATION ---------------- */
+document.getElementById("generate-btn").addEventListener("click", () => {
+  const wrap = document.getElementById("sheet-wrap");
+  const container = document.getElementById("sheet-sessions");
+  container.innerHTML = "";
+
+  sessionsData.forEach((sess) => {
+    const modLabel = sess.modalidad ? MODALIDADES[sess.modalidad].label : "Volumen personalizado";
+
+    const titleRow = document.createElement("div");
+    titleRow.className = "sheet-session-title-row";
+    titleRow.innerHTML = `<span class="sheet-session-title">${sess.nombre}</span><span class="sheet-modalidad">${modLabel}</span>`;
+    container.appendChild(titleRow);
+
+    const table = document.createElement("table");
+    table.className = "sheet-table";
+    table.innerHTML = `
+      <thead><tr>
+        <th style="width:26px;">#</th>
+        <th style="width:68px;"></th>
+        <th>Ejercicio</th>
+        <th style="width:56px;">Series</th>
+        <th style="width:56px;">Reps</th>
+        <th style="width:60px;">Peso</th>
+        <th style="width:60px;">Desc.</th>
+      </tr></thead>
+      <tbody>
+        ${sess.ejercicios.map((slot,i) => {
+          const gif = gifDe(slot.ejercicio);
+          const grp = slot.grupoId ? sess.grupos[slot.grupoId] : null;
+          return `
+          <tr class="${grp?'ss-row':''}" ${grp?`style="--sg-color:${grp.color}"`:''}>
+            <td>${i+1}</td>
+            <td class="thumb">${gif ? `<img src="${gif}" onerror="this.onerror=null;fixGifSrc(this)">` : ""}</td>
+            <td class="${slot.ejercicio?'ex-name':'blank'}">
+              ${slot.hecho && slot.ejercicio ? "✔ " : ""}${slot.ejercicio || "— sin asignar —"}
+              ${grp ? `<div class="ex-ss" style="color:${grp.color}">${grp.nombre} · sin descanso</div>` : ""}
+              ${slot.obs ? `<div class="ex-obs">Obs: ${slot.obs}</div>` : ""}
+            </td>
+            <td>${slot.series || "___"}</td>
+            <td>${slot.reps || "___"}</td>
+            <td>${slot.peso || "___"}</td>
+            <td>${slot.descanso || "___"}</td>
+          </tr>`;
+        }).join("")}
+      </tbody>
+    `;
+    container.appendChild(table);
+  });
+
+  document.getElementById("sheet-date").textContent = new Date().toLocaleDateString("es-ES", {year:"numeric",month:"long",day:"numeric"});
+  wrap.classList.add("visible");
+  wrap.scrollIntoView({behavior:"smooth", block:"start"});
+});
+
+document.getElementById("print-btn").addEventListener("click", () => window.print());
+
+document.getElementById("pdf-btn").addEventListener("click", async () => {
+  const btn = document.getElementById("pdf-btn");
+  const original = btn.textContent;
+  btn.textContent = "Generando..."; btn.disabled = true;
+  try{
+    const sheet = document.getElementById("sheet");
+    const canvas = await html2canvas(sheet, {scale:2, backgroundColor:"#efe8d8", useCORS:true});
+    const imgData = canvas.toDataURL("image/png");
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF({orientation:"portrait", unit:"pt", format:"a4"});
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const imgWidth = pageWidth - 40;
+    const imgHeight = canvas.height * (imgWidth / canvas.width);
+    pdf.addImage(imgData, "PNG", 20, 20, imgWidth, imgHeight);
+    pdf.save("jyntra-planilla-entrenamiento.pdf");
+  } catch(err){
+    alert("No se pudo generar el PDF. Probá con Imprimir y elegí 'Guardar como PDF'.");
+  } finally {
+    btn.textContent = original; btn.disabled = false;
+  }
+});
+
+(async function init(){
+  await loadGifData();
+  document.getElementById("lib-count").textContent = gifLib.length;
+  document.getElementById("catalogo-count").textContent =
+    CATALOGO.length + " ejercicios en catálogo";
+  renderAll();
+})();
+</script>
+
+<script>
+/* =================================================================
+   PUENTE JYNTRA · el planificador guarda la rutina en la ficha del
+   alumno seleccionado en «Mis alumnos» y recupera la última guardada.
+   ================================================================= */
+(function(){
+  var C = (window.__JY_CTX) || {};
+  var A = C.alumno || null;
+
+  /* --- 1 · recuperar la última rutina de esa persona --------------- */
+  try{
+    if(C.plan && Array.isArray(C.plan.sesiones) && C.plan.sesiones.length){
+      sessionsData = JSON.parse(JSON.stringify(C.plan.sesiones));
+      currentSession = 0;
+      setTimeout(function(){ try{ renderAll(); }catch(e){} }, 0);
+    }
+  }catch(e){}
+
+  /* --- 2 · rótulos --------------------------------------------------- */
+  function rotular(){
+    var lab = document.getElementById('jy-alumno-label');
+    var dat = document.getElementById('jy-alumno-datos');
+    var hoja = document.getElementById('jy-sheet-alumno');
+    var campo = document.getElementById('jy-rutina-nombre');
+    if(A){
+      if(lab) lab.textContent = A.nombre;
+      if(dat) dat.textContent = [A.edad ? A.edad+' años' : '', A.objetivo || ''].filter(Boolean).join(' · ');
+      if(hoja){ hoja.textContent = ' ' + A.nombre; hoja.style.borderBottom = 'none'; }
+    } else {
+      if(lab) lab.textContent = 'Sin alumno seleccionado';
+      if(dat) dat.textContent = 'Ábrelo desde «Mis alumnos» para poder guardar.';
+    }
+    if(campo && C.plan && C.plan.nombre) campo.value = C.plan.nombre;
+  }
+
+  /* --- 3 · guardar --------------------------------------------------- */
+  function aviso(txt, malo){
+    var e = document.getElementById('jy-estado');
+    if(!e) return;
+    e.textContent = txt;
+    e.style.color = malo ? '#e0605f' : '#5fbf7a';
+    clearTimeout(e._t); e._t = setTimeout(function(){ e.textContent=''; }, 3200);
+  }
+
+  function guardar(){
+    window.jyGuardarRutina = guardar;   /* para el marcado de ejercicios */
+    if(!window.parent || window.parent === window){ aviso('Sin conexión con la app', true); return; }
+    if(!A){ aviso('Abre el planificador desde «Mis alumnos»', true); return; }
+    var ejercicios = 0;
+    sessionsData.forEach(function(s){
+      (s.ejercicios||[]).forEach(function(x){ if(x.ejercicio) ejercicios++; });
+    });
+    if(!ejercicios){ aviso('Carga al menos un ejercicio', true); return; }
+    var campo = document.getElementById('jy-rutina-nombre');
+    var nom = (campo && campo.value.trim()) || ('Rutina · ' + new Date().toLocaleDateString('es-CL'));
+    try{
+      window.parent.postMessage({
+        jyntra:true, accion:'guardar',
+        registro:{
+          modulo:'planificacion', tipo:'Rutina de entrenamiento',
+          datos:{
+            nombre: nom,
+            sesiones: JSON.parse(JSON.stringify(sessionsData)),
+            totalSesiones: sessionsData.length,
+            totalEjercicios: ejercicios,
+            guardadoEn: new Date().toISOString()
+          }
+        }
+      }, '*');
+      aviso('Guardado en la ficha de ' + A.nombre.split(' ')[0]);
+    }catch(e){ aviso('No se pudo guardar', true); }
+  }
+
+  function ligar(){
+    rotular();
+    ['jy-guardar-btn','jy-guardar-btn2'].forEach(function(id){
+      var b = document.getElementById(id);
+      if(b && !b._jy){ b._jy = true; b.addEventListener('click', guardar); }
+    });
+  }
+  ligar();
+  document.addEventListener('DOMContentLoaded', ligar);
+
+  /* --- 4 · alto del marco -------------------------------------------- */
+  if(window.parent && window.parent !== window){
+    var ultimo = 0;
+    setInterval(function(){
+      var h = Math.max(document.documentElement.scrollHeight, document.body ? document.body.scrollHeight : 0);
+      if(Math.abs(h - ultimo) > 20){
+        ultimo = h;
+        try{ window.parent.postMessage({jyntra:true, accion:'alto', px:h}, '*'); }catch(e){}
+      }
+    }, 600);
+    try{ window.parent.postMessage({jyntra:true, accion:'listo'}, '*'); }catch(e){}
+  }
+})();
+</script>
+</body>
+</html>
+

@@ -1,0 +1,2590 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+<script src="./_puente.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#090909">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>JYNTRA - Cineantropometría ISAK 1 & 2</title>
+    <!-- Chart.js -->
+    <script src="../vendor/chart.umd.js"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="../vendor/fontawesome/css/all.min.css">
+    <!-- html2canvas & jsPDF for PDF generation -->
+    <script src="../vendor/html2canvas.min.js"></script>
+    <script src="../vendor/jspdf.umd.min.js"></script>
+    <style>
+/* paleta JYNTRA: blanco, negro #171717, rojo #DD2C37, blanco 2 #EEF1F3 */
+:root{--jy-acc:#DD2C37;--jy-acc-hi:#E8434D;--jy-acc-lo:#8E1C23;--jy-acc-glow:rgba(221,44,55,.16);--jy-borde:#3A3A3A;--jy-texto-acc:#FFFFFF;--jy-texto-tenue:#9F9F9F;}
+
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Inter:wght@300;400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #090909;
+            color: #EEF1F3;
+        }
+
+        .font-cinzel {
+            font-family: 'Cinzel', serif;
+        }
+
+        /* Gold Gradient Text & Elements */
+        .gold-gradient-text {
+            background: linear-gradient(135deg, #EEF1F3 0%, #DD2C37 50%, #8E1C23 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .gold-border-gradient {
+            border-image: linear-gradient(135deg, #EEF1F3, #DD2C37, #DD2C37) 1;
+        }
+
+        .gold-btn {
+            background: linear-gradient(135deg, #DD2C37 0%, #DD2C37 50%, #DD2C37 100%);
+            color: #FFFFFF;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(221,44,55, 0.25);
+        }
+
+        .gold-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(221,44,55, 0.4);
+            filter: brightness(1.1);
+        }
+
+        .glass-card {
+            background: rgba(18,18,18, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(221,44,55, 0.2);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #090909;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #292929;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #DD2C37;
+        }
+
+        /* Printable PDF Template container */
+        #pdfReportContainer {
+            width: 794px;
+            background: #ffffff;
+            color: #181818;
+            font-family: 'Inter', sans-serif;
+            position: absolute;
+            left: -9999px;
+            top: -9999px;
+        }
+
+        /* ===== JYNTRA — Plantilla PDF (estilo informe impreso) ===== */
+        .jintra-page {
+            width: 794px;
+            min-height: 1123px;
+            background: #ffffff;
+            color: #242424;
+            display: flex;
+            flex-direction: column;
+            page-break-after: always;
+        }
+        .jintra-accent-line {
+            height: 3px;
+            width: 100%;
+            background: linear-gradient(90deg, transparent 0%, #8E1C23 15%, #DD2C37 50%, #EEF1F3 65%, #DD2C37 85%, transparent 100%);
+        }
+        .jintra-header {
+            background: #171717;
+            color: #FFFFFF;
+            padding: 20px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .jintra-header .brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .jintra-header .brand-title {
+            font-family: 'Cinzel', serif;
+            font-weight: 800;
+            font-size: 16px;
+            letter-spacing: 3px;
+            background: linear-gradient(135deg, #EEF1F3 0%, #DD2C37 50%, #8E1C23 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .jintra-header .brand-sub {
+            font-size: 9px;
+            letter-spacing: 2px;
+            color: #ADADAD;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+        .jintra-header .meta {
+            text-align: right;
+            font-size: 10px;
+            color: #FFFFFF;
+            font-weight: 600;
+        }
+        .jintra-header .meta .pname { color: #FFFFFF; font-weight: 700; }
+        .jintra-body { padding: 26px 40px 10px 40px; flex: 1; }
+        .jintra-footer {
+            border-top: 1px solid #EEF1F3;
+            padding: 10px 40px 16px 40px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 9px;
+            color: #939393;
+            margin-top: auto;
+        }
+        .jintra-card {
+            background: #EEF1F3;
+            border-radius: 8px;
+            padding: 14px 16px;
+        }
+        .jintra-card-bordertop { border-top: 4px solid #DD2C37; }
+        .jintra-section-title {
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            font-size: 15px;
+            color: #191919;
+            margin-bottom: 6px;
+        }
+        .jintra-section-rule {
+            height: 3px;
+            width: 60px;
+            background: linear-gradient(90deg, #8E1C23, #DD2C37);
+            border-radius: 3px;
+            margin-bottom: 16px;
+        }
+        .jintra-label {
+            font-size: 9px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: #727272;
+            font-weight: 700;
+        }
+        .jintra-table th {
+            background: #0D0D0D;
+            color: #FFFFFF;
+            font-size: 9px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            padding: 8px 10px;
+            text-align: left;
+        }
+        .jintra-table td {
+            padding: 7px 10px;
+            font-size: 11px;
+            color: #2F2F2F;
+        }
+        .jintra-table tr:nth-child(even) td { background: #EEF1F3; }
+        .jintra-table tr:nth-child(odd) td { background: #ffffff; }
+        .jintra-hero {
+            background: #0D0D0D;
+            border-radius: 10px;
+            padding: 24px 26px;
+            position: relative;
+            overflow: hidden;
+        }
+        .jintra-info-box {
+            background: #EEF1F3;
+            border-left: 4px solid #DD2C37;
+            border-radius: 6px;
+            padding: 12px 16px;
+            font-size: 10.5px;
+            color: #454545;
+        }
+    
+        /* Logo oficial JYNTRA (incrustado) */
+        .jintra-logo-icon { background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAEsCAYAAAB5fY51AAAQAElEQVR4nOzdCbQlRX3H8d8DHUBkFXfUUSFqUBhABEX2LSIIiMwIuEXcEiUqqGiMmgMYOSxCEEOIYVGBsAVQ9kUEcWGRVUQlbEISIEYggOCgOPkVfeHgOPO637xauvp+P+fUqZHXI/dc3v3df1VXVz1NAFCJpwkAKkFgAagGgQWgGgQWgGoQWACqQWABqAaBBaAaBBaAahBYAKpBYAGoBoEFoBoEFoBqEFgAqkFgAagGgQWgGgQWgGoQWACqQWABqAaBBaAaBBaAaiwmANHNmzdvDbc9hagILCAyB9Vsd5e7vUSIisACInFQLeZ2oP94otsSbosLUTGHBUTgoFrO3alumz7lHxNYkRFYwDQ5rP7c3dn60yEgn6/IGBIC0+Cw2sHdj7Xg+SoqrMgILGAROaz2UzMMXGohlxBYkVGyAlPkoFrZ3clu67VcSmBFRmABU+CwWlPNfNXzOlw+Q4iKISHQkcNqF3eXqltYBRNCVFRYQAcOq6+5e59QFIEFTMJBFSbUz3HbSCiOISGwEA6rjd3dIMKqNwgsYAEcVh9y9123lwm9QWABT+GgWmY0X3W40DvMYQEjDqpV3Z3vNlPoJSosQI+H1WZqHrGZKfQWgYWx57Day92FbssKvcaQEGPNYXWsu12FKhBYGHe7CNUgsDDueHymIgQWgGoQWBhbnr+iuqoMgQWgGixrwNiamJiYJ1SFwMJgecjXdd8qVILAwiA5rPZ3d6AwKAQWBsVB9Wq3G/3HT6r8HC1DzsgILAyGg2qOu8vcXjX6R6UPgfiDEBWBhUFwWP29uxPcln7KP1685e8sobRYNhEZyxpQPQfPUe7+cgE/mvQL2XcJ5/rvKiEqrMgILFRrdD7gaW6vXcgli7X8/SWVFnNYkTEkRJVG+61fo4WHVVD695sKKzICC9VxWO2hZv+qlTS5tkn31L//zGFFxpAQ1RgduXWM2+yOf6UtMFIP2aiwIiOwUAWH1UvdneG2muJJXWExhxUZQ0L0nsNqS3dXK25YBQzZKkNgodccVn+n5uTl5RVf6sCiwoqMISF6KZwP6O6bbtspndSBxRxWZAQWesdhtYa7U5X+1GUqoMowJESvOKw+oOZ5wBxHxKd+1pBAjIwKC70wWnV+pPKeYsMcVmUILBTnsFrF3emKfxew9V+ttAisyBgSoiiH1ZvdXaX8YRWwDqsyBBaKcVjt6+5MDfeIeAIrMoaEyM5BtZy7E922Ull8YVeGwEJWDqvXqKmqXqzho8KKjG8YZOOw2tHd5epPWDGHVRkCC8k5qBZ3O9h/PMVtKfUHyxoqw5AQSTmonu3uZLeN1D9sL1MZAgvJOKzCbqDfcnuBynis5ecMCSvDkBBJOKzCJns/ULmwCiam+fPU/35MEYGF6BxWh6hZtjBDZZUekjEkjIwhIaJxUK2o5hSbDdUPpYdkDAkjI7AQhcPq5WoOhpipepQ+GRpTxJAQ0+awChVV2MJ4pvqFCmtgCCxMy2j/qkvUz+cBmcMaGIaEWCQOqjCh/lW396m/2iocvrArQ2BhyhxW4dGasIXx2uo3hmQDwzcMpsRhtbm7n6j/YRWUrrAoCCIjsNCZw+pj7i5QPftXlV64SWBFxhuKVqMj4g9ze6/qUnrh6tOFqAgsTGq03/q33V6l+izZ8vPUI4zSgTk4DAmxUA6rHdxdozrDKmgLjNST8hQEkRFYWKDRfuvhTuAzVa+2wEr9+8/nKzK+AfBHRkfEH++2jerXtnCTDfwqQ2DhSaP1Vee7vULjgQqoMvwHw+McVpu4u07DCqu2CocKqzIEFkJYfdrdRW7La1gIrIFhSDjGHFRhAegJbm/SMJUOLERGYI0ph9UsNfutD/l8QCqsgWFIOIYcVmHFelhfVTqsPuv230qn9PYuBFZkBNYYcVA9zS1sCXOkynrAbauJiYl/UNlhGTuOVoYh4ZgY7bd+ltt6KusWty0dVrcqPYaEA0OFNQYcVq9Xs2ShdFid7rbWfGGV8kPdNiTkINXKEFgD57D6lLsfuq2ssj7roNrB7QHl0xZIqYeEVFiRMSQcKAfVc9QsWdhEZc11e4eD6pSF/LzkHBZf2JUhsAZodIrNSW7PVVn3u23jsPrBJNekrELajqpPXQFRYUXGN8zAPGXVeumwutltVktYBSkrrLb/b+4SVoYKayAcVMu5O1b92GUhHKj6NofV/3W4tuSke+rhKJPukVFhDcBo1XpYCNqHsPqSg2qLjmGVGgepDgwVVuVGB5keofJ+7barg+o8TU3KKqf0XUJERmBVzGF1tLv3qLzvuc12WN2jqUtZhfDw88AQWBVyUD1bzar1dVReCM33O6za7sgtzJArLIaEkTGHVZnRfNW1Kh9WYUJ5TwfVe6cRVqmVPkiVwIqMCqsiDqvZ7k5UeQ+qGQKeq+kreZcwNQIrMiqsSjisDlU/wio8B7hupLBKjQprYKiwes5B9QJ3p7m9TuWFBanbO6weVDxsL4POqLB6zGG1gZpdFvoQVgc5qDaLHFbBkBeO9nVur1oEVk85rHZXU9GspLIedZvjoPqE0hhyhcWyicgYEvZQj9ZX3e32FofVlaoTB6kODIHVIw6qVdyd7DZL5V3ltq3D6i6lVfJDzTqsyjAk7InRIzZhvqoPYXWm2/oZwioouXCUL+zKEFiFOaiWcgt7V4XnAZ+h8g52UIXKaq7yKDnpnrrCYreGyPiGKchBNdPdGW6vVj/s7qA6TMNRusJiSBgZgVWIw2pzd2Hb4OVU3m/cdnJYnaP8St5Je7rS4i5hZAwJM3NQLea2j/8YtmHpQ1jd6bZ2obBKjQprYKiwMnJQLaNm1fpm6oewLcyODqv/VTlDnsMisCKjwspk9IhNOG6rL2F1qINqo8JhlVpbYCyptJh0j4wKKwOH1bpqJtefrX4Ix24dp34oOc8zQ6gKFVZiDqtd1Ay9+hBWd7i9pkdhlVpbhbWUUBUCKyGH1cHuQjj04Zv8fLfVHVY3aHwwJBwYAisBB9Xybhf4jx9TP+zroNqqJyfZzC/lxPTvWn7+TKEqzGFF5qB6hZpHW1ZReWF9Vdhp4Sz1V8o5rMtafr6CUBUCK6LRyvUr3JZVebep2Wmh70PAlMOm01p+nnrrnt8LUTEkjOv56kdYhe2L16pkvipVhXVphyUbL1VarHSPjMAans/5g/omt/s13k7pcE3qZzhZOBoZQ8K4Sn+jvttB9Q3VJdV7NumBHR6+rylUh8CKq9Q3arj7Fx6x+Y7qk+I9+06HU6jfoPSosCIjsOIqMcT+hdvW/oDeqjqlqLC6bJGzg1Ad5rDiyr1QMCxKXbvisApiVyE3+f04fbILwjo55Xmm89dCVFRYdXrY7a/9wfy6ML8vdrhmF+VxkRAVgRVXjor1l2qGgDdqGGIOCW/seNNhT6V3v1/L1UJUDAnjSj0kvNBt1oDCKog5JPxI2wUeDm7t7mVKb4gbIhZHYMWV6v0MH+ow1NlqgOurYgXWUX5vvtvhuv2Ux9lCdAwJ40pRYYUlC2/3h/FcDVOM9+w/1eFBc1dX27l7jfI4XYiOwOq3sN/6lg6rn2u4YgTW2/wePTjZBaPtqf9ReZzm1/OQEB1Dwrhivp+Xu6058LCarvBwcQj0yztce7TbS5THuGyQmB2BFVesIeFh/hCu5zYO63ge06Lb1e/RBW0Xubrazd2OyuNuv6Z/F5JgSBjXdL8AHnHbzb/w/ya0+ZDfp5PaLnJYzXJ3uPL5spAMgRXXdCqsW9y284fwpxovi1Jh7e336Yi2ixxWz1Vzty71galPCHdwc4bj2GFI2A9hR9C1xzCsgqmG/EF+n77QdpHDalU1O44+X/l8hcn2tAisuBZl1fYX/Uu+TU/3W89hKuuw9vL79Im2ixxWa6m5aTFT+YSgOlRIiiFhOWG+6l3+AHbZaG7IulZYnfb6clht4e5byn+E194DP5S2FwisMm5XM191vdAlsLb1e3Vm20UOq53dHa/8bvHrO0BIjiFhXF2GN+GDtwZh9aTJJt3DYtANOobVJ1UmrIIPClkQWHG1zWEd4A9fqBYeEJ6wsArrXreN/V59Xy0cVl9xt7/KOLHSnV6rxJAwrskqrBr3W89hQRXWf7lt5vfrFy1/N4RVmAPMtSh0fuHcx74cljsWqLDiWlBghT2RViWsFmrufP/7Yrd12sLKQbWc2/dULqyC3f067xayIbDimn9I+G23N/qX+mZhYR59yp/38Xu1idtdk/0FB9Ur3f3YbQOV8y9+nUcLWRFY6YRFhOFO4CPCZJ6osN7p9+rzbRc7rHZyd43bKirnfL9WJtoLILDiemJI+HH/Qv+N0MVNbpv6/Tq27UKH1SHuwvODS6qca8WJO8VwlHZE/kC9wt0K/vBdJkTj9/V5ak5yXl9lhfmq9Ss/pahqBBZ6zWG1nprdO5+rssI8ZKgE7xSKYUiI3nJYvdvdj1Q+rMJziRsQVuURWOglh9XB7o5ReSeONlNk+UIPsHAUvRLWV7k72W0LlRdO4tlN6A0qLPSGw+pV7q5QP8JqD8Kqf6iw0AsOq7e7+1e3pVVW2DV02y7PMCI/AgtFOahmqDl+60MqLyxX2NxhdZvQSwQWinFYvdhdOGHmtSovnBq9o8PqPqG3mMNCEQ6rLd1dp36E1ZcdVJsSVv1HYCE7h9Ve7s5zW17l7eKg2lOoAkNCZDOarwpnLr5V5YXta97isLpJqAYVFrJwWL1QzZKFPoRVeIB6DcKqPgQWknNYvVHNfNUaKuuJk7XnuM0VqkNgISmH1UfV3IF7lsoKSxVe56A6SqgWc1hIYjRfFbaFnqPyws6vu3Iqc/2osBDdaL4q7LLQh7D69GjnV8JqAKiwEJXDakN3p7mtqLLCiTZvdVCdLwwGFRaicVh9xt1FKh9Wv3Rbi7AaHiosTJuDahl3x7ltq/IucdveYXW/MDhUWJiW0ZFbV6l8WIUTpPdRs40xYTVQVFhYZA6rcIjpN92WUlm/ctuZI+OHjwoLi8Rh9VU1J9mUDqsfus0irMYDFRamxEG1kpp1Ta9XeQc4qD4ljA0CC505rFZzd47bi1RWWLLwNofVucJYYUiIThxW26t5eLl0WP1czRCQsBpDBBYm5aBawu1wNYtBn6GywlB0bYfVzcJYYkiIhXJQ/Zm7U91WU1mPuX3GQXWAMNYILCyQw2pnd8ervHvV7LV+sTD2GBLiTzisPq9+hNVP3VYnrPAEKiw8yUEVfh/CQtC3q7wz3XZyWP1WwAgVFh7nsFrZ3WUqH1bz3D7noNqWsML8qLAQwmprNUPA5VQWW8JgUlRYY85htb+7s1Q+rO5wW4ewwmSosMaUgyoEVFiysKnKu1DNncAHBEyCCmsMOazWdHe9+hFW+zqotiCs0AUV1phxWH3A3aFuS6isB91m84gNpoLAGiMOq3CKzTtVXlhfFe4C3iZgCgisMeCgeo6adU3rqLyT3d7tsHpEwBQxhzVwDqt13V2rfoTVHg6qKCYulgAABrpJREFU2YQVFhUV1oA5rD7i7iC3GSrrbre3OKiuFDANBNZA9Wi+KhxTP8dh9SsB08SQcGAcVM9yC/uc9yGs9nNQbUpYIRYqrAFxUM1SM7n+QpV1n5pHbC4WEBEV1kA4rN7j7hqVD6vvu61GWCEFAqtyDqoJtzCxfrTKCrssfMltY4fVXQISYEhYMQfVCu5OcttcZT2s5hSbcwQkRGBVymG1lrsz3F6gskI19RcOq+sFJMaQsEIOqx3cXaXyYXW5miO3CCtkQWBVZvTw8qkq72gH1Xpu/yMgEwKrIg6rf3J3hMp6yO0dDqr3CsiMOawKOKiWVXOI6EYq6zo1B0P8h4ACqLB6zmG1krtLVD6sjnJQzSKsUBKB1WOjnUFDVTNLZYVdFnYTUBhDwp5yWIW1Vae7La1ywik2Ya/18wT0ABVWDzmsdnd3gcqG1Q1uaxJW6BMCq2ccVnup2XO9pOPc1m2br/JrfabbXwnIhMDqEX/4P+FuP5X1YQdVWLbw8GQX+bW+yN2P3LYWkAlzWD3hAAh3AQ9QOfeo2RX0irYL/VpXd3e2mp0h7hCQCRVWDzgAVnF3msq51G31jmE1x13YILD0NjYYQwRWYaMdF8IuByuojEMcVBt2ecTGrzXMrZ2gP74ZMCEgE4aEBTkAwvt/ltsqym+u27scVCe1XejXGQIq7AyxiYCCCKyyDnR7vfILp9i8yWF1bduFDqsw9AvzVasv7BIBmRBYhTgI3ujuo8rvFrfNHVa3t13o17iamvVgzxfQA8xhFeAgWNLdMcovzJW9rmNYhYNXw2Q8YYXeILDKCGutXq68DnRQbe12b9uFDquN1ZwnWOpGALBADAkzcxi8QfmHgh9wUH2ty4V+fbPdnSigh6iw8jtEec2ZQlh9WIQVeowKKyMHwobu1lE+H++ybCHwa/ugu8M0dazDQjYEVl57Kp+vO6w6VXOj1ev/rEXDsgZkQ2Bl4lBY1d22yiPssvDBLhf6dYXFoMdq0VFhIRsCK59PKt+HO2y6N7ftIofVK92dqen9HlBhIRsCKwMHw4ru3q88vuCw+knHa0Nl9QxNDxUWsiGw8thGedzqsNq7y4WjjQLX1vRRYSEbAiuP7ZXH57tcNNp8L9ZGgVRYyIbAymMrpXeTq6vjOl57kOKhwkI2BFZirmbCcHC680Rd7N/lotEDzTspHiosZENgpbed0rvT1dWRHa/9W8VFhYVsCKz03qz0vtHlotFWzLsIqBSBldAoIHJsz3J0x+v2EFAxAiut1ZTelR4O3tJ2UThD0N17BFSMwEprVaV3dsfrdnZbSkDFCKy0XqT0Wo/mGtlVQOUIrLRWUno/a7tgNBzcSEDlCKy0km8x7Pmr2zpctr7SYVkDsiGw0lpWad3V8bo3KB0WjiIbAiut1JPc93S8bi0BA0BgpbWE0rqv43WvFjAABFZaSyqtB9ou8IT7DHczlQ5LJZANgZXWDKX1UIdrUi+tSF1FAk8isNJKHVi/7XDNykqLCgvZEFhpPV1pte7bbs9TWqmHvcCTCKy0UgfWox2ueY6AgSCw0kodWL/rcM2KAgaCwEor9XCpS2AtI2AgCKy6PdbhmtSBxaM5yIbASmTevHk5Hln5Q4drllZaPJqDbBYTkpiYmMhRefy+wzWph6VdQhOIggorEVdYfVlQmTqw+NJDNgRWOjk+yF2quNR3KoFsCKy6dRmOpf5vzKQ7siGw0ulyB2+6uvz3S/14EJPuyIb5h0Q86d5lFfp0dZmf4ksJg8Evc926VE+LKy2GhMiGCiutLrspTEeXnRL4b4zBoMJKK3V10+UOYOrAYg4L2RBYaaUOiy7DMQIFg0FgpZW6wnos0jXTwRwWsiGwhi/13UoqOGRDYCUyb9681NVV0GXhaOqJfyAb7iAlMjExkWPhaJd/xyNKiyEhsqHCSiTTw89dwiL1bgoMCZENgZVOjuqVSXeMFQIrnRyB1aV6Sl0BUWEhGwIrnb5MulMBYTAIrHRyVB5dhnvsCIrBILDSyVFhddkimQoLg0FgpZNjDovAwlghsNIhsIDICKx0GBICkRFY6eSosLqc/ExgYTAIrHRyBFaXB5sJLAwGgZVOjmUNXR5sZqU7BoPASifHHFaXB5tZ6Y7BILDSyTEk/E2Ha1IvHKXCQjYEVjpz3S5RWld3uOZniV/H7QIyoZwHUA0qLADVILAAVIPAAlANAgtANQgsANUgsABUg8ACUA0CC0A1CCwA1SCwAFSDwAJQDQILQDUILADVILAAVIPAAlANAgtANQgsANUgsABUg8ACUA0CC0A1/h8AAP//vpd4FAAAAAZJREFUAwCmtLZ5h3O73QAAAABJRU5ErkJggg==); background-size: contain; background-repeat: no-repeat; background-position: center; }
+    
+/* ═══════════════════════════════════════════════════════════════
+   CAPA MOVIL · JYNTRA Cineantropometria
+   Misma identidad dorado/negro, armazon de app: header compacto,
+   panales por pestaña y barra de pestañas inferior.
+   ═══════════════════════════════════════════════════════════════ */
+:root{
+  --gold:#DD2C37;
+  --gold-hi:#EEF1F3;
+  --gold-lo:#8E1C23;
+  --ink:#090909;
+  --ink-2:#121212;
+  --ink-3:#1C1C1C;
+  --tabbar-h:64px;
+  --safe-b:env(safe-area-inset-bottom,0px);
+}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;overflow-x:hidden}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;
+    scroll-behavior:auto!important}
+}
+
+/* ── Header ─────────────────────────────────────────────────── */
+.app-header{
+  position:sticky;top:0;z-index:60;width:100%;
+  background:rgba(18,18,18,.94);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid rgba(221,44,55,.22);
+  padding-top:env(safe-area-inset-top,0px);
+}
+.hd-accent{height:3px;width:100%;
+  background:linear-gradient(90deg,transparent 0%,var(--jy-acc-lo) 15%,var(--jy-acc) 50%,
+    var(--gold-hi) 65%,var(--gold) 85%,transparent 100%)}
+.hd-row{display:flex;align-items:center;gap:11px;padding:10px 14px 0;max-width:1180px;margin:0 auto}
+.hd-logo{width:38px;height:38px;flex-shrink:0;border-radius:12px;padding:5px;
+  background:linear-gradient(140deg,#0E0E0E,#000);border:1px solid rgba(221,44,55,.5);
+  box-shadow:0 0 18px rgba(221,44,55,.2)}
+.hd-logo>div{width:100%;height:100%}
+.hd-txt{min-width:0;flex:1}
+.hd-brand{font-size:15px;font-weight:800;letter-spacing:2.6px;line-height:1}
+.hd-sub{font-size:11px;color:#A2A2A2;margin-top:4px;line-height:1.2;font-weight:600;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hd-actions{display:flex;gap:7px;flex-shrink:0}
+.icon-btn{width:40px;height:40px;border-radius:12px;flex-shrink:0;
+  display:inline-flex;align-items:center;justify-content:center;font-size:15px;
+  background:var(--ink-3);border:1px solid rgba(221,44,55,.3);color:#FFFFFF;
+  cursor:pointer;transition:.16s;-webkit-tap-highlight-color:transparent}
+.icon-btn:active{transform:scale(.94)}
+.icon-btn.gold{background:linear-gradient(135deg,#DD2C37,#DD2C37 50%,#DD2C37);
+  color:#FFFFFF;border-color:var(--jy-borde);box-shadow:0 5px 16px -6px rgba(221,44,55,.75)}
+
+/* Selector ISAK: los botones conservan sus clases (el JS las reescribe),
+   asi que se les da forma desde el contenedor. */
+.isak-switch{display:flex;gap:5px;margin:9px auto 0;max-width:1180px;padding:0 14px 10px}
+.isak-switch>button{flex:1;min-height:38px;border-radius:10px;font-size:12.5px;
+  display:inline-flex;align-items:center;justify-content:center;
+  -webkit-tap-highlight-color:transparent}
+.isak-switch{position:relative}
+.isak-switch::before{content:'';position:absolute;inset:-3px 11px 7px;border-radius:13px;
+  background:var(--ink);border:1px solid rgba(221,44,55,.28);z-index:0}
+.isak-switch>button{position:relative;z-index:1}
+
+/* ── Panales ────────────────────────────────────────────────── */
+main{padding:16px 14px calc(var(--tabbar-h) + var(--safe-b) + 26px)!important;
+  max-width:1180px;margin:0 auto;width:100%}
+.tabpanel{display:none}
+.tabpanel.on{display:block;animation:tpfade .26s ease}
+@keyframes tpfade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.tabpanel>*+*{margin-top:14px}
+
+/* ── Sub-navegacion de Medidas ──────────────────────────────── */
+.subnav{display:flex;gap:7px;overflow-x:auto;padding:2px 0 4px;-webkit-overflow-scrolling:touch;
+  scrollbar-width:none}
+.subnav::-webkit-scrollbar{display:none}
+.subnav button{flex:0 0 auto;padding:9px 14px;border-radius:20px;font-size:12.5px;font-weight:600;
+  background:var(--ink-2);border:1px solid rgba(221,44,55,.22);color:#A2A2A2;cursor:pointer;
+  transition:.16s;-webkit-tap-highlight-color:transparent}
+.subnav button:active{transform:scale(.96)}
+.subnav button.on{background:rgba(221,44,55,.14);border-color:var(--jy-acc);color:var(--jy-texto-acc)}
+.measure-block{scroll-margin-top:118px}
+
+/* ── Barra de pestañas inferior ─────────────────────────────── */
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:70;
+  display:grid;grid-template-columns:repeat(5,1fr);
+  background:rgba(14,14,14,.96);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  border-top:1px solid rgba(221,44,55,.22);
+  padding:7px 4px calc(7px + var(--safe-b))}
+.tabbtn{position:relative;background:none;border:0;padding:5px 2px;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;gap:5px;justify-content:center;
+  min-height:48px;color:#727272;transition:color .16s;border-radius:12px;
+  -webkit-tap-highlight-color:transparent}
+.tabbtn i{font-size:16px;line-height:1}
+.tabbtn span{font-size:9.5px;font-weight:700;letter-spacing:.2px;line-height:1}
+.tabbtn.on{color:var(--jy-texto-acc)}
+.tabbtn.on::before{content:'';position:absolute;top:-7px;left:50%;transform:translateX(-50%);
+  width:26px;height:3px;border-radius:0 0 3px 3px;
+  background:linear-gradient(90deg,var(--jy-acc),var(--jy-acc-hi));
+  box-shadow:0 0 14px rgba(221,44,55,.75)}
+.tabbtn:active{transform:scale(.95)}
+
+/* ── Ajustes de formulario para pantalla tactil ─────────────── */
+main input,main select{font-size:16px!important;min-height:44px}
+main input[type=date]{min-height:44px}
+main label{font-size:11.5px}
+.glass-card{padding:15px!important}
+main canvas{max-width:100%}
+#somatochartCanvas{width:100%!important;height:100%!important}
+
+/* ── Escritorio: la barra flota centrada ────────────────────── */
+@media(min-width:900px){
+  main{padding:22px 20px calc(var(--tabbar-h) + 46px)!important}
+  .glass-card{padding:22px!important}
+  .tabbar{left:50%;right:auto;transform:translateX(-50%);bottom:18px;
+    width:min(620px,94vw);border-radius:20px;border:1px solid rgba(221,44,55,.3);
+    box-shadow:0 20px 50px -18px rgba(0,0,0,.9);padding:8px}
+  .tabbtn.on::before{top:auto;bottom:-8px;border-radius:3px 3px 0 0}
+  .tabbtn span{font-size:11px}
+  .hd-brand{font-size:18px}
+  .hd-logo{width:44px;height:44px}
+}
+@media print{.app-header,.tabbar,.subnav{display:none!important}
+  .tabpanel{display:block!important}}
+
+.tab-save-bar{display:flex;justify-content:flex-end;margin-bottom:12px}
+.tab-save-btn{display:inline-flex;align-items:center;gap:8px;padding:8px 16px;
+  border-radius:10px;border:1px solid rgba(221,44,55,.4);
+  background:linear-gradient(135deg,#DD2C37,#DD2C37);color:#FFFFFF;
+  font-weight:700;font-size:12.5px;cursor:pointer;box-shadow:0 2px 10px rgba(221,44,55,.25);
+  transition:transform .15s ease,box-shadow .15s ease}
+.tab-save-btn:hover{box-shadow:0 4px 14px rgba(221,44,55,.4)}
+.tab-save-btn:active{transform:scale(.96)}
+.save-toast{position:fixed;left:50%;bottom:calc(var(--tabbar-h) + var(--safe-b) + 14px);
+  transform:translate(-50%,10px);background:#242424;color:#fff;border:1px solid rgba(221,44,55,.5);
+  padding:9px 18px;border-radius:999px;font-size:12.5px;font-weight:600;z-index:200;
+  opacity:0;pointer-events:none;transition:opacity .2s ease,transform .2s ease}
+.save-toast.show{opacity:1;transform:translate(-50%,0)}
+
+    </style>
+    <link rel="stylesheet" href="../vendor/cine-tailwind.css"><!-- Tailwind compilado (antes cdn.tailwindcss.com) -->
+<style>/* paleta JYNTRA · ajustes finales */
+:root{--ink:#171717;--ink-2:#1F1F1F;--ink-3:#262626;}
+body{background-color:#171717 !important;color:#EEF1F3 !important}
+[class*="bg-gold"]{color:#FFFFFF !important}
+</style>
+</head>
+<body class="min-h-screen flex flex-col antialiased selection:bg-gold-500 selection:text-black">
+
+    <header class="app-header">
+        <div class="hd-accent"></div>
+        <div class="hd-row">
+            <div class="hd-logo"><div class="jintra-logo-icon"></div></div>
+            <div class="hd-txt">
+                <div class="hd-brand" style="line-height:0;margin-bottom:5px"><svg width="107" height="15" viewBox="3 5 927 130" role="img" aria-label="JYNTRA" style="display:block"><path fill-rule="evenodd" fill="#FFFFFF" d="M 330.50 6.16 C 325.66 7.96, 322.36 10.71, 320.62 14.38 C 319.18 17.41, 319 24.25, 319 74.40 L 319 131 337.50 131 L 356 131 356 98 C 356 79.85, 356.33 65.00, 356.75 65.00 C 357.16 65.01, 366.95 73.62, 378.50 84.15 C 436.64 137.14, 431.86 133.56, 443.39 132.82 C 447.84 132.54, 450.51 131.76, 452.90 130.06 C 459.10 125.65, 459 126.75, 459 64.03 L 459 7 441.01 7 L 423.02 7 422.76 41.42 L 422.50 75.84 398.90 54.17 C 385.93 42.25, 369.67 27.25, 362.79 20.84 C 355.90 14.43, 348.89 8.48, 347.21 7.61 C 343.20 5.53, 334.26 4.76, 330.50 6.16 M 817.33 5.95 C 811.23 7.41, 805.49 11.70, 801.00 18.17 C 798.58 21.65, 792.93 29.67, 788.42 36 C 781.35 45.93, 756.28 82.36, 731.82 118.24 C 727.79 124.15, 724.19 128.87, 723.83 128.74 C 722.32 128.19, 694.42 92.14, 695.13 91.64 C 695.33 91.50, 698.61 89.88, 702.42 88.04 C 711.18 83.81, 717.28 77.74, 721.32 69.20 C 724.36 62.78, 724.50 61.97, 724.50 49.97 C 724.50 37.85, 724.39 37.24, 721.21 30.79 C 717.33 22.90, 710.01 15.82, 702.12 12.30 C 690.78 7.25, 687.26 6.95, 642.86 7.23 L 601.63 7.50 589.36 23 C 582.61 31.52, 577.07 38.83, 577.04 39.25 C 577.02 39.66, 598.83 40, 625.53 40 C 678.18 40, 678.52 40.03, 682.83 45.51 C 685.77 49.25, 685.81 56.69, 682.91 60.38 C 678.01 66.61, 679.29 66.47, 624.75 66.79 L 575 67.08 575 99.04 L 575 131 595 131 L 615 131 615 114.50 L 615 98 633.92 98 L 652.84 98 666.60 114.50 L 680.36 131 724.09 131 L 767.81 131 795.77 90.75 C 811.15 68.61, 824.25 50.50, 824.88 50.50 C 825.96 50.50, 857.92 95.64, 857.97 97.23 C 857.98 97.63, 846.24 98.08, 831.86 98.23 L 805.73 98.50 794.75 114.30 C 788.72 123, 783.98 130.31, 784.23 130.56 C 784.47 130.81, 817.17 130.89, 856.88 130.75 L 929.09 130.50 917.74 114.50 C 888.03 72.64, 861.64 35.40, 854.11 24.72 C 849.54 18.25, 844.30 11.80, 842.45 10.39 C 836.33 5.72, 825.98 3.89, 817.33 5.95 M 85.97 44.25 C 85.95 86.10, 85.81 86.98, 78.61 92.48 C 72.26 97.32, 69.04 97.90, 48.41 97.95 L 29.32 98 24.86 103.75 C 22.42 106.91, 16.66 114.37, 12.07 120.32 L 3.73 131.14 42.61 130.76 C 85.65 130.33, 85.34 130.37, 99.48 123.25 C 112.83 116.53, 123.96 102.30, 126.89 88.20 C 127.58 84.88, 128 68.71, 128 44.95 L 128 7 107 7 L 86 7 85.97 44.25 M 144.81 12.75 C 147.56 15.91, 162.44 32.45, 177.86 49.50 L 205.90 80.50 205.95 105.77 L 206 131.04 226.25 130.77 L 246.50 130.50 246.76 105.00 L 247.03 79.51 253.35 73.00 C 260.98 65.14, 304.56 17.26, 311.40 9.23 L 313.31 7 287.21 7 L 261.11 7 244.30 27.43 C 235.06 38.67, 227.27 47.88, 227 47.89 C 226.72 47.91, 218.89 38.71, 209.59 27.46 L 192.69 7 166.25 7 L 139.80 7 144.81 12.75 M 466.22 23.25 L 466.50 39.50 481.95 39.77 C 492.77 39.97, 497.65 40.42, 498.21 41.27 C 498.65 41.95, 498.99 60.50, 498.96 82.50 C 498.93 104.50, 498.93 124.42, 498.95 126.77 L 499 131.04 518.75 130.77 L 538.50 130.50 538.76 85.25 L 539.02 40 548.85 40 L 558.67 40 563.54 33.75 C 566.22 30.31, 571.95 22.88, 576.26 17.25 L 584.12 7 525.03 7 L 465.95 7 466.22 23.25"/></svg></div>
+                <div class="hd-sub" id="hdSub">Cineantropometr&iacute;a ISAK</div>
+            </div>
+            <div class="hd-actions">
+                <button class="icon-btn" type="button" onclick="loadSampleData('athlete')"
+                        aria-label="Cargar atleta de ejemplo" title="Cargar atleta de ejemplo">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i></button>
+                <button class="icon-btn gold" type="button" onclick="generatePDF()"
+                        aria-label="Exportar PDF" title="Exportar PDF">
+                    <i class="fa-solid fa-file-pdf"></i></button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-1 w-full">
+
+        <!-- Campos de perfil (ocultos: la sub pestaña de Perfil fue eliminada, pero estos datos
+             los siguen usando calculateAll(), loadSampleData() y la generación de PDF) -->
+        <div style="display:none">
+            <input type="text" id="athleteName" value="Carlos Mendoza">
+            <input type="number" id="athleteAge" value="24">
+            <select id="athleteGender" onchange="calculateAll()">
+                <option value="male" selected>Masculino</option>
+                <option value="female">Femenino</option>
+            </select>
+            <input type="text" id="athleteSport" value="Fútbol / Centrocampista">
+            <input type="text" id="evaluatorName" value="Dr. J. Silva (ISAK 2)">
+            <input type="date" id="evalDate">
+        </div>
+
+        <!-- PESTANA 1 · MEDIDAS -->
+        <section class="tabpanel on" id="tp1" role="tabpanel" aria-labelledby="tb1">
+            <div class="tab-save-bar">
+                <button type="button" class="tab-save-btn" onclick="saveData('medidas')">
+                    <i class="fa-solid fa-floppy-disk"></i> Guardar
+                </button>
+            </div>
+            <div class="subnav" id="measureNav">
+                <button type="button" class="on" data-goto="m-basic">B&aacute;sicas</button>
+                <button type="button" data-goto="m-pliegues">Pliegues</button>
+                <button type="button" data-goto="m-perimetros">Per&iacute;metros</button>
+                <button type="button" data-goto="m-diametros">Di&aacute;metros</button>
+            </div>
+            <div class="measure-block" id="m-basic">
+                <!-- Section 1: Basic Measures -->
+                <div class="glass-card rounded-2xl p-5">
+                    <div class="flex items-center justify-between mb-3 border-b border-gold-500/20 pb-2">
+                        <span class="font-semibold text-gold-400 text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-ruler-vertical"></i> Medidas Básicas
+                        </span>
+                        <span class="text-[10px] text-gray-400 bg-darkbg-900 px-2 py-0.5 rounded border border-gold-500/20">ISAK 1 & 2</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3 text-xs">
+                        <div>
+                            <label class="text-gray-300 block mb-1">Masa Corporal (kg)</label>
+                            <input type="number" step="0.1" id="m_weight" value="76.5" oninput="syncSharedField('m_weight','bia_userWeight')" class="w-full bg-darkbg-900 border border-gold-500/30 rounded-lg p-2 text-white focus:border-gold-500">
+                        </div>
+                        <div>
+                            <label class="text-gray-300 block mb-1">Estatura Corporal (cm)</label>
+                            <input type="number" step="0.1" id="m_height" value="178.0" oninput="syncSharedField('m_height','bia_userHeight')" class="w-full bg-darkbg-900 border border-gold-500/30 rounded-lg p-2 text-white focus:border-gold-500">
+                        </div>
+                        <div>
+                            <label class="text-gray-300 block mb-1">Talla Sentado (cm)</label>
+                            <input type="number" step="0.1" id="m_sitting_height" value="93.2" oninput="calculateAll()" class="w-full bg-darkbg-900 border border-gold-500/30 rounded-lg p-2 text-white focus:border-gold-500">
+                        </div>
+                        <input type="hidden" id="m_span" value="181.5">
+                    </div>
+                </div>
+            </div>
+            <div class="measure-block" id="m-pliegues">
+                <!-- Section 2: Skinfolds -->
+                <div class="glass-card rounded-2xl p-5">
+                    <div class="flex items-center justify-between mb-3 border-b border-gold-500/20 pb-2">
+                        <span class="font-semibold text-gold-400 text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-compress-arrows-alt"></i> Pliegues Cutáneos (mm)
+                        </span>
+                        <span id="skinfoldBadge" class="text-[10px] text-gray-400 bg-darkbg-900 px-2 py-0.5 rounded border border-gold-500/20">8 Pliegues</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3 text-xs">
+                        <div>
+                            <label class="text-gray-300 block mb-1">Triceps</label>
+                            <input type="number" step="0.1" id="sf_triceps" value="8.5" oninput="calculateAll()" class="w-full bg-darkbg-900 border border-gold-500/30 rounded-lg p-2 text-white focus:border-gold-500">
+                        </div>
+                        <div>
+                            <label class="text-gray-300 block mb-1">Subescapular</label>
+                            <input type="number" step="0.1" id="sf_subscapular" value="10.2" oninput="calculateAll()" class="w-full bg-darkbg-900 border border-gold-500/30 rounded-lg p-2 text-white focus:border-gold-500">
+                        </div>
+                        <div>
+                            <label class="text-gray-300 block mb-1">Biceps</label>
+                            <input type="number" step="0.1" id="sf_biceps" value="4.2" oninput="calculateAll()" class="w-full bg-darkbg-900 border border-gold-500/30 rounded-lg p-2 text-white focus:border-gold-500">
+                        </div>
+                        <div>
+                            <label class="text-gray-300 block mb-1">Cresta Ilíaca</label>
+                            <input type="number" step="0.1" id="sf_iliac_crest" value="12.0" oninput="calculateAll()" class="w-full bg-darkbg-900 border border-gold-500/30 rounded-lg p-2 text-white focus:border-gold-500">
+                        </div>
+                        <div>
+                            <label class="text-gray-300 block mb-1">Supraespinal</label>
+                            <input type="number" step="0.1" id="sf_supraspinale" value="7.8" oninput="calculateAll()" class="w-full bg-darkbg-900 border border-gold-500/30 rounded-lg p-2 text-white focus:border-gold-500">
+                        </div>
+                        <div>
+                            <label class="text-gray-300 block mb-1">Abdominal</label>
+                            <input type="number" step="0.1" id="sf_abdominal" value="11.5" oninput="calculateAll()" class="w-full bg-darkbg-900 border border-gold-500/30 rounded-lg p-2 text-white focus:border-gold-500">
+                        </div>
+                        <div>
+                            <label class="text-gray-300 block mb-1">Muslo Anterior</label>
+                            <input type="number" step="0.1" id="sf_thigh" value="9.8" oninput="calculateAll()" class="w-full bg-darkbg-900 border border-gold-500/30 rounded-lg p-2 text-white focus:border-gold-500">
+                        </div>
+                        <div>
+                            <label class="text-gray-300 block mb-1">Pantorrilla Medial</label>
+                            <input type="number" step="0.1" id="sf_calf" value="6.4" oninput="calculateAll()" class="w-full bg-darkbg-900 border border-gold-500/30 rounded-lg p-2 text-white focus:border-gold-500">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="measure-block" id="m-perimetros">
+                <!-- Section 3: Girths / Perimeters -->
+                <div class="glass-card rounded-2xl p-5">
+                    <div class="flex items-center justify-between mb-3 border-b border-gold-500/20 pb-2">
+                        <span class="font-semibold text-gold-400 text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-tape"></i> Perímetros Corporal (cm)
+                        </span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3 text-xs">
+                        <div>
+                            <label class="text-gray-300 block mb-1">Brazo Relajado</label>
+                            <input type="number" step="0.1" id="g_arm_relaxed" value="32.5" oninput="calculateAll()" class="w-full bg-darkbg-900 border border-gold-500/30 rounded-lg p-2 text-white focus:border-gold-500">
+                        </div>
+                        <div>
+                            <label class="text-gray-300 block mb-1">Brazo Flex/Contraído</label>
+                            <input type="number" step="0.1" id="g_arm_flexed" value="35.8" oninput="calculateAll()" class="w-full bg-darkbg-900 border border-gold-500/30 rounded-lg p-2 text-white focus:border-gold-500">
+                        </div>
+                        <div>
+                            <label class="text-gray-300 block mb-1">Cintura (Mínimo)</label>
+                            <input type="number" step="0.1" id="g_waist" value="78.0" oninput="calculateAll()" class="w-full bg-darkbg-900 border border-gold-500/30 rounded-lg p-2 text-white focus:border-gold-500">
+                        </div>
+                        <div>
+                            <label class="text-gray-300 block mb-1">Cadera (Máximo)</label>
+                            <input type="number" step="0.1" id="g_hip" value="96.5" oninput="calculateAll()" class="w-full bg-darkbg-900 border border-gold-500/30 rounded-lg p-2 text-white focus:border-gold-500">
+                        </div>
+                        <div>
+                            <label class="text-gray-300 block mb-1">Muslo Medio</label>
+                            <input type="number" step="0.1" id="g_thigh_mid" value="55.2" oninput="calculateAll()" class="w-full bg-darkbg-900 border border-gold-500/30 rounded-lg p-2 text-white focus:border-gold-500">
+                        </div>
+                        <div>
+                            <label class="text-gray-300 block mb-1">Pantorrilla Máxima</label>
+                            <input type="number" step="0.1" id="g_calf_max" value="37.2" oninput="calculateAll()" class="w-full bg-darkbg-900 border border-gold-500/30 rounded-lg p-2 text-white focus:border-gold-500">
+                        </div>
+                        <!-- Extended ISAK 2 Girths -->
+                        <div class="isak2-field hidden">
+                            <label class="text-gray-300 block mb-1">Antebrazo Máximo</label>
+                            <input type="number" step="0.1" id="g_forearm" value="27.8" oninput="calculateAll()" class="w-full bg-darkbg-900 border border-gold-500/30 rounded-lg p-2 text-white focus:border-gold-500">
+                        </div>
+                        <div class="isak2-field hidden">
+                            <label class="text-gray-300 block mb-1">Muñeca (Estiloide)</label>
+                            <input type="number" step="0.1" id="g_wrist" value="16.8" oninput="calculateAll()" class="w-full bg-darkbg-900 border border-gold-500/30 rounded-lg p-2 text-white focus:border-gold-500">
+                        </div>
+                        <div class="isak2-field hidden">
+                            <label class="text-gray-300 block mb-1">Tórax (Mesoesternal)</label>
+                            <input type="number" step="0.1" id="g_chest" value="98.5" oninput="calculateAll()" class="w-full bg-darkbg-900 border border-gold-500/30 rounded-lg p-2 text-white focus:border-gold-500">
+                        </div>
+                        <div class="isak2-field hidden">
+                            <label class="text-gray-300 block mb-1">Cabeza / Cuello</label>
+                            <input type="number" step="0.1" id="g_head" value="56.2" oninput="calculateAll()" class="w-full bg-darkbg-900 border border-gold-500/30 rounded-lg p-2 text-white focus:border-gold-500">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="measure-block" id="m-diametros">
+                <!-- Section 4: Bone Diameters -->
+                <div class="glass-card rounded-2xl p-5">
+                    <div class="flex items-center justify-between mb-3 border-b border-gold-500/20 pb-2">
+                        <span class="font-semibold text-gold-400 text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-bone"></i> Diámetros Óseos (cm)
+                        </span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3 text-xs">
+                        <div>
+                            <label class="text-gray-300 block mb-1">Biepicondilar Húmero</label>
+                            <input type="number" step="0.1" id="d_humerus" value="6.8" oninput="calculateAll()" class="w-full bg-darkbg-900 border border-gold-500/30 rounded-lg p-2 text-white focus:border-gold-500">
+                        </div>
+                        <div>
+                            <label class="text-gray-300 block mb-1">Biepicondilar Fémur</label>
+                            <input type="number" step="0.1" id="d_femur" value="9.6" oninput="calculateAll()" class="w-full bg-darkbg-900 border border-gold-500/30 rounded-lg p-2 text-white focus:border-gold-500">
+                        </div>
+                        <!-- Extended ISAK 2 Diameters -->
+                        <div class="isak2-field hidden">
+                            <label class="text-gray-300 block mb-1">Biacromial</label>
+                            <input type="number" step="0.1" id="d_biacromial" value="40.2" oninput="calculateAll()" class="w-full bg-darkbg-900 border border-gold-500/30 rounded-lg p-2 text-white focus:border-gold-500">
+                        </div>
+                        <div class="isak2-field hidden">
+                            <label class="text-gray-300 block mb-1">Biiliocrestal</label>
+                            <input type="number" step="0.1" id="d_biiliocristal" value="28.4" oninput="calculateAll()" class="w-full bg-darkbg-900 border border-gold-500/30 rounded-lg p-2 text-white focus:border-gold-500">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PESTANA 2 · RESULTADOS -->
+        <section class="tabpanel" id="tp2" role="tabpanel" aria-labelledby="tb2">
+            <div class="tab-save-bar">
+                <button type="button" class="tab-save-btn" onclick="saveData('resultados')">
+                    <i class="fa-solid fa-floppy-disk"></i> Guardar
+                </button>
+            </div>
+                <!-- TOP KPI METRICS SUMMARY -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                    <!-- IMC -->
+                    <div class="glass-card rounded-2xl p-4 text-center relative overflow-hidden group border-gold-500/30">
+                        <p class="text-xs text-gray-400 uppercase tracking-wider font-medium">I.M.C.</p>
+                        <h3 id="kpi_bmi" class="text-2xl font-bold font-cinzel gold-gradient-text mt-1">24.1</h3>
+                        <p id="kpi_bmi_cat" class="text-[11px] text-emerald-400 mt-1 font-semibold">Normopeso</p>
+                    </div>
+
+                    <!-- Sum 6 Skinfolds -->
+                    <div class="glass-card rounded-2xl p-4 text-center relative overflow-hidden group border-gold-500/30">
+                        <p class="text-xs text-gray-400 uppercase tracking-wider font-medium">Sumatoria 6 Pliegues</p>
+                        <h3 id="kpi_sum6" class="text-2xl font-bold font-cinzel text-amber-400 mt-1">54.2 mm</h3>
+                        <p id="kpi_sum6_cat" class="text-[11px] text-gray-300 mt-1">Perfil Atleta</p>
+                    </div>
+
+                    <!-- Body Fat % (Kerr/Yuhasz) -->
+                    <div class="glass-card rounded-2xl p-4 text-center relative overflow-hidden group border-gold-500/30">
+                        <p class="text-xs text-gray-400 uppercase tracking-wider font-medium">% Masa Grasa</p>
+                        <h3 id="kpi_fat_pct" class="text-2xl font-bold font-cinzel text-red-400 mt-1">8.9 %</h3>
+                        <p id="kpi_fat_kg" class="text-[11px] text-gray-400 mt-1">6.8 kg</p>
+                    </div>
+
+                    <!-- Muscle Mass % -->
+                    <div class="glass-card rounded-2xl p-4 text-center relative overflow-hidden group border-gold-500/30">
+                        <p class="text-xs text-gray-400 uppercase tracking-wider font-medium">% Masa Muscular</p>
+                        <h3 id="kpi_muscle_pct" class="text-2xl font-bold font-cinzel text-emerald-400 mt-1">48.2 %</h3>
+                        <p id="kpi_muscle_kg" class="text-[11px] text-gray-400 mt-1">36.9 kg</p>
+                    </div>
+                </div>
+                <!-- ADDITIONAL ISAK METRICS & DERIVED INDICES -->
+                <div class="glass-card rounded-2xl p-5 space-y-4">
+                    <h3 class="font-cinzel text-sm font-bold text-white flex items-center gap-2 border-b border-gold-500/20 pb-2">
+                        <i class="fa-solid fa-calculator text-gold-400"></i> Índices Cineantropométricos de Salud y Rendimiento
+                    </h3>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
+                        <div class="bg-darkbg-900 border border-gold-500/20 p-3 rounded-xl">
+                            <p class="text-gray-400">Índice Cintura/Cadera (ICC)</p>
+                            <p id="idx_whr" class="text-lg font-bold text-gold-400 mt-1">0.81</p>
+                            <p id="idx_whr_risk" class="text-[10px] text-emerald-400">Riesgo Bajo</p>
+                        </div>
+
+                        <div class="bg-darkbg-900 border border-gold-500/20 p-3 rounded-xl">
+                            <p class="text-gray-400">Índice Cintura/Estatura (ICE)</p>
+                            <p id="idx_whtr" class="text-lg font-bold text-gold-400 mt-1">0.44</p>
+                            <p class="text-[10px] text-emerald-400">Saludable (&lt;0.5)</p>
+                        </div>
+
+                        <div class="bg-darkbg-900 border border-gold-500/20 p-3 rounded-xl">
+                            <p class="text-gray-400">Índice Músculo / Hueso</p>
+                            <p id="idx_mb" class="text-lg font-bold text-gold-400 mt-1">4.21</p>
+                            <p class="text-[10px] text-gray-300">Relación Estructural</p>
+                        </div>
+
+                        <div class="bg-darkbg-900 border border-gold-500/20 p-3 rounded-xl">
+                            <p class="text-gray-400">Perímetro Brazo Corregido</p>
+                            <p id="g_corr_arm" class="text-lg font-bold text-gold-400 mt-1">32.8 cm</p>
+                            <p class="text-[10px] text-gray-400">Descontando pliegue</p>
+                        </div>
+
+                        <div class="bg-darkbg-900 border border-gold-500/20 p-3 rounded-xl">
+                            <p class="text-gray-400">Perímetro Pantorrilla Correg.</p>
+                            <p id="g_corr_calf" class="text-lg font-bold text-gold-400 mt-1">35.2 cm</p>
+                            <p class="text-[10px] text-gray-400">Descontando pliegue</p>
+                        </div>
+
+                        <div class="bg-darkbg-900 border border-gold-500/20 p-3 rounded-xl">
+                            <p class="text-gray-400">Fórmula Yuhasz (% Grasa)</p>
+                            <p id="eq_yuhasz" class="text-lg font-bold text-gold-400 mt-1">8.9 %</p>
+                            <p class="text-[10px] text-gray-400">Específica Deportistas</p>
+                        </div>
+                    </div>
+                </div>
+        </section>
+
+        <!-- PESTANA 3 · SOMATOTIPO -->
+        <section class="tabpanel" id="tp3" role="tabpanel" aria-labelledby="tb3">
+            <div class="tab-save-bar">
+                <button type="button" class="tab-save-btn" onclick="saveData('somatotipo')">
+                    <i class="fa-solid fa-floppy-disk"></i> Guardar
+                </button>
+            </div>
+                <!-- SOMATOCHART HEATH-CARTER & CLASSIFICATION -->
+                <div class="glass-card rounded-2xl p-6">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4 border-b border-gold-500/20 pb-2">
+                        <div>
+                            <h3 class="font-cinzel text-base font-bold text-white flex items-center gap-2">
+                                <i class="fa-solid fa-chart-scatter text-gold-400"></i> Somatocarta de Heath-Carter
+                            </h3>
+                            <p class="text-xs text-gray-400">Endomorfia - Mesomorfia - Ectomorfia</p>
+                        </div>
+                        <div class="bg-darkbg-900 border border-gold-500/30 px-3 py-1.5 rounded-xl text-xs text-center">
+                            <span class="text-gray-400">Clasificación: </span>
+                            <span id="somatotypeClass" class="font-bold text-gold-400">Mesomorfo Balanceado</span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+                        <!-- Canvas Container -->
+                        <div class="md:col-span-7 flex justify-center">
+                            <div class="relative w-full max-w-[320px] aspect-square bg-darkbg-900/90 rounded-2xl border border-gold-500/30 p-2 shadow-inner">
+                                <canvas id="somatochartCanvas" width="300" height="300" class="w-full h-full block"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Somatotype Values Box -->
+                        <div class="md:col-span-5 space-y-4 text-xs">
+                            <div class="bg-darkbg-900 border border-gold-500/20 rounded-xl p-3 space-y-2">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-red-400 font-semibold"><i class="fa-solid fa-circle text-[8px] mr-1"></i> Endomorfia (Grasa):</span>
+                                    <span id="val_endo" class="font-bold text-white text-sm">2.1</span>
+                                </div>
+                                <div class="w-full bg-darkbg-700 h-1.5 rounded-full overflow-hidden">
+                                    <div id="bar_endo" class="bg-red-500 h-full" style="width: 30%"></div>
+                                </div>
+
+                                <div class="flex justify-between items-center pt-2">
+                                    <span class="text-emerald-400 font-semibold"><i class="fa-solid fa-circle text-[8px] mr-1"></i> Mesomorfia (Músculo):</span>
+                                    <span id="val_meso" class="font-bold text-white text-sm">5.4</span>
+                                </div>
+                                <div class="w-full bg-darkbg-700 h-1.5 rounded-full overflow-hidden">
+                                    <div id="bar_meso" class="bg-emerald-500 h-full" style="width: 70%"></div>
+                                </div>
+
+                                <div class="flex justify-between items-center pt-2">
+                                    <span class="text-sky-400 font-semibold"><i class="fa-solid fa-circle text-[8px] mr-1"></i> Ectomorfia (Linealidad):</span>
+                                    <span id="val_ecto" class="font-bold text-white text-sm">2.3</span>
+                                </div>
+                                <div class="w-full bg-darkbg-700 h-1.5 rounded-full overflow-hidden">
+                                    <div id="bar_ecto" class="bg-sky-500 h-full" style="width: 35%"></div>
+                                </div>
+                            </div>
+
+                            <div class="bg-gold-500/10 border border-gold-500/30 rounded-xl p-3">
+                                <p class="text-gray-300 text-[11px] leading-relaxed">
+                                    <i class="fa-solid fa-circle-info text-gold-400 mr-1"></i>
+                                    Coordenadas Somatocarta: <b id="somatoX" class="text-gold-300">X = 0.2</b>, <b id="somatoY" class="text-gold-300">Y = 6.4</b>.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </section>
+
+        <!-- PESTANA 4 · COMPOSICION -->
+        <section class="tabpanel" id="tp4" role="tabpanel" aria-labelledby="tb4">
+            <div class="tab-save-bar">
+                <button type="button" class="tab-save-btn" onclick="saveData('composicion')">
+                    <i class="fa-solid fa-floppy-disk"></i> Guardar
+                </button>
+            </div>
+                <!-- BODY FRACTIONATION (5 COMPONENTS KERR MODEL) & SKIN FOLD PROFILE -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                    <!-- 5-Component Doughnut Chart -->
+                    <div class="glass-card rounded-2xl p-5 flex flex-col justify-between">
+                        <div class="flex items-center justify-between mb-3 border-b border-gold-500/20 pb-2">
+                            <h3 class="font-cinzel text-sm font-bold text-white flex items-center gap-2">
+                                <i class="fa-solid fa-chart-pie text-gold-400"></i> Fraccionamiento 5 Masas (Kerr)
+                            </h3>
+                        </div>
+                        <div class="relative w-full aspect-square max-h-[220px] mx-auto flex items-center justify-center">
+                            <canvas id="bodyCompChart"></canvas>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2 text-[11px] mt-4 text-gray-300 border-t border-gold-500/10 pt-2">
+                            <div>• Masa Muscular: <span id="txt_m_musc" class="font-bold text-emerald-400">--</span></div>
+                            <div>• Masa Grasa: <span id="txt_m_fat" class="font-bold text-red-400">--</span></div>
+                            <div>• Masa Ósea: <span id="txt_m_bone" class="font-bold text-amber-300">--</span></div>
+                            <div>• Masa Visceral/Resid: <span id="txt_m_res" class="font-bold text-sky-400">--</span></div>
+                        </div>
+                    </div>
+
+                    <!-- Skinfold Distribution Chart -->
+                    <div class="glass-card rounded-2xl p-5 flex flex-col justify-between">
+                        <div class="flex items-center justify-between mb-3 border-b border-gold-500/20 pb-2">
+                            <h3 class="font-cinzel text-sm font-bold text-white flex items-center gap-2">
+                                <i class="fa-solid fa-chart-bar text-gold-400"></i> Distribución de Pliegues
+                            </h3>
+                        </div>
+                        <div class="relative w-full aspect-square max-h-[220px] mx-auto">
+                            <canvas id="skinfoldChart"></canvas>
+                        </div>
+                        <div class="text-[11px] text-gray-400 mt-4 border-t border-gold-500/10 pt-2 flex justify-between">
+                            <span>Suma 8 Pliegues: <b id="txt_sum8" class="text-white">65.2 mm</b></span>
+                            <span>I. Adiposidad: <b id="txt_adip_idx" class="text-gold-400">Óptimo</b></span>
+                        </div>
+                    </div>
+
+                </div>
+        </section>
+
+        <!-- PESTANA 5 · BIOIMPEDANCIA -->
+        <section class="tabpanel" id="tp5" role="tabpanel" aria-labelledby="tb5">
+            <div class="tab-save-bar">
+                <button type="button" class="tab-save-btn" onclick="saveData('bioimpedancia')">
+                    <i class="fa-solid fa-floppy-disk"></i> Guardar
+                </button>
+            </div>
+
+            <!-- Info Banner -->
+            <div class="glass-card rounded-2xl p-4 flex items-start gap-3.5 mb-4">
+                <div class="w-10 h-10 rounded-xl bg-gold-500/10 border border-gold-500/30 flex items-center justify-center flex-shrink-0 text-gold-400 mt-0.5">
+                    <i class="fa-solid fa-bolt text-lg"></i>
+                </div>
+                <div>
+                    <h3 class="font-cinzel font-bold text-sm text-gold-200">Evaluación de Bioimpedancia (Balanza Bioeléctrica)</h3>
+                    <p class="text-xs text-gray-400 mt-0.5 leading-relaxed">
+                        Ingresa las métricas capturadas por balanza de bioimpedancia para calcular la distribución de masa magra, grasa visceral, gasto calórico y edad corporal estimada.
+                    </p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+                <!-- FORM COLUMN -->
+                <div class="lg:col-span-5 space-y-4">
+                    <div class="glass-card rounded-2xl p-5 space-y-4">
+                        <div class="flex items-center justify-between mb-1 border-b border-gold-500/20 pb-2">
+                            <span class="font-semibold text-gold-400 text-sm flex items-center gap-2">
+                                <i class="fa-solid fa-clipboard-user"></i> Datos de Bioimpedancia
+                            </span>
+                        </div>
+
+                        <form id="bia_omronForm" onsubmit="event.preventDefault(); biaCalculateResults();" class="space-y-3">
+                            <div class="grid grid-cols-2 gap-3 text-xs">
+                                <div>
+                                    <label class="text-gray-300 block mb-1">Sexo Biológico</label>
+                                    <select id="bia_userGender" onchange="biaCalculateResults()" class="w-full bg-darkbg-900 border border-gold-500/30 rounded-lg p-2 text-white focus:border-gold-500">
+                                        <option value="M">Masculino</option>
+                                        <option value="F">Femenino</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="text-gray-300 block mb-1">Edad Real</label>
+                                    <input type="number" id="bia_userAge" min="10" max="85" value="32" oninput="biaCalculateResults()" class="w-full bg-darkbg-900 border border-gold-500/30 rounded-lg p-2 text-white focus:border-gold-500">
+                                </div>
+                                <div>
+                                    <label class="text-gray-300 block mb-1">Estatura (cm) <span class="text-gold-400/70">· vinculado a Medidas</span></label>
+                                    <input type="number" step="0.5" id="bia_userHeight" value="176" oninput="syncSharedField('bia_userHeight','m_height')" class="w-full bg-darkbg-900 border border-gold-500/30 rounded-lg p-2 text-white focus:border-gold-500">
+                                </div>
+                                <div>
+                                    <label class="text-gray-300 block mb-1">Peso (kg) <span class="text-gold-400/70">· vinculado a Medidas</span></label>
+                                    <input type="number" step="0.1" id="bia_userWeight" value="74.5" oninput="syncSharedField('bia_userWeight','m_weight')" class="w-full bg-darkbg-900 border border-gold-500/30 rounded-lg p-2 text-white focus:border-gold-500">
+                                </div>
+                            </div>
+
+                            <div class="pt-3 border-t border-gold-500/10 space-y-3">
+                                <span class="text-[11px] font-bold gold-gradient-text block uppercase tracking-wider">Métricas Balanza Bioimpedancia</span>
+                                <div class="grid grid-cols-2 gap-3 text-xs">
+                                    <div>
+                                        <label class="text-gray-300 block mb-1">% Grasa Corporal</label>
+                                        <input type="number" step="0.1" id="bia_bodyFat" value="18.2" oninput="biaCalculateResults()" class="w-full bg-darkbg-900 border border-gold-500/30 rounded-lg p-2 text-white focus:border-gold-500">
+                                    </div>
+                                    <div>
+                                        <label class="text-gray-300 block mb-1">% Músculo Esq.</label>
+                                        <input type="number" step="0.1" id="bia_skeletalMuscle" value="37.5" oninput="biaCalculateResults()" class="w-full bg-darkbg-900 border border-gold-500/30 rounded-lg p-2 text-white focus:border-gold-500">
+                                    </div>
+                                    <div>
+                                        <label class="text-gray-300 block mb-1">Grasa Visceral</label>
+                                        <input type="number" id="bia_visceralFat" value="6" oninput="biaCalculateResults()" class="w-full bg-darkbg-900 border border-gold-500/30 rounded-lg p-2 text-white focus:border-gold-500">
+                                    </div>
+                                    <div>
+                                        <label class="text-gray-300 block mb-1">Metab. Basal (kcal)</label>
+                                        <input type="number" id="bia_basalRM" value="1710" oninput="biaCalculateResults()" class="w-full bg-darkbg-900 border border-gold-500/30 rounded-lg p-2 text-white focus:border-gold-500">
+                                    </div>
+                                    <div class="col-span-2">
+                                        <label class="text-gray-300 block mb-1">Edad Corporal (Body Age)</label>
+                                        <input type="number" id="bia_bodyAge" value="30" oninput="biaCalculateResults()" class="w-full bg-darkbg-900 border border-gold-500/30 rounded-lg p-2 text-white focus:border-gold-500">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="gold-btn w-full py-2.5 rounded-xl text-sm flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-rotate text-sm"></i>
+                                <span>Calcular Diagnóstico</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- RESULTS COLUMN -->
+                <div class="lg:col-span-7 space-y-4">
+
+                    <!-- Global Score Card -->
+                    <div class="glass-card rounded-2xl p-5">
+                        <div class="flex flex-col sm:flex-row items-center justify-between gap-5">
+                            <div class="flex items-center gap-4">
+                                <div class="relative w-20 h-20 flex items-center justify-center flex-shrink-0">
+                                    <svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+                                        <path class="text-darkbg-700" stroke-width="3.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                        <path id="bia_scoreCircle" class="text-gold-500 stroke-current transition-all duration-1000 ease-out" stroke-dasharray="88, 100" stroke-width="3.5" stroke-linecap="round" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                    </svg>
+                                    <div class="absolute flex flex-col items-center justify-center">
+                                        <span id="bia_scoreValue" class="text-xl font-black gold-gradient-text">88</span>
+                                        <span class="text-[7px] font-extrabold text-gray-400 uppercase tracking-widest">PUNTAJE</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex items-center gap-2 mb-1 flex-wrap">
+                                        <span id="bia_scoreBadge" class="px-2.5 py-0.5 bg-emerald-500/10 text-emerald-400 text-[11px] font-bold rounded-full border border-emerald-500/20">Excelente Estructura</span>
+                                    </div>
+                                    <h3 id="bia_scoreTitle" class="text-base font-bold font-cinzel text-white">Composición Atlética Balanceada</h3>
+                                    <p id="bia_scoreSubtitle" class="text-[11px] text-gray-300 mt-1 leading-relaxed">Niveles óptimos de masa magra y control efectivo de tejido graso visceral.</p>
+                                </div>
+                            </div>
+
+                            <div class="bg-darkbg-900 border border-gold-500/20 rounded-xl p-3 w-full sm:w-auto min-w-[170px] text-center sm:text-right flex-shrink-0">
+                                <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wider block">Edad Corporal</span>
+                                <div class="flex items-center justify-center sm:justify-end gap-2 mt-1">
+                                    <span id="bia_ageDiffTag" class="text-base font-black text-emerald-400">-2 Años más joven</span>
+                                </div>
+                                <p class="text-[10px] text-gray-400 mt-1">Real: <strong id="bia_valRealAge" class="text-gray-200">32</strong> | Balanza: <strong id="bia_valBodyAge" class="text-gray-200">30</strong></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- KPI Cards -->
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                        <div class="glass-card rounded-2xl p-3 border-gold-500/20">
+                            <span class="text-[9px] text-gray-400 font-bold block uppercase tracking-wider">IMC Total</span>
+                            <div class="flex items-baseline gap-1 mt-1">
+                                <span id="bia_cardBmiVal" class="text-xl font-black text-white">24.0</span>
+                                <span class="text-[9px] text-gray-400">kg/m²</span>
+                            </div>
+                            <div class="mt-1.5">
+                                <span id="bia_cardBmiBadge" class="px-2 py-0.5 text-[9px] font-bold rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Normal (0)</span>
+                            </div>
+                        </div>
+                        <div class="glass-card rounded-2xl p-3 border-gold-500/20">
+                            <span class="text-[9px] text-gray-400 font-bold block uppercase tracking-wider">% Grasa Corp.</span>
+                            <div class="flex items-baseline gap-1 mt-1">
+                                <span id="bia_cardFatVal" class="text-xl font-black text-white">18.2</span>
+                                <span class="text-[9px] text-gray-400">%</span>
+                            </div>
+                            <div class="mt-1.5">
+                                <span id="bia_cardFatBadge" class="px-2 py-0.5 text-[9px] font-bold rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Normal (0)</span>
+                            </div>
+                        </div>
+                        <div class="glass-card rounded-2xl p-3 border-gold-500/20">
+                            <span class="text-[9px] text-gray-400 font-bold block uppercase tracking-wider">% Músculo Esq.</span>
+                            <div class="flex items-baseline gap-1 mt-1">
+                                <span id="bia_cardMuscleVal" class="text-xl font-black text-white">37.5</span>
+                                <span class="text-[9px] text-gray-400">%</span>
+                            </div>
+                            <div class="mt-1.5">
+                                <span id="bia_cardMuscleBadge" class="px-2 py-0.5 text-[9px] font-bold rounded bg-gold-500/20 text-gold-300 border border-gold-500/30">Elevado (+)</span>
+                            </div>
+                        </div>
+                        <div class="glass-card rounded-2xl p-3 border-gold-500/20">
+                            <span class="text-[9px] text-gray-400 font-bold block uppercase tracking-wider">Grasa Visceral</span>
+                            <div class="flex items-baseline gap-1 mt-1">
+                                <span id="bia_cardVisceralVal" class="text-xl font-black text-white">6</span>
+                                <span class="text-[9px] text-gray-400">Nivel</span>
+                            </div>
+                            <div class="mt-1.5">
+                                <span id="bia_cardVisceralBadge" class="px-2 py-0.5 text-[9px] font-bold rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Normal (0)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Diagnostic Bars -->
+                    <div class="glass-card rounded-2xl p-5 space-y-4">
+                        <h3 class="font-cinzel text-sm font-bold text-white flex items-center gap-2 border-b border-gold-500/20 pb-2">
+                            <i class="fa-solid fa-chart-bar text-gold-400"></i> Escalas Diagnósticas (OMS)
+                        </h3>
+
+                        <div class="space-y-1.5">
+                            <div class="flex justify-between items-center text-xs">
+                                <span class="font-bold text-gray-300">IMC: <span id="bia_lblBmiVal" class="gold-gradient-text">24.0 kg/m²</span></span>
+                                <span id="bia_lblBmiStatus" class="font-semibold text-emerald-400">Normal (0)</span>
+                            </div>
+                            <div class="relative h-5 bg-darkbg-900 rounded-lg overflow-hidden flex text-[9px] font-bold text-white text-center border border-gold-500/10">
+                                <div class="w-[20%] bg-blue-600/80 flex items-center justify-center border-r border-black/30">Bajo (-)</div>
+                                <div class="w-[35%] bg-emerald-600/80 flex items-center justify-center border-r border-black/30">Normal (0)</div>
+                                <div class="w-[25%] bg-amber-600/80 flex items-center justify-center border-r border-black/30">Sobrepeso (+)</div>
+                                <div class="w-[20%] bg-rose-600/80 flex items-center justify-center">Obesidad (++)</div>
+                                <div id="bia_pinBmi" class="absolute top-0 bottom-0 w-2 bg-white rounded-full shadow-lg border border-black transition-all duration-500" style="left: 42%;"></div>
+                            </div>
+                        </div>
+
+                        <div class="space-y-1.5 pt-2 border-t border-gold-500/10">
+                            <div class="flex justify-between items-center text-xs">
+                                <span class="font-bold text-gray-300">% Grasa Corporal: <span id="bia_lblFatVal" class="gold-gradient-text">18.2 %</span></span>
+                                <span id="bia_lblFatStatus" class="font-semibold text-emerald-400">Normal (0)</span>
+                            </div>
+                            <div class="relative h-5 bg-darkbg-900 rounded-lg overflow-hidden flex text-[9px] font-bold text-white text-center border border-gold-500/10">
+                                <div class="w-[20%] bg-blue-600/80 flex items-center justify-center border-r border-black/30">Bajo (-)</div>
+                                <div class="w-[35%] bg-emerald-600/80 flex items-center justify-center border-r border-black/30">Normal (0)</div>
+                                <div class="w-[25%] bg-amber-600/80 flex items-center justify-center border-r border-black/30">Elevado (+)</div>
+                                <div class="w-[20%] bg-rose-600/80 flex items-center justify-center">Muy Elev. (++)</div>
+                                <div id="bia_pinFat" class="absolute top-0 bottom-0 w-2 bg-white rounded-full shadow-lg border border-black transition-all duration-500" style="left: 38%;"></div>
+                            </div>
+                        </div>
+
+                        <div class="space-y-1.5 pt-2 border-t border-gold-500/10">
+                            <div class="flex justify-between items-center text-xs">
+                                <span class="font-bold text-gray-300">% Músculo Esquelético: <span id="bia_lblMuscleVal" class="gold-gradient-text">37.5 %</span></span>
+                                <span id="bia_lblMuscleStatus" class="font-semibold text-gold-300">Elevado (+)</span>
+                            </div>
+                            <div class="relative h-5 bg-darkbg-900 rounded-lg overflow-hidden flex text-[9px] font-bold text-white text-center border border-gold-500/10">
+                                <div class="w-[20%] bg-rose-600/80 flex items-center justify-center border-r border-black/30">Bajo (-)</div>
+                                <div class="w-[35%] bg-emerald-600/80 flex items-center justify-center border-r border-black/30">Normal (0)</div>
+                                <div class="w-[25%] bg-gold-600/80 flex items-center justify-center border-r border-black/30">Elevado (+)</div>
+                                <div class="w-[20%] bg-purple-600/80 flex items-center justify-center">Muy Elev. (++)</div>
+                                <div id="bia_pinMuscle" class="absolute top-0 bottom-0 w-2 bg-white rounded-full shadow-lg border border-black transition-all duration-500" style="left: 65%;"></div>
+                            </div>
+                        </div>
+
+                        <div class="space-y-1.5 pt-2 border-t border-gold-500/10">
+                            <div class="flex justify-between items-center text-xs">
+                                <span class="font-bold text-gray-300">Nivel Grasa Visceral: <span id="bia_lblVisceralVal" class="gold-gradient-text">6</span></span>
+                                <span id="bia_lblVisceralStatus" class="font-semibold text-emerald-400">Normal (0)</span>
+                            </div>
+                            <div class="relative h-5 bg-darkbg-900 rounded-lg overflow-hidden flex text-[9px] font-bold text-white text-center border border-gold-500/10">
+                                <div class="w-[40%] bg-emerald-600/80 flex items-center justify-center border-r border-black/30">Normal (≤ 9)</div>
+                                <div class="w-[30%] bg-amber-600/80 flex items-center justify-center border-r border-black/30">Alto (10-14)</div>
+                                <div class="w-[30%] bg-rose-600/80 flex items-center justify-center">Muy Alto (≥ 15)</div>
+                                <div id="bia_pinVisceral" class="absolute top-0 bottom-0 w-2 bg-white rounded-full shadow-lg border border-black transition-all duration-500" style="left: 22%;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pie Chart + Energy -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="glass-card rounded-2xl p-4 flex flex-col justify-between">
+                            <h3 class="text-xs font-bold text-white mb-1 flex items-center gap-2 uppercase tracking-wider">
+                                <i class="fa-solid fa-chart-pie text-gold-400"></i> Desglose de Masa Corporal
+                            </h3>
+                            <div class="h-40 relative">
+                                <canvas id="bia_weightPieChart"></canvas>
+                            </div>
+                            <div class="grid grid-cols-3 gap-2 text-center text-xs pt-3 mt-2 border-t border-gold-500/10">
+                                <div class="bg-darkbg-900 p-2 rounded-xl border border-gold-500/10">
+                                    <span class="text-gray-400 block text-[9px]">Grasa</span>
+                                    <strong id="bia_kgFatText" class="text-amber-400 text-xs font-bold">13.6 kg</strong>
+                                </div>
+                                <div class="bg-darkbg-900 p-2 rounded-xl border border-gold-500/10">
+                                    <span class="text-gray-400 block text-[9px]">Músculo</span>
+                                    <strong id="bia_kgMuscleText" class="text-gold-300 text-xs font-bold">27.9 kg</strong>
+                                </div>
+                                <div class="bg-darkbg-900 p-2 rounded-xl border border-gold-500/10">
+                                    <span class="text-gray-400 block text-[9px]">Residual</span>
+                                    <strong id="bia_kgOtherText" class="text-gray-200 text-xs font-bold">33.0 kg</strong>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="glass-card rounded-2xl p-4 flex flex-col justify-between">
+                            <h3 class="text-xs font-bold text-white mb-1 flex items-center gap-2 uppercase tracking-wider">
+                                <i class="fa-solid fa-fire text-amber-500"></i> Gasto Calórico Estimado (RM)
+                            </h3>
+                            <div class="space-y-2.5 my-auto">
+                                <div class="bg-darkbg-900 p-2.5 rounded-xl border border-gold-500/20">
+                                    <div class="flex justify-between items-center text-xs mb-1">
+                                        <span class="font-semibold text-gray-300">Metabolismo Basal (RM)</span>
+                                        <span id="bia_basalValueDisplay" class="font-extrabold gold-gradient-text">1,710 kcal</span>
+                                    </div>
+                                    <div class="w-full bg-black/50 h-2 rounded-full overflow-hidden border border-gold-500/10">
+                                        <div class="bg-gold-500 h-full w-[68%] rounded-full"></div>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-2 gap-2 text-xs">
+                                    <div class="bg-darkbg-900 p-2 rounded-xl border border-gold-500/10">
+                                        <span class="text-gray-400 text-[9px] block">Actividad Moderada (+35%)</span>
+                                        <strong id="bia_tdeeModVal" class="text-white font-bold text-xs">~ 2,308 kcal</strong>
+                                    </div>
+                                    <div class="bg-darkbg-900 p-2 rounded-xl border border-gold-500/10">
+                                        <span class="text-gray-400 text-[9px] block">Actividad Alta (+55%)</span>
+                                        <strong id="bia_tdeeActiveVal" class="text-white font-bold text-xs">~ 2,650 kcal</strong>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-[10px] text-gray-400 italic pt-2 border-t border-gold-500/10">
+                                💡 A mayor masa muscular esquelética, mayor consumo metabólico basal.
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- BOTTOM TAB BAR -->
+    <nav class="tabbar" role="tablist" aria-label="Secciones">
+        <button class="tabbtn on" id="tb1" data-tab="0" role="tab" type="button"><i class="fa-solid fa-ruler"></i><span>Medidas</span></button>
+        <button class="tabbtn" id="tb2" data-tab="1" role="tab" type="button"><i class="fa-solid fa-gauge-high"></i><span>Resultados</span></button>
+        <button class="tabbtn" id="tb3" data-tab="2" role="tab" type="button"><i class="fa-solid fa-diagram-project"></i><span>Somatotipo</span></button>
+        <button class="tabbtn" id="tb4" data-tab="3" role="tab" type="button"><i class="fa-solid fa-chart-pie"></i><span>Composici&oacute;n</span></button>
+        <button class="tabbtn" id="tb5" data-tab="4" role="tab" type="button"><i class="fa-solid fa-bolt"></i><span>Bioimpedancia</span></button>
+    </nav>
+
+    <script>
+    /* Navegacion por pestañas de la version movil.
+       No toca calculateAll ni los graficos: solo muestra/oculta paneles
+       y avisa a Chart.js para que recalcule el tamaño del canvas. */
+    (function () {
+        var SUBS = ['Mediciones antropom&eacute;tricas','M&eacute;tricas e &iacute;ndices','Somatocarta Heath-Carter','Fraccionamiento y pliegues','Evaluaci&oacute;n de bioimpedancia'];
+        var tabs = document.querySelectorAll('.tabbtn');
+        var panels = document.querySelectorAll('.tabpanel');
+        var sub = document.getElementById('hdSub');
+
+        function show(n) {
+            panels.forEach(function (p, i) { p.classList.toggle('on', i === n); });
+            tabs.forEach(function (t, i) {
+                t.classList.toggle('on', i === n);
+                t.setAttribute('aria-selected', i === n ? 'true' : 'false');
+            });
+            if (sub) sub.innerHTML = SUBS[n];
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            /* Los canvas ocultos nacen con tamaño 0: al mostrarlos hay que redimensionar. */
+            setTimeout(function () {
+                window.dispatchEvent(new Event('resize'));
+                if (typeof bodyCompChartInstance !== 'undefined' && bodyCompChartInstance) bodyCompChartInstance.resize();
+                if (typeof skinfoldChartInstance !== 'undefined' && skinfoldChartInstance) skinfoldChartInstance.resize();
+                if (typeof calculateAll === 'function') calculateAll();
+                if (n === 4 && typeof biaCalculateResults === 'function') biaCalculateResults();
+            }, 60);
+        }
+        tabs.forEach(function (t) {
+            t.addEventListener('click', function () { show(+t.dataset.tab); });
+        });
+
+        /* =========================================================
+           BASE DE INTEGRACION: guardado por pestaña.
+           Esta herramienta esta pensada para vivir dentro de otra
+           aplicacion web (sin pestaña de Perfil propia). saveData()
+           no depende de un backend: solo empaqueta el estado actual
+           y lo entrega por 3 vias, para que la app contenedora use
+           la que le resulte mas comoda:
+             1) window.postMessage  -> si esto corre dentro de un <iframe>
+             2) CustomEvent 'jintra:save' -> si esto vive en el mismo DOM del host
+             3) localStorage 'jintra_pro_data' -> respaldo para pruebas standalone
+           ========================================================= */
+        /* Sincroniza campos duplicados entre "Medidas Básicas" y
+           "Datos de Bioimpedancia" (peso y estatura): al cambiar uno
+           se copia al otro y se recalculan ambas pestañas al instante. */
+        window.syncSharedField = function (sourceId, targetId) {
+            var src = document.getElementById(sourceId);
+            var tgt = document.getElementById(targetId);
+            if (src && tgt && tgt.value !== src.value) tgt.value = src.value;
+            if (typeof calculateAll === 'function') calculateAll();
+            if (typeof biaCalculateResults === 'function') biaCalculateResults();
+        };
+
+        window.collectAllData = function () {
+            var data = {};
+            document.querySelectorAll('input[id], select[id], textarea[id]').forEach(function (el) {
+                if (el.type === 'checkbox' || el.type === 'radio') data[el.id] = el.checked;
+                else data[el.id] = el.value;
+            });
+            data.isakLevel = (typeof isakLevel !== 'undefined') ? isakLevel : null;
+            data.savedAt = new Date().toISOString();
+            return data;
+        };
+
+        window.saveData = function (section) {
+            if (typeof calculateAll === 'function') calculateAll();
+            var data = window.collectAllData();
+            var payload = { section: section || null, data: data };
+
+            try {
+                if (window.parent && window.parent !== window) {
+                    window.parent.postMessage({ type: 'jintra:save', payload: payload }, '*');
+                }
+            } catch (e) { /* fuera de iframe o bloqueado por CORS: se ignora */ }
+
+            window.dispatchEvent(new CustomEvent('jintra:save', { detail: payload }));
+
+            try { localStorage.setItem('jintra_pro_data', JSON.stringify(data)); } catch (e) {}
+
+            var toast = document.getElementById('saveToast');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'saveToast';
+                toast.className = 'save-toast';
+                document.body.appendChild(toast);
+            }
+            toast.innerText = 'Guardado ✓';
+            toast.classList.add('show');
+            clearTimeout(window._saveToastTimer);
+            window._saveToastTimer = setTimeout(function () { toast.classList.remove('show'); }, 1600);
+        };
+
+        /* Sub-navegacion dentro de Medidas */
+        var nav = document.getElementById('measureNav');
+        if (nav) {
+            var chips = nav.querySelectorAll('button');
+            chips.forEach(function (c) {
+                c.addEventListener('click', function () {
+                    chips.forEach(function (o) { o.classList.remove('on'); });
+                    c.classList.add('on');
+                    var el = document.getElementById(c.dataset.goto);
+                    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                });
+            });
+        }
+    })();
+    </script>
+
+    <!-- HIDDEN PRINTABLE CONTAINER FOR PDF REPORT GENERATION -->
+    <div id="pdfReportContainer">
+
+        <!-- =================== PÁGINA 1 — PORTADA Y COMPOSICIÓN CORPORAL =================== -->
+        <div class="jintra-page" id="pdfPage1">
+            <div class="jintra-accent-line"></div>
+            <div class="jintra-header">
+                <div class="brand">
+                    <div style="width:42px;height:42px;background:#000;border:1px solid #DD2C37;border-radius:9px;padding:6px;display:flex;align-items:center;justify-content:center;"><div class="jintra-logo-icon" style="width:100%;height:100%;"></div></div>
+                    <div>
+                        <div class="brand-title" style="-webkit-text-fill-color:initial;background:none;line-height:0;margin-bottom:6px"><svg width="114" height="16" viewBox="3 5 927 130" role="img" aria-label="JYNTRA" style="display:block"><path fill-rule="evenodd" fill="#FFFFFF" d="M 330.50 6.16 C 325.66 7.96, 322.36 10.71, 320.62 14.38 C 319.18 17.41, 319 24.25, 319 74.40 L 319 131 337.50 131 L 356 131 356 98 C 356 79.85, 356.33 65.00, 356.75 65.00 C 357.16 65.01, 366.95 73.62, 378.50 84.15 C 436.64 137.14, 431.86 133.56, 443.39 132.82 C 447.84 132.54, 450.51 131.76, 452.90 130.06 C 459.10 125.65, 459 126.75, 459 64.03 L 459 7 441.01 7 L 423.02 7 422.76 41.42 L 422.50 75.84 398.90 54.17 C 385.93 42.25, 369.67 27.25, 362.79 20.84 C 355.90 14.43, 348.89 8.48, 347.21 7.61 C 343.20 5.53, 334.26 4.76, 330.50 6.16 M 817.33 5.95 C 811.23 7.41, 805.49 11.70, 801.00 18.17 C 798.58 21.65, 792.93 29.67, 788.42 36 C 781.35 45.93, 756.28 82.36, 731.82 118.24 C 727.79 124.15, 724.19 128.87, 723.83 128.74 C 722.32 128.19, 694.42 92.14, 695.13 91.64 C 695.33 91.50, 698.61 89.88, 702.42 88.04 C 711.18 83.81, 717.28 77.74, 721.32 69.20 C 724.36 62.78, 724.50 61.97, 724.50 49.97 C 724.50 37.85, 724.39 37.24, 721.21 30.79 C 717.33 22.90, 710.01 15.82, 702.12 12.30 C 690.78 7.25, 687.26 6.95, 642.86 7.23 L 601.63 7.50 589.36 23 C 582.61 31.52, 577.07 38.83, 577.04 39.25 C 577.02 39.66, 598.83 40, 625.53 40 C 678.18 40, 678.52 40.03, 682.83 45.51 C 685.77 49.25, 685.81 56.69, 682.91 60.38 C 678.01 66.61, 679.29 66.47, 624.75 66.79 L 575 67.08 575 99.04 L 575 131 595 131 L 615 131 615 114.50 L 615 98 633.92 98 L 652.84 98 666.60 114.50 L 680.36 131 724.09 131 L 767.81 131 795.77 90.75 C 811.15 68.61, 824.25 50.50, 824.88 50.50 C 825.96 50.50, 857.92 95.64, 857.97 97.23 C 857.98 97.63, 846.24 98.08, 831.86 98.23 L 805.73 98.50 794.75 114.30 C 788.72 123, 783.98 130.31, 784.23 130.56 C 784.47 130.81, 817.17 130.89, 856.88 130.75 L 929.09 130.50 917.74 114.50 C 888.03 72.64, 861.64 35.40, 854.11 24.72 C 849.54 18.25, 844.30 11.80, 842.45 10.39 C 836.33 5.72, 825.98 3.89, 817.33 5.95 M 85.97 44.25 C 85.95 86.10, 85.81 86.98, 78.61 92.48 C 72.26 97.32, 69.04 97.90, 48.41 97.95 L 29.32 98 24.86 103.75 C 22.42 106.91, 16.66 114.37, 12.07 120.32 L 3.73 131.14 42.61 130.76 C 85.65 130.33, 85.34 130.37, 99.48 123.25 C 112.83 116.53, 123.96 102.30, 126.89 88.20 C 127.58 84.88, 128 68.71, 128 44.95 L 128 7 107 7 L 86 7 85.97 44.25 M 144.81 12.75 C 147.56 15.91, 162.44 32.45, 177.86 49.50 L 205.90 80.50 205.95 105.77 L 206 131.04 226.25 130.77 L 246.50 130.50 246.76 105.00 L 247.03 79.51 253.35 73.00 C 260.98 65.14, 304.56 17.26, 311.40 9.23 L 313.31 7 287.21 7 L 261.11 7 244.30 27.43 C 235.06 38.67, 227.27 47.88, 227 47.89 C 226.72 47.91, 218.89 38.71, 209.59 27.46 L 192.69 7 166.25 7 L 139.80 7 144.81 12.75 M 466.22 23.25 L 466.50 39.50 481.95 39.77 C 492.77 39.97, 497.65 40.42, 498.21 41.27 C 498.65 41.95, 498.99 60.50, 498.96 82.50 C 498.93 104.50, 498.93 124.42, 498.95 126.77 L 499 131.04 518.75 130.77 L 538.50 130.50 538.76 85.25 L 539.02 40 548.85 40 L 558.67 40 563.54 33.75 C 566.22 30.31, 571.95 22.88, 576.26 17.25 L 584.12 7 525.03 7 L 465.95 7 466.22 23.25"/></svg></div>
+                        <div class="brand-sub">Anamnesis y Evaluación Cineantropométrica</div>
+                    </div>
+                </div>
+                <div class="meta">
+                    <div class="pname pdfHeaderName">--</div>
+                    <div>Página 1</div>
+                </div>
+            </div>
+
+            <div class="jintra-body space-y-6">
+                <!-- HERO -->
+                <div class="jintra-hero" style="border-left:6px solid #DD2C37;">
+                    <p class="jintra-label" style="color:#FFFFFF;">Informe de Evaluación Cineantropométrica</p>
+                    <h1 style="color:#fff;font-size:26px;font-weight:800;margin-top:6px;" id="pdf_athlete_name">--</h1>
+                    <p style="color:#FFFFFF;font-size:12px;font-weight:600;margin-top:4px;" id="pdf_athlete_sport">--</p>
+                    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:18px;border-top:1px solid rgba(221,44,55,0.3);padding-top:14px;">
+                        <div><p class="jintra-label" style="color:#8F8F8F;">Sexo</p><p style="color:#fff;font-weight:700;font-size:13px;" id="pdf_athlete_gender">--</p></div>
+                        <div><p class="jintra-label" style="color:#8F8F8F;">Edad</p><p style="color:#fff;font-weight:700;font-size:13px;" id="pdf_athlete_age">--</p></div>
+                        <div><p class="jintra-label" style="color:#8F8F8F;">Peso</p><p style="color:#fff;font-weight:700;font-size:13px;" id="pdf_athlete_weight">--</p></div>
+                        <div><p class="jintra-label" style="color:#8F8F8F;">Talla</p><p style="color:#fff;font-weight:700;font-size:13px;" id="pdf_athlete_height">--</p></div>
+                    </div>
+                </div>
+
+                <!-- KPI TITLE -->
+                <div>
+                    <p class="jintra-section-title">Composición corporal — resumen</p>
+                    <div class="jintra-section-rule"></div>
+                </div>
+
+                <!-- KPI CARDS -->
+                <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;">
+                    <div class="jintra-card" style="border-top:4px solid #38bdf8;">
+                        <p class="jintra-label">IMC</p>
+                        <p style="font-size:20px;font-weight:800;color:#575757;margin-top:4px;" id="pdf_kpi_bmi">--</p>
+                        <p style="font-size:9px;color:#727272;" id="pdf_kpi_bmi_cat">--</p>
+                    </div>
+                    <div class="jintra-card" style="border-top:4px solid #ef4444;">
+                        <p class="jintra-label">% Masa grasa</p>
+                        <p style="font-size:20px;font-weight:800;color:#dc2626;margin-top:4px;" id="pdf_kpi_fat_pct">--</p>
+                        <p style="font-size:9px;color:#727272;" id="pdf_kpi_fat_kg">--</p>
+                    </div>
+                    <div class="jintra-card" style="border-top:4px solid #3A3A3A;">
+                        <p class="jintra-label">% Masa muscular</p>
+                        <p style="font-size:20px;font-weight:800;color:#9F9F9F;margin-top:4px;" id="pdf_kpi_muscle_pct">--</p>
+                        <p style="font-size:9px;color:#727272;" id="pdf_kpi_muscle_kg">--</p>
+                    </div>
+                    <div class="jintra-card" style="border-top:4px solid #DD2C37;">
+                        <p class="jintra-label">Suma 6 pliegues</p>
+                        <p style="font-size:20px;font-weight:800;color:#9F9F9F;margin-top:4px;" id="pdf_kpi_sum6">--</p>
+                        <p style="font-size:9px;color:#727272;">mm · Perfil ISAK</p>
+                    </div>
+                </div>
+
+                <!-- Composition bar -->
+                <div>
+                    <div style="display:flex;height:22px;border-radius:6px;overflow:hidden;font-size:9px;font-weight:700;color:#fff;" id="pdf_comp_bar">
+                        <div id="pdf_bar_musc" style="background:#8E1C23;display:flex;align-items:center;justify-content:center;">--</div>
+                        <div id="pdf_bar_fat" style="background:#ef4444;display:flex;align-items:center;justify-content:center;">--</div>
+                        <div id="pdf_bar_bone" style="background:#DD2C37;display:flex;align-items:center;justify-content:center;">--</div>
+                        <div id="pdf_bar_res" style="background:#38bdf8;display:flex;align-items:center;justify-content:center;">--</div>
+                    </div>
+                    <div style="display:flex;gap:16px;margin-top:8px;font-size:9px;color:#454545;">
+                        <span><i style="display:inline-block;width:8px;height:8px;background:#8E1C23;border-radius:50%;margin-right:4px;"></i>Masa muscular</span>
+                        <span><i style="display:inline-block;width:8px;height:8px;background:#ef4444;border-radius:50%;margin-right:4px;"></i>Masa grasa</span>
+                        <span><i style="display:inline-block;width:8px;height:8px;background:#DD2C37;border-radius:50%;margin-right:4px;"></i>Masa ósea</span>
+                        <span><i style="display:inline-block;width:8px;height:8px;background:#38bdf8;border-radius:50%;margin-right:4px;"></i>Masa residual</span>
+                    </div>
+                </div>
+
+                <!-- Charts + registered data -->
+                <div class="jintra-card" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;align-items:center;">
+                    <div style="text-align:center;">
+                        <p class="jintra-label" style="margin-bottom:6px;">Fraccionamiento (5 masas)</p>
+                        <img id="pdf_bodycomp_image1" style="width:150px;height:150px;margin:0 auto;" alt="Composición corporal">
+                    </div>
+                    <div style="text-align:center;">
+                        <p class="jintra-label" style="margin-bottom:6px;">Distribución de pliegues</p>
+                        <img id="pdf_skinfold_image1" style="width:170px;margin:0 auto;" alt="Pliegues">
+                    </div>
+                    <div>
+                        <p class="jintra-label" style="margin-bottom:6px;">Datos registrados</p>
+                        <div style="font-size:11px;line-height:2;color:#2F2F2F;">
+                            <div style="display:flex;justify-content:space-between;"><span>Masa / Estatura</span><b id="pdf_kpi_weight_height">--</b></div>
+                            <div style="display:flex;justify-content:space-between;"><span>Suma 8 pliegues</span><b id="pdf_reg_sum8">--</b></div>
+                            <div style="display:flex;justify-content:space-between;"><span>Masa grasa</span><b id="pdf_reg_fatkg">--</b></div>
+                            <div style="display:flex;justify-content:space-between;"><span>Masa muscular</span><b id="pdf_reg_musclekg">--</b></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="jintra-info-box">
+                    <p class="jintra-label" style="color:#FFFFFF;margin-bottom:4px;">Cómo leer este informe</p>
+                    <p>Todos los valores se obtienen mediante fórmulas antropométricas estandarizadas (Heath-Carter, Kerr, Yuhasz) a partir de mediciones tomadas siguiendo el protocolo ISAK. Los porcentajes de fraccionamiento son estimaciones, no una medición directa de composición corporal (DEXA/BIA).</p>
+                </div>
+            </div>
+
+            <div class="jintra-footer">
+                <span>JYNTRA · Documento confidencial · Los datos no se almacenan en ninguna base de datos</span>
+                <span class="pdfFooterDate">--</span>
+            </div>
+        </div>
+
+        <!-- =================== PÁGINA 2 — EVALUACIÓN ANTROPOMÉTRICA =================== -->
+        <div class="jintra-page" id="pdfPage2">
+            <div class="jintra-accent-line"></div>
+            <div class="jintra-header">
+                <div class="brand">
+                    <div style="width:42px;height:42px;background:#000;border:1px solid #DD2C37;border-radius:9px;padding:6px;display:flex;align-items:center;justify-content:center;"><div class="jintra-logo-icon" style="width:100%;height:100%;"></div></div>
+                    <div>
+                        <div class="brand-title" style="-webkit-text-fill-color:initial;background:none;line-height:0;margin-bottom:6px"><svg width="114" height="16" viewBox="3 5 927 130" role="img" aria-label="JYNTRA" style="display:block"><path fill-rule="evenodd" fill="#FFFFFF" d="M 330.50 6.16 C 325.66 7.96, 322.36 10.71, 320.62 14.38 C 319.18 17.41, 319 24.25, 319 74.40 L 319 131 337.50 131 L 356 131 356 98 C 356 79.85, 356.33 65.00, 356.75 65.00 C 357.16 65.01, 366.95 73.62, 378.50 84.15 C 436.64 137.14, 431.86 133.56, 443.39 132.82 C 447.84 132.54, 450.51 131.76, 452.90 130.06 C 459.10 125.65, 459 126.75, 459 64.03 L 459 7 441.01 7 L 423.02 7 422.76 41.42 L 422.50 75.84 398.90 54.17 C 385.93 42.25, 369.67 27.25, 362.79 20.84 C 355.90 14.43, 348.89 8.48, 347.21 7.61 C 343.20 5.53, 334.26 4.76, 330.50 6.16 M 817.33 5.95 C 811.23 7.41, 805.49 11.70, 801.00 18.17 C 798.58 21.65, 792.93 29.67, 788.42 36 C 781.35 45.93, 756.28 82.36, 731.82 118.24 C 727.79 124.15, 724.19 128.87, 723.83 128.74 C 722.32 128.19, 694.42 92.14, 695.13 91.64 C 695.33 91.50, 698.61 89.88, 702.42 88.04 C 711.18 83.81, 717.28 77.74, 721.32 69.20 C 724.36 62.78, 724.50 61.97, 724.50 49.97 C 724.50 37.85, 724.39 37.24, 721.21 30.79 C 717.33 22.90, 710.01 15.82, 702.12 12.30 C 690.78 7.25, 687.26 6.95, 642.86 7.23 L 601.63 7.50 589.36 23 C 582.61 31.52, 577.07 38.83, 577.04 39.25 C 577.02 39.66, 598.83 40, 625.53 40 C 678.18 40, 678.52 40.03, 682.83 45.51 C 685.77 49.25, 685.81 56.69, 682.91 60.38 C 678.01 66.61, 679.29 66.47, 624.75 66.79 L 575 67.08 575 99.04 L 575 131 595 131 L 615 131 615 114.50 L 615 98 633.92 98 L 652.84 98 666.60 114.50 L 680.36 131 724.09 131 L 767.81 131 795.77 90.75 C 811.15 68.61, 824.25 50.50, 824.88 50.50 C 825.96 50.50, 857.92 95.64, 857.97 97.23 C 857.98 97.63, 846.24 98.08, 831.86 98.23 L 805.73 98.50 794.75 114.30 C 788.72 123, 783.98 130.31, 784.23 130.56 C 784.47 130.81, 817.17 130.89, 856.88 130.75 L 929.09 130.50 917.74 114.50 C 888.03 72.64, 861.64 35.40, 854.11 24.72 C 849.54 18.25, 844.30 11.80, 842.45 10.39 C 836.33 5.72, 825.98 3.89, 817.33 5.95 M 85.97 44.25 C 85.95 86.10, 85.81 86.98, 78.61 92.48 C 72.26 97.32, 69.04 97.90, 48.41 97.95 L 29.32 98 24.86 103.75 C 22.42 106.91, 16.66 114.37, 12.07 120.32 L 3.73 131.14 42.61 130.76 C 85.65 130.33, 85.34 130.37, 99.48 123.25 C 112.83 116.53, 123.96 102.30, 126.89 88.20 C 127.58 84.88, 128 68.71, 128 44.95 L 128 7 107 7 L 86 7 85.97 44.25 M 144.81 12.75 C 147.56 15.91, 162.44 32.45, 177.86 49.50 L 205.90 80.50 205.95 105.77 L 206 131.04 226.25 130.77 L 246.50 130.50 246.76 105.00 L 247.03 79.51 253.35 73.00 C 260.98 65.14, 304.56 17.26, 311.40 9.23 L 313.31 7 287.21 7 L 261.11 7 244.30 27.43 C 235.06 38.67, 227.27 47.88, 227 47.89 C 226.72 47.91, 218.89 38.71, 209.59 27.46 L 192.69 7 166.25 7 L 139.80 7 144.81 12.75 M 466.22 23.25 L 466.50 39.50 481.95 39.77 C 492.77 39.97, 497.65 40.42, 498.21 41.27 C 498.65 41.95, 498.99 60.50, 498.96 82.50 C 498.93 104.50, 498.93 124.42, 498.95 126.77 L 499 131.04 518.75 130.77 L 538.50 130.50 538.76 85.25 L 539.02 40 548.85 40 L 558.67 40 563.54 33.75 C 566.22 30.31, 571.95 22.88, 576.26 17.25 L 584.12 7 525.03 7 L 465.95 7 466.22 23.25"/></svg></div>
+                        <div class="brand-sub">Anamnesis y Evaluación Cineantropométrica</div>
+                    </div>
+                </div>
+                <div class="meta">
+                    <div class="pname pdfHeaderName">--</div>
+                    <div>Página 2</div>
+                </div>
+            </div>
+
+            <div class="jintra-body space-y-6">
+                <div>
+                    <p class="jintra-section-title">Evaluación antropométrica</p>
+                    <div class="jintra-section-rule"></div>
+                </div>
+
+                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;">
+                    <div class="jintra-card" style="border-top:4px solid #3A3A3A;">
+                        <p class="jintra-label">IMC</p>
+                        <p style="font-size:18px;font-weight:800;margin-top:4px;" id="pdf2_bmi">--</p>
+                        <p style="font-size:9px;color:#727272;" id="pdf2_bmi_cat">--</p>
+                    </div>
+                    <div class="jintra-card" style="border-top:4px solid #DD2C37;">
+                        <p class="jintra-label">Índice cintura-cadera (ICC)</p>
+                        <p style="font-size:18px;font-weight:800;margin-top:4px;" id="pdf2_whr">--</p>
+                        <p style="font-size:9px;color:#727272;" id="pdf2_whr_risk">--</p>
+                    </div>
+                    <div class="jintra-card" style="border-top:4px solid #191919;">
+                        <p class="jintra-label">Índice cintura-talla (ICT)</p>
+                        <p style="font-size:18px;font-weight:800;margin-top:4px;" id="pdf2_whtr">--</p>
+                        <p style="font-size:9px;color:#727272;">Referencia &lt; 0.5</p>
+                    </div>
+                    <div class="jintra-card" style="border-top:4px solid #38bdf8;">
+                        <p class="jintra-label">Masa libre de grasa</p>
+                        <p style="font-size:18px;font-weight:800;margin-top:4px;" id="pdf2_mlg">--</p>
+                        <p style="font-size:9px;color:#727272;" id="pdf2_mlg_pct">--</p>
+                    </div>
+                    <div class="jintra-card" style="border-top:4px solid #DD2C37;">
+                        <p class="jintra-label">Relación músculo/hueso</p>
+                        <p style="font-size:18px;font-weight:800;margin-top:4px;" id="pdf2_mb">--</p>
+                        <p style="font-size:9px;color:#727272;">Kg músculo / kg hueso</p>
+                    </div>
+                    <div class="jintra-card" style="border-top:4px solid #DD2C37;">
+                        <p class="jintra-label">Fórmula Yuhasz (% grasa)</p>
+                        <p style="font-size:18px;font-weight:800;margin-top:4px;" id="pdf2_yuhasz">--</p>
+                        <p style="font-size:9px;color:#727272;">Específica deportistas</p>
+                    </div>
+                </div>
+
+                <div>
+                    <p class="jintra-section-title" style="font-size:13px;">Perímetros corregidos</p>
+                    <div class="jintra-section-rule"></div>
+                </div>
+                <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;text-align:center;">
+                    <div class="jintra-card"><p class="jintra-label">Brazo flex. corregido</p><p style="font-weight:700;font-size:14px;margin-top:4px;" id="pdf2_corr_arm">--</p></div>
+                    <div class="jintra-card"><p class="jintra-label">Pantorrilla corregida</p><p style="font-weight:700;font-size:14px;margin-top:4px;" id="pdf2_corr_calf">--</p></div>
+                    <div class="jintra-card"><p class="jintra-label">Envergadura</p><p style="font-weight:700;font-size:14px;margin-top:4px;" id="pdf2_span">--</p></div>
+                    <div class="jintra-card"><p class="jintra-label">Talla sentado</p><p style="font-weight:700;font-size:14px;margin-top:4px;" id="pdf2_sitting">--</p></div>
+                </div>
+
+                <div>
+                    <p class="jintra-section-title" style="font-size:13px;">Datos del evaluado y antropometrista</p>
+                    <div class="jintra-section-rule"></div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;font-size:11px;">
+                    <div class="space-y-3">
+                        <div><p class="jintra-label">Nombre completo</p><p style="font-weight:600;" id="pdf2_name">--</p></div>
+                        <div><p class="jintra-label">Edad / Sexo</p><p style="font-weight:600;" id="pdf2_age_gender">--</p></div>
+                        <div><p class="jintra-label">Deporte / Especialidad</p><p style="font-weight:600;" id="pdf2_sport">--</p></div>
+                    </div>
+                    <div class="space-y-3">
+                        <div><p class="jintra-label">Antropometrista</p><p style="font-weight:600;" id="pdf2_evaluator">--</p></div>
+                        <div><p class="jintra-label">Fecha de evaluación</p><p style="font-weight:600;" id="pdf2_date">--</p></div>
+                        <div><p class="jintra-label">Nivel ISAK</p><p style="font-weight:600;" id="pdf2_level">--</p></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="jintra-footer">
+                <span>JYNTRA · Documento confidencial · Los datos no se almacenan en ninguna base de datos</span>
+                <span class="pdfFooterDate">--</span>
+            </div>
+        </div>
+
+        <!-- =================== PÁGINA 3 — SOMATOTIPO HEATH-CARTER =================== -->
+        <div class="jintra-page" id="pdfPage3">
+            <div class="jintra-accent-line"></div>
+            <div class="jintra-header">
+                <div class="brand">
+                    <div style="width:42px;height:42px;background:#000;border:1px solid #DD2C37;border-radius:9px;padding:6px;display:flex;align-items:center;justify-content:center;"><div class="jintra-logo-icon" style="width:100%;height:100%;"></div></div>
+                    <div>
+                        <div class="brand-title" style="-webkit-text-fill-color:initial;background:none;line-height:0;margin-bottom:6px"><svg width="114" height="16" viewBox="3 5 927 130" role="img" aria-label="JYNTRA" style="display:block"><path fill-rule="evenodd" fill="#FFFFFF" d="M 330.50 6.16 C 325.66 7.96, 322.36 10.71, 320.62 14.38 C 319.18 17.41, 319 24.25, 319 74.40 L 319 131 337.50 131 L 356 131 356 98 C 356 79.85, 356.33 65.00, 356.75 65.00 C 357.16 65.01, 366.95 73.62, 378.50 84.15 C 436.64 137.14, 431.86 133.56, 443.39 132.82 C 447.84 132.54, 450.51 131.76, 452.90 130.06 C 459.10 125.65, 459 126.75, 459 64.03 L 459 7 441.01 7 L 423.02 7 422.76 41.42 L 422.50 75.84 398.90 54.17 C 385.93 42.25, 369.67 27.25, 362.79 20.84 C 355.90 14.43, 348.89 8.48, 347.21 7.61 C 343.20 5.53, 334.26 4.76, 330.50 6.16 M 817.33 5.95 C 811.23 7.41, 805.49 11.70, 801.00 18.17 C 798.58 21.65, 792.93 29.67, 788.42 36 C 781.35 45.93, 756.28 82.36, 731.82 118.24 C 727.79 124.15, 724.19 128.87, 723.83 128.74 C 722.32 128.19, 694.42 92.14, 695.13 91.64 C 695.33 91.50, 698.61 89.88, 702.42 88.04 C 711.18 83.81, 717.28 77.74, 721.32 69.20 C 724.36 62.78, 724.50 61.97, 724.50 49.97 C 724.50 37.85, 724.39 37.24, 721.21 30.79 C 717.33 22.90, 710.01 15.82, 702.12 12.30 C 690.78 7.25, 687.26 6.95, 642.86 7.23 L 601.63 7.50 589.36 23 C 582.61 31.52, 577.07 38.83, 577.04 39.25 C 577.02 39.66, 598.83 40, 625.53 40 C 678.18 40, 678.52 40.03, 682.83 45.51 C 685.77 49.25, 685.81 56.69, 682.91 60.38 C 678.01 66.61, 679.29 66.47, 624.75 66.79 L 575 67.08 575 99.04 L 575 131 595 131 L 615 131 615 114.50 L 615 98 633.92 98 L 652.84 98 666.60 114.50 L 680.36 131 724.09 131 L 767.81 131 795.77 90.75 C 811.15 68.61, 824.25 50.50, 824.88 50.50 C 825.96 50.50, 857.92 95.64, 857.97 97.23 C 857.98 97.63, 846.24 98.08, 831.86 98.23 L 805.73 98.50 794.75 114.30 C 788.72 123, 783.98 130.31, 784.23 130.56 C 784.47 130.81, 817.17 130.89, 856.88 130.75 L 929.09 130.50 917.74 114.50 C 888.03 72.64, 861.64 35.40, 854.11 24.72 C 849.54 18.25, 844.30 11.80, 842.45 10.39 C 836.33 5.72, 825.98 3.89, 817.33 5.95 M 85.97 44.25 C 85.95 86.10, 85.81 86.98, 78.61 92.48 C 72.26 97.32, 69.04 97.90, 48.41 97.95 L 29.32 98 24.86 103.75 C 22.42 106.91, 16.66 114.37, 12.07 120.32 L 3.73 131.14 42.61 130.76 C 85.65 130.33, 85.34 130.37, 99.48 123.25 C 112.83 116.53, 123.96 102.30, 126.89 88.20 C 127.58 84.88, 128 68.71, 128 44.95 L 128 7 107 7 L 86 7 85.97 44.25 M 144.81 12.75 C 147.56 15.91, 162.44 32.45, 177.86 49.50 L 205.90 80.50 205.95 105.77 L 206 131.04 226.25 130.77 L 246.50 130.50 246.76 105.00 L 247.03 79.51 253.35 73.00 C 260.98 65.14, 304.56 17.26, 311.40 9.23 L 313.31 7 287.21 7 L 261.11 7 244.30 27.43 C 235.06 38.67, 227.27 47.88, 227 47.89 C 226.72 47.91, 218.89 38.71, 209.59 27.46 L 192.69 7 166.25 7 L 139.80 7 144.81 12.75 M 466.22 23.25 L 466.50 39.50 481.95 39.77 C 492.77 39.97, 497.65 40.42, 498.21 41.27 C 498.65 41.95, 498.99 60.50, 498.96 82.50 C 498.93 104.50, 498.93 124.42, 498.95 126.77 L 499 131.04 518.75 130.77 L 538.50 130.50 538.76 85.25 L 539.02 40 548.85 40 L 558.67 40 563.54 33.75 C 566.22 30.31, 571.95 22.88, 576.26 17.25 L 584.12 7 525.03 7 L 465.95 7 466.22 23.25"/></svg></div>
+                        <div class="brand-sub">Anamnesis y Evaluación Cineantropométrica</div>
+                    </div>
+                </div>
+                <div class="meta">
+                    <div class="pname pdfHeaderName">--</div>
+                    <div>Página 3</div>
+                </div>
+            </div>
+
+            <div class="jintra-body space-y-5">
+                <!-- Meal-style header card for somatotype -->
+                <div style="background:#0D0D0D;border-radius:10px;padding:16px 20px;border-left:6px solid #DD2C37;display:flex;justify-content:space-between;align-items:center;">
+                    <div>
+                        <p style="color:#8F8F8F;font-size:10px;letter-spacing:1px;" id="pdf3_class_label">Clasificación somatotípica</p>
+                        <h2 style="color:#fff;font-size:19px;font-weight:800;margin-top:2px;" id="pdf_somato_class">--</h2>
+                    </div>
+                    <div style="display:flex;gap:8px;">
+                        <div style="background:#ef4444;color:#fff;border-radius:8px;padding:8px 12px;text-align:center;">
+                            <p style="font-size:8px;">ENDO</p><p style="font-weight:800;" id="pdf_endo">--</p>
+                        </div>
+                        <div style="background:#8E1C23;color:#fff;border-radius:8px;padding:8px 12px;text-align:center;">
+                            <p style="font-size:8px;">MESO</p><p style="font-weight:800;" id="pdf_meso">--</p>
+                        </div>
+                        <div style="background:#38bdf8;color:#fff;border-radius:8px;padding:8px 12px;text-align:center;">
+                            <p style="font-size:8px;">ECTO</p><p style="font-weight:800;" id="pdf_ecto">--</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="jintra-card" style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:center;">
+                    <div style="text-align:center;">
+                        <img id="pdf_somato_image" style="width:220px;height:220px;margin:0 auto;border-radius:8px;" alt="Somatocarta">
+                        <p style="font-size:10px;color:#727272;margin-top:6px;" id="pdf_somato_coords">--</p>
+                    </div>
+                    <div>
+                        <p class="jintra-label" style="margin-bottom:10px;">Aporte de cada componente</p>
+                        <div style="font-size:10px;color:#2F2F2F;">
+                            <div style="display:flex;justify-content:space-between;margin-bottom:2px;"><span>Endomorfia (grasa relativa)</span><b id="pdf3_endo_txt">--</b></div>
+                            <div style="width:100%;background:#DFE0E1;height:8px;border-radius:4px;overflow:hidden;margin-bottom:10px;"><div id="pdf3_bar_endo" style="background:#ef4444;height:100%;"></div></div>
+                            <div style="display:flex;justify-content:space-between;margin-bottom:2px;"><span>Mesomorfia (desarrollo muscular)</span><b id="pdf3_meso_txt">--</b></div>
+                            <div style="width:100%;background:#DFE0E1;height:8px;border-radius:4px;overflow:hidden;margin-bottom:10px;"><div id="pdf3_bar_meso" style="background:#8E1C23;height:100%;"></div></div>
+                            <div style="display:flex;justify-content:space-between;margin-bottom:2px;"><span>Ectomorfia (linealidad)</span><b id="pdf3_ecto_txt">--</b></div>
+                            <div style="width:100%;background:#DFE0E1;height:8px;border-radius:4px;overflow:hidden;"><div id="pdf3_bar_ecto" style="background:#38bdf8;height:100%;"></div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <p class="jintra-section-title" style="font-size:13px;">Pliegues cutáneos registrados</p>
+                    <div class="jintra-section-rule"></div>
+                </div>
+                <table class="jintra-table" style="width:100%;border-collapse:collapse;border-radius:6px;overflow:hidden;">
+                    <thead><tr><th>Pliegue</th><th style="text-align:right;">Valor (mm)</th></tr></thead>
+                    <tbody id="pdf_skinfolds_tbody"></tbody>
+                </table>
+
+                <div class="jintra-info-box">
+                    <p class="jintra-label" style="color:#FFFFFF;margin-bottom:4px;">Interpretación</p>
+                    <p>El somatotipo describe la forma y composición corporal relativa mediante tres componentes: endomorfia (adiposidad), mesomorfia (desarrollo músculo-esquelético) y ectomorfia (linealidad/delgadez relativa). Se calcula con las ecuaciones de Heath-Carter a partir de pliegues, diámetros óseos y perímetros corregidos.</p>
+                </div>
+            </div>
+
+            <div class="jintra-footer">
+                <span>JYNTRA · Documento confidencial · Los datos no se almacenan en ninguna base de datos</span>
+                <span class="pdfFooterDate">--</span>
+            </div>
+        </div>
+
+        <!-- =================== PÁGINA 4 — FRACCIONAMIENTO Y MEDICIONES DIRECTAS =================== -->
+        <div class="jintra-page" id="pdfPage4">
+            <div class="jintra-accent-line"></div>
+            <div class="jintra-header">
+                <div class="brand">
+                    <div style="width:42px;height:42px;background:#000;border:1px solid #DD2C37;border-radius:9px;padding:6px;display:flex;align-items:center;justify-content:center;"><div class="jintra-logo-icon" style="width:100%;height:100%;"></div></div>
+                    <div>
+                        <div class="brand-title" style="-webkit-text-fill-color:initial;background:none;line-height:0;margin-bottom:6px"><svg width="114" height="16" viewBox="3 5 927 130" role="img" aria-label="JYNTRA" style="display:block"><path fill-rule="evenodd" fill="#FFFFFF" d="M 330.50 6.16 C 325.66 7.96, 322.36 10.71, 320.62 14.38 C 319.18 17.41, 319 24.25, 319 74.40 L 319 131 337.50 131 L 356 131 356 98 C 356 79.85, 356.33 65.00, 356.75 65.00 C 357.16 65.01, 366.95 73.62, 378.50 84.15 C 436.64 137.14, 431.86 133.56, 443.39 132.82 C 447.84 132.54, 450.51 131.76, 452.90 130.06 C 459.10 125.65, 459 126.75, 459 64.03 L 459 7 441.01 7 L 423.02 7 422.76 41.42 L 422.50 75.84 398.90 54.17 C 385.93 42.25, 369.67 27.25, 362.79 20.84 C 355.90 14.43, 348.89 8.48, 347.21 7.61 C 343.20 5.53, 334.26 4.76, 330.50 6.16 M 817.33 5.95 C 811.23 7.41, 805.49 11.70, 801.00 18.17 C 798.58 21.65, 792.93 29.67, 788.42 36 C 781.35 45.93, 756.28 82.36, 731.82 118.24 C 727.79 124.15, 724.19 128.87, 723.83 128.74 C 722.32 128.19, 694.42 92.14, 695.13 91.64 C 695.33 91.50, 698.61 89.88, 702.42 88.04 C 711.18 83.81, 717.28 77.74, 721.32 69.20 C 724.36 62.78, 724.50 61.97, 724.50 49.97 C 724.50 37.85, 724.39 37.24, 721.21 30.79 C 717.33 22.90, 710.01 15.82, 702.12 12.30 C 690.78 7.25, 687.26 6.95, 642.86 7.23 L 601.63 7.50 589.36 23 C 582.61 31.52, 577.07 38.83, 577.04 39.25 C 577.02 39.66, 598.83 40, 625.53 40 C 678.18 40, 678.52 40.03, 682.83 45.51 C 685.77 49.25, 685.81 56.69, 682.91 60.38 C 678.01 66.61, 679.29 66.47, 624.75 66.79 L 575 67.08 575 99.04 L 575 131 595 131 L 615 131 615 114.50 L 615 98 633.92 98 L 652.84 98 666.60 114.50 L 680.36 131 724.09 131 L 767.81 131 795.77 90.75 C 811.15 68.61, 824.25 50.50, 824.88 50.50 C 825.96 50.50, 857.92 95.64, 857.97 97.23 C 857.98 97.63, 846.24 98.08, 831.86 98.23 L 805.73 98.50 794.75 114.30 C 788.72 123, 783.98 130.31, 784.23 130.56 C 784.47 130.81, 817.17 130.89, 856.88 130.75 L 929.09 130.50 917.74 114.50 C 888.03 72.64, 861.64 35.40, 854.11 24.72 C 849.54 18.25, 844.30 11.80, 842.45 10.39 C 836.33 5.72, 825.98 3.89, 817.33 5.95 M 85.97 44.25 C 85.95 86.10, 85.81 86.98, 78.61 92.48 C 72.26 97.32, 69.04 97.90, 48.41 97.95 L 29.32 98 24.86 103.75 C 22.42 106.91, 16.66 114.37, 12.07 120.32 L 3.73 131.14 42.61 130.76 C 85.65 130.33, 85.34 130.37, 99.48 123.25 C 112.83 116.53, 123.96 102.30, 126.89 88.20 C 127.58 84.88, 128 68.71, 128 44.95 L 128 7 107 7 L 86 7 85.97 44.25 M 144.81 12.75 C 147.56 15.91, 162.44 32.45, 177.86 49.50 L 205.90 80.50 205.95 105.77 L 206 131.04 226.25 130.77 L 246.50 130.50 246.76 105.00 L 247.03 79.51 253.35 73.00 C 260.98 65.14, 304.56 17.26, 311.40 9.23 L 313.31 7 287.21 7 L 261.11 7 244.30 27.43 C 235.06 38.67, 227.27 47.88, 227 47.89 C 226.72 47.91, 218.89 38.71, 209.59 27.46 L 192.69 7 166.25 7 L 139.80 7 144.81 12.75 M 466.22 23.25 L 466.50 39.50 481.95 39.77 C 492.77 39.97, 497.65 40.42, 498.21 41.27 C 498.65 41.95, 498.99 60.50, 498.96 82.50 C 498.93 104.50, 498.93 124.42, 498.95 126.77 L 499 131.04 518.75 130.77 L 538.50 130.50 538.76 85.25 L 539.02 40 548.85 40 L 558.67 40 563.54 33.75 C 566.22 30.31, 571.95 22.88, 576.26 17.25 L 584.12 7 525.03 7 L 465.95 7 466.22 23.25"/></svg></div>
+                        <div class="brand-sub">Anamnesis y Evaluación Cineantropométrica</div>
+                    </div>
+                </div>
+                <div class="meta">
+                    <div class="pname pdfHeaderName">--</div>
+                    <div>Página 4</div>
+                </div>
+            </div>
+
+            <div class="jintra-body space-y-5">
+                <div>
+                    <p class="jintra-section-title">Fraccionamiento corporal — Modelo de 5 masas (Kerr)</p>
+                    <div class="jintra-section-rule"></div>
+                </div>
+
+                <div class="jintra-card" style="display:grid;grid-template-columns:1fr 1.2fr;gap:20px;align-items:center;">
+                    <div style="text-align:center;">
+                        <img id="pdf_bodycomp_image2" style="width:190px;height:190px;margin:0 auto;" alt="Fraccionamiento corporal">
+                    </div>
+                    <table class="jintra-table" style="width:100%;border-collapse:collapse;">
+                        <thead><tr><th>Componente</th><th style="text-align:right;">%</th><th style="text-align:right;">Kg</th></tr></thead>
+                        <tbody id="pdf_frac_tbody"></tbody>
+                    </table>
+                </div>
+
+                <div>
+                    <p class="jintra-section-title" style="font-size:13px;">Perfil de mediciones directas</p>
+                    <div class="jintra-section-rule"></div>
+                </div>
+                <table class="jintra-table" style="width:100%;border-collapse:collapse;">
+                    <thead><tr><th>Variable</th><th style="text-align:right;">Valor</th></tr></thead>
+                    <tbody id="pdf_measures_tbody"></tbody>
+                </table>
+            </div>
+
+            <div class="jintra-footer">
+                <span>JYNTRA · Documento confidencial · Los datos no se almacenan en ninguna base de datos</span>
+                <span class="pdfFooterDate">--</span>
+            </div>
+        </div>
+
+        <!-- =================== PÁGINA 5 — RECOMENDACIONES Y FIRMA =================== -->
+        <div class="jintra-page" id="pdfPage5" style="page-break-after:auto;">
+            <div class="jintra-accent-line"></div>
+            <div class="jintra-header">
+                <div class="brand">
+                    <div style="width:42px;height:42px;background:#000;border:1px solid #DD2C37;border-radius:9px;padding:6px;display:flex;align-items:center;justify-content:center;"><div class="jintra-logo-icon" style="width:100%;height:100%;"></div></div>
+                    <div>
+                        <div class="brand-title" style="-webkit-text-fill-color:initial;background:none;line-height:0;margin-bottom:6px"><svg width="114" height="16" viewBox="3 5 927 130" role="img" aria-label="JYNTRA" style="display:block"><path fill-rule="evenodd" fill="#FFFFFF" d="M 330.50 6.16 C 325.66 7.96, 322.36 10.71, 320.62 14.38 C 319.18 17.41, 319 24.25, 319 74.40 L 319 131 337.50 131 L 356 131 356 98 C 356 79.85, 356.33 65.00, 356.75 65.00 C 357.16 65.01, 366.95 73.62, 378.50 84.15 C 436.64 137.14, 431.86 133.56, 443.39 132.82 C 447.84 132.54, 450.51 131.76, 452.90 130.06 C 459.10 125.65, 459 126.75, 459 64.03 L 459 7 441.01 7 L 423.02 7 422.76 41.42 L 422.50 75.84 398.90 54.17 C 385.93 42.25, 369.67 27.25, 362.79 20.84 C 355.90 14.43, 348.89 8.48, 347.21 7.61 C 343.20 5.53, 334.26 4.76, 330.50 6.16 M 817.33 5.95 C 811.23 7.41, 805.49 11.70, 801.00 18.17 C 798.58 21.65, 792.93 29.67, 788.42 36 C 781.35 45.93, 756.28 82.36, 731.82 118.24 C 727.79 124.15, 724.19 128.87, 723.83 128.74 C 722.32 128.19, 694.42 92.14, 695.13 91.64 C 695.33 91.50, 698.61 89.88, 702.42 88.04 C 711.18 83.81, 717.28 77.74, 721.32 69.20 C 724.36 62.78, 724.50 61.97, 724.50 49.97 C 724.50 37.85, 724.39 37.24, 721.21 30.79 C 717.33 22.90, 710.01 15.82, 702.12 12.30 C 690.78 7.25, 687.26 6.95, 642.86 7.23 L 601.63 7.50 589.36 23 C 582.61 31.52, 577.07 38.83, 577.04 39.25 C 577.02 39.66, 598.83 40, 625.53 40 C 678.18 40, 678.52 40.03, 682.83 45.51 C 685.77 49.25, 685.81 56.69, 682.91 60.38 C 678.01 66.61, 679.29 66.47, 624.75 66.79 L 575 67.08 575 99.04 L 575 131 595 131 L 615 131 615 114.50 L 615 98 633.92 98 L 652.84 98 666.60 114.50 L 680.36 131 724.09 131 L 767.81 131 795.77 90.75 C 811.15 68.61, 824.25 50.50, 824.88 50.50 C 825.96 50.50, 857.92 95.64, 857.97 97.23 C 857.98 97.63, 846.24 98.08, 831.86 98.23 L 805.73 98.50 794.75 114.30 C 788.72 123, 783.98 130.31, 784.23 130.56 C 784.47 130.81, 817.17 130.89, 856.88 130.75 L 929.09 130.50 917.74 114.50 C 888.03 72.64, 861.64 35.40, 854.11 24.72 C 849.54 18.25, 844.30 11.80, 842.45 10.39 C 836.33 5.72, 825.98 3.89, 817.33 5.95 M 85.97 44.25 C 85.95 86.10, 85.81 86.98, 78.61 92.48 C 72.26 97.32, 69.04 97.90, 48.41 97.95 L 29.32 98 24.86 103.75 C 22.42 106.91, 16.66 114.37, 12.07 120.32 L 3.73 131.14 42.61 130.76 C 85.65 130.33, 85.34 130.37, 99.48 123.25 C 112.83 116.53, 123.96 102.30, 126.89 88.20 C 127.58 84.88, 128 68.71, 128 44.95 L 128 7 107 7 L 86 7 85.97 44.25 M 144.81 12.75 C 147.56 15.91, 162.44 32.45, 177.86 49.50 L 205.90 80.50 205.95 105.77 L 206 131.04 226.25 130.77 L 246.50 130.50 246.76 105.00 L 247.03 79.51 253.35 73.00 C 260.98 65.14, 304.56 17.26, 311.40 9.23 L 313.31 7 287.21 7 L 261.11 7 244.30 27.43 C 235.06 38.67, 227.27 47.88, 227 47.89 C 226.72 47.91, 218.89 38.71, 209.59 27.46 L 192.69 7 166.25 7 L 139.80 7 144.81 12.75 M 466.22 23.25 L 466.50 39.50 481.95 39.77 C 492.77 39.97, 497.65 40.42, 498.21 41.27 C 498.65 41.95, 498.99 60.50, 498.96 82.50 C 498.93 104.50, 498.93 124.42, 498.95 126.77 L 499 131.04 518.75 130.77 L 538.50 130.50 538.76 85.25 L 539.02 40 548.85 40 L 558.67 40 563.54 33.75 C 566.22 30.31, 571.95 22.88, 576.26 17.25 L 584.12 7 525.03 7 L 465.95 7 466.22 23.25"/></svg></div>
+                        <div class="brand-sub">Anamnesis y Evaluación Cineantropométrica</div>
+                    </div>
+                </div>
+                <div class="meta">
+                    <div class="pname pdfHeaderName">--</div>
+                    <div>Página 5</div>
+                </div>
+            </div>
+
+            <div class="jintra-body space-y-4">
+                <div>
+                    <p class="jintra-section-title">Indicaciones profesionales</p>
+                    <div class="jintra-section-rule"></div>
+                </div>
+
+                <div class="jintra-info-box">
+                    <p class="jintra-label" style="color:#FFFFFF;margin-bottom:4px;">Reevaluación</p>
+                    <p>Repetir la evaluación cada 6–8 semanas, siguiendo el protocolo ISAK y, de ser posible, con el mismo antropometrista para reducir el error inter-evaluador.</p>
+                </div>
+                <div class="jintra-info-box">
+                    <p class="jintra-label" style="color:#FFFFFF;margin-bottom:4px;">Técnica y estandarización</p>
+                    <p>Mantener el mismo protocolo, lado corporal y equipo calibrado en cada control, para asegurar la comparabilidad de las mediciones en el tiempo.</p>
+                </div>
+                <div class="jintra-info-box">
+                    <p class="jintra-label" style="color:#FFFFFF;margin-bottom:4px;">Interpretación de la composición corporal</p>
+                    <p>Analizar el % de masa grasa y masa muscular en conjunto con los objetivos deportivos del atleta, y no de forma aislada respecto a valores de referencia poblacional general.</p>
+                </div>
+                <div class="jintra-info-box">
+                    <p class="jintra-label" style="color:#FFFFFF;margin-bottom:4px;">Uso del informe</p>
+                    <p>Este informe es de carácter técnico-deportivo y no sustituye la evaluación médica ni el diagnóstico de patologías. Su interpretación debe ser realizada por un profesional acreditado.</p>
+                </div>
+
+                <div style="background:#0D0D0D;border-radius:10px;padding:18px 22px;display:flex;justify-content:space-between;align-items:center;margin-top:10px;border-left:6px solid #DD2C37;">
+                    <div style="color:#BFBFBF;font-size:10px;max-width:60%;">
+                        <p>Informe de uso personal y confidencial, elaborado específicamente para el atleta indicado.</p>
+                        <p style="margin-top:4px;">No sustituye la evaluación médica ni el tratamiento de patologías diagnosticadas.</p>
+                    </div>
+                    <div style="text-align:right;">
+                        <div class="brand-title" style="font-size:14px;">JYNTRA</div>
+                        <div style="border-top:1px solid #454545;width:170px;margin-top:22px;padding-top:4px;">
+                            <p style="color:#fff;font-size:10px;font-weight:600;" id="pdf_sig_evaluator">--</p>
+                            <p style="color:#8F8F8F;font-size:8px;">Firma y sello profesional · Acreditación ISAK</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="jintra-footer">
+                <span>JYNTRA · Documento confidencial · Los datos no se almacenan en ninguna base de datos</span>
+                <span class="pdfFooterDate">--</span>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Global State variables
+        let isakLevel = 1; // 1 or 2
+        let bodyCompChartInstance = null;
+        let skinfoldChartInstance = null;
+
+        // Sample datasets for quick demo loading
+        const sampleData = {
+            athlete: {
+                name: "Carlos Mendoza",
+                age: 24,
+                gender: "male",
+                sport: "Fútbol / Centrocampista",
+                evaluator: "Dr. J. Silva (ISAK 2)",
+                weight: 76.5,
+                height: 178.0,
+                sitting_height: 93.2,
+                span: 181.5,
+                skinfolds: {
+                    triceps: 8.5,
+                    subscapular: 10.2,
+                    biceps: 4.2,
+                    iliac_crest: 12.0,
+                    supraspinale: 7.8,
+                    abdominal: 11.5,
+                    thigh: 9.8,
+                    calf: 6.4
+                },
+                girths: {
+                    arm_relaxed: 32.5,
+                    arm_flexed: 35.8,
+                    waist: 78.0,
+                    hip: 96.5,
+                    thigh_mid: 55.2,
+                    calf_max: 37.2,
+                    forearm: 27.8,
+                    wrist: 16.8,
+                    chest: 98.5,
+                    head: 56.2
+                },
+                diameters: {
+                    humerus: 6.8,
+                    femur: 9.6,
+                    biacromial: 40.2,
+                    biiliocristal: 28.4
+                }
+            }
+        };
+
+        // Initialize Application
+        window.onload = function() {
+            // Set current date
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('evalDate').value = today;
+
+            // Alinear al inicio los campos compartidos entre Medidas y Bioimpedancia
+            document.getElementById('bia_userHeight').value = document.getElementById('m_height').value;
+            document.getElementById('bia_userWeight').value = document.getElementById('m_weight').value;
+
+            // Initialize Charts
+            initCharts();
+
+            // Calculate Initial Metrics
+            calculateAll();
+            biaCalculateResults();
+        };
+
+        // Switch between ISAK 1 & ISAK 2
+        function switchIsakLevel(level) {
+            isakLevel = level;
+            const btn1 = document.getElementById('btnIsak1');
+            const btn2 = document.getElementById('btnIsak2');
+            const extendedFields = document.querySelectorAll('.isak2-field');
+
+            if (level === 1) {
+                btn1.className = "px-3 py-1.5 rounded-lg font-semibold transition-all bg-gold-500 text-black shadow-md";
+                btn2.className = "px-3 py-1.5 rounded-lg font-semibold transition-all text-gray-400 hover:text-white";
+                extendedFields.forEach(el => el.classList.add('hidden'));
+                document.getElementById('skinfoldBadge').innerText = "8 Pliegues (Perfil ISAK 1)";
+            } else {
+                btn2.className = "px-3 py-1.5 rounded-lg font-semibold transition-all bg-gold-500 text-black shadow-md";
+                btn1.className = "px-3 py-1.5 rounded-lg font-semibold transition-all text-gray-400 hover:text-white";
+                extendedFields.forEach(el => el.classList.remove('hidden'));
+                document.getElementById('skinfoldBadge').innerText = "Perfil Completo (ISAK 2)";
+            }
+
+            calculateAll();
+        }
+
+        // Quick demo filler
+        function loadSampleData(key) {
+            const data = sampleData[key];
+            if (!data) return;
+
+            document.getElementById('athleteName').value = data.name;
+            document.getElementById('athleteAge').value = data.age;
+            document.getElementById('athleteGender').value = data.gender;
+            document.getElementById('athleteSport').value = data.sport;
+            document.getElementById('evaluatorName').value = data.evaluator;
+
+            document.getElementById('m_weight').value = data.weight;
+            document.getElementById('m_height').value = data.height;
+            document.getElementById('m_sitting_height').value = data.sitting_height;
+            document.getElementById('m_span').value = data.span;
+
+            // Reflejar peso y estatura en la pestaña de Bioimpedancia (campos vinculados)
+            document.getElementById('bia_userWeight').value = data.weight;
+            document.getElementById('bia_userHeight').value = data.height;
+
+            // Skinfolds
+            for (let sf in data.skinfolds) {
+                const el = document.getElementById('sf_' + sf);
+                if (el) el.value = data.skinfolds[sf];
+            }
+
+            // Girths
+            for (let g in data.girths) {
+                const el = document.getElementById('g_' + g);
+                if (el) el.value = data.girths[g];
+            }
+
+            // Diameters
+            for (let d in data.diameters) {
+                const el = document.getElementById('d_' + d);
+                if (el) el.value = data.diameters[d];
+            }
+
+            calculateAll();
+            biaCalculateResults();
+        }
+
+        // Main Math Engine
+        function calculateAll() {
+            // 1. Gather Basic Measures
+            const weight = parseFloat(document.getElementById('m_weight').value) || 0;
+            const height = parseFloat(document.getElementById('m_height').value) || 0;
+            const gender = document.getElementById('athleteGender').value;
+
+            if (weight <= 0 || height <= 0) return;
+
+            // 2. BMI Calculation
+            const heightM = height / 100;
+            const bmi = weight / (heightM * heightM);
+            document.getElementById('kpi_bmi').innerText = bmi.toFixed(1);
+
+            let bmiCat = "Normopeso";
+            if (bmi < 18.5) bmiCat = "Bajo Peso";
+            else if (bmi >= 25 && bmi < 29.9) bmiCat = "Sobrepeso";
+            else if (bmi >= 30) bmiCat = "Obesidad";
+            document.getElementById('kpi_bmi_cat').innerText = bmiCat;
+
+            // 3. Skinfolds
+            const sf_triceps = parseFloat(document.getElementById('sf_triceps').value) || 0;
+            const sf_subscapular = parseFloat(document.getElementById('sf_subscapular').value) || 0;
+            const sf_biceps = parseFloat(document.getElementById('sf_biceps').value) || 0;
+            const sf_iliac_crest = parseFloat(document.getElementById('sf_iliac_crest').value) || 0;
+            const sf_supraspinale = parseFloat(document.getElementById('sf_supraspinale').value) || 0;
+            const sf_abdominal = parseFloat(document.getElementById('sf_abdominal').value) || 0;
+            const sf_thigh = parseFloat(document.getElementById('sf_thigh').value) || 0;
+            const sf_calf = parseFloat(document.getElementById('sf_calf').value) || 0;
+
+            const sum6 = sf_triceps + sf_subscapular + sf_supraspinale + sf_abdominal + sf_thigh + sf_calf;
+            const sum8 = sum6 + sf_biceps + sf_iliac_crest;
+
+            document.getElementById('kpi_sum6').innerText = sum6.toFixed(1) + " mm";
+            document.getElementById('txt_sum8').innerText = sum8.toFixed(1) + " mm";
+
+            // 4. Girths & Diameters
+            const g_arm_flexed = parseFloat(document.getElementById('g_arm_flexed').value) || 0;
+            const g_waist = parseFloat(document.getElementById('g_waist').value) || 0;
+            const g_hip = parseFloat(document.getElementById('g_hip').value) || 0;
+            const g_calf_max = parseFloat(document.getElementById('g_calf_max').value) || 0;
+
+            const d_humerus = parseFloat(document.getElementById('d_humerus').value) || 0;
+            const d_femur = parseFloat(document.getElementById('d_femur').value) || 0;
+
+            // Corrected Girths
+            const corrArmGirth = g_arm_flexed - (sf_triceps / 10 * Math.PI);
+            const corrCalfGirth = g_calf_max - (sf_calf / 10 * Math.PI);
+
+            document.getElementById('g_corr_arm').innerText = corrArmGirth.toFixed(1) + " cm";
+            document.getElementById('g_corr_calf').innerText = corrCalfGirth.toFixed(1) + " cm";
+
+            // Waist-to-Hip & Waist-to-Height Ratio
+            const whr = g_hip > 0 ? (g_waist / g_hip) : 0;
+            const whtr = height > 0 ? (g_waist / height) : 0;
+
+            document.getElementById('idx_whr').innerText = whr.toFixed(2);
+            document.getElementById('idx_whtr').innerText = whtr.toFixed(2);
+
+            let whrRisk = "Riesgo Bajo";
+            if (gender === 'male' && whr > 0.95) whrRisk = "Riesgo Elevado";
+            if (gender === 'female' && whr > 0.85) whrRisk = "Riesgo Elevado";
+            document.getElementById('idx_whr_risk').innerText = whrRisk;
+
+            // 5. HEATH-CARTER SOMATOTYPE CALCULATIONS
+            // Endomorphy
+            const sum3_endo = (sf_triceps + sf_subscapular + sf_supraspinale) * (170.18 / height);
+            let endo = -0.7182 + (0.1451 * sum3_endo) - (0.00068 * Math.pow(sum3_endo, 2)) + (0.0000014 * Math.pow(sum3_endo, 3));
+            if (endo < 0.1) endo = 0.1;
+
+            // Mesomorphy
+            let meso = (0.858 * d_humerus) + (0.601 * d_femur) + (0.188 * corrArmGirth) + (0.161 * corrCalfGirth) - (0.131 * height) + 4.50;
+            if (meso < 0.1) meso = 0.1;
+
+            // Ectomorphy
+            const hwr = height / Math.cbrt(weight);
+            let ecto = 0.1;
+            if (hwr >= 40.75) {
+                ecto = (0.732 * hwr) - 28.58;
+            } else if (hwr >= 38.25) {
+                ecto = (0.463 * hwr) - 17.63;
+            } else {
+                ecto = 0.1;
+            }
+
+            document.getElementById('val_endo').innerText = endo.toFixed(1);
+            document.getElementById('val_meso').innerText = meso.toFixed(1);
+            document.getElementById('val_ecto').innerText = ecto.toFixed(1);
+
+            // Update Somatotype Progress Bars
+            document.getElementById('bar_endo').style.width = Math.min(endo * 10, 100) + '%';
+            document.getElementById('bar_meso').style.width = Math.min(meso * 10, 100) + '%';
+            document.getElementById('bar_ecto').style.width = Math.min(ecto * 10, 100) + '%';
+
+            // Somatocarta Coordinates (X = Ecto - Endo, Y = 2*Meso - (Endo + Ecto))
+            const somatoX = ecto - endo;
+            const somatoY = (2 * meso) - (endo + ecto);
+
+            document.getElementById('somatoX').innerText = "X = " + somatoX.toFixed(1);
+            document.getElementById('somatoY').innerText = "Y = " + somatoY.toFixed(1);
+
+            // Classification Text
+            let somatoCategory = "Central / Balanceado";
+            if (meso > endo && meso > ecto) {
+                if (endo > ecto) somatoCategory = "Endo-Mesomorfo";
+                else if (ecto > endo) somatoCategory = "Ecto-Mesomorfo";
+                else somatoCategory = "Mesomorfo Balanceado";
+            } else if (endo > meso && endo > ecto) {
+                if (meso > ecto) somatoCategory = "Meso-Endomorfo";
+                else somatoCategory = "Endomorfo Balanceado";
+            } else if (ecto > meso && ecto > endo) {
+                if (meso > endo) somatoCategory = "Meso-Ectomorfo";
+                else somatoCategory = "Ectomorfo Balanceado";
+            }
+            document.getElementById('somatotypeClass').innerText = somatoCategory;
+
+            // Draw Somatochart Canvas
+            drawSomatochart(somatoX, somatoY);
+
+            // 6. BODY FRACTIONATION (5 COMPONENTS KERR MODEL & YUHASZ FORMULA)
+            // Yuhasz Fat %
+            let yuhaszFatPct = 0;
+            if (gender === 'male') {
+                yuhaszFatPct = 3.64 + (0.097 * sum6);
+            } else {
+                yuhaszFatPct = 4.56 + (0.143 * sum6);
+            }
+            if (yuhaszFatPct < 3) yuhaszFatPct = 3;
+
+            document.getElementById('eq_yuhasz').innerText = yuhaszFatPct.toFixed(1) + " %";
+
+            // Kerr 5-Component Mass Fractionation
+            const fatKg = (weight * (yuhaszFatPct / 100));
+            
+            // Bone Mass (Matiegka/Kerr approximation)
+            const boneKg = 3.02 * Math.pow((Math.pow(heightM, 2) * (d_humerus / 100) * (d_femur / 100) * 400), 0.712);
+            
+            // Muscle Mass
+            let muscleKg = weight * 0.48; // default baseline factor adjusted by somatotype
+            if (meso > 4) muscleKg = weight * (0.42 + (meso * 0.012));
+            
+            // Residual Mass (Visceral/Organs)
+            const residualKg = gender === 'male' ? weight * 0.241 : weight * 0.209;
+
+            // Skin Mass
+            const skinKg = Math.max(weight - (fatKg + muscleKg + boneKg + residualKg), weight * 0.05);
+
+            // Percentages
+            const fatPct = (fatKg / weight) * 100;
+            const musclePct = (muscleKg / weight) * 100;
+            const bonePct = (boneKg / weight) * 100;
+            const residualPct = (residualKg / weight) * 100;
+
+            // Update KPIs
+            document.getElementById('kpi_fat_pct').innerText = fatPct.toFixed(1) + " %";
+            document.getElementById('kpi_fat_kg').innerText = fatKg.toFixed(1) + " kg";
+
+            document.getElementById('kpi_muscle_pct').innerText = musclePct.toFixed(1) + " %";
+            document.getElementById('kpi_muscle_kg').innerText = muscleKg.toFixed(1) + " kg";
+
+            document.getElementById('txt_m_musc').innerText = musclePct.toFixed(1) + "% (" + muscleKg.toFixed(1) + "kg)";
+            document.getElementById('txt_m_fat').innerText = fatPct.toFixed(1) + "% (" + fatKg.toFixed(1) + "kg)";
+            document.getElementById('txt_m_bone').innerText = bonePct.toFixed(1) + "% (" + boneKg.toFixed(1) + "kg)";
+            document.getElementById('txt_m_res').innerText = residualPct.toFixed(1) + "% (" + residualKg.toFixed(1) + "kg)";
+
+            const mbRatio = boneKg > 0 ? (muscleKg / boneKg) : 0;
+            document.getElementById('idx_mb').innerText = mbRatio.toFixed(2);
+
+            // Update Chart Visualizations
+            updateCharts({
+                muscle: musclePct,
+                fat: fatPct,
+                bone: bonePct,
+                residual: residualPct
+            }, [sf_triceps, sf_subscapular, sf_biceps, sf_iliac_crest, sf_supraspinale, sf_abdominal, sf_thigh, sf_calf]);
+        }
+
+        // Draw Heath-Carter Triangle / Axis Canvas
+        function drawSomatochart(x, y) {
+            const canvas = document.getElementById('somatochartCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const w = canvas.width;
+            const h = canvas.height;
+            const cx = w / 2;
+            const cy = h / 2;
+
+            // Clear
+            ctx.clearRect(0, 0, w, h);
+
+            // Background Fill
+            ctx.fillStyle = "#121212";
+            ctx.fillRect(0, 0, w, h);
+
+            // Draw Triangular Grid Lines
+            ctx.strokeStyle = "rgba(221,44,55, 0.25)";
+            ctx.lineWidth = 1;
+
+            // Concentric Circles
+            for (let r = 30; r <= 120; r += 30) {
+                ctx.beginPath();
+                ctx.arc(cx, cy, r, 0, 2 * Math.PI);
+                ctx.stroke();
+            }
+
+            // Main X-Y Axes
+            ctx.strokeStyle = "#DD2C37";
+            ctx.lineWidth = 1.5;
+            
+            // X Axis
+            ctx.beginPath();
+            ctx.moveTo(20, cy);
+            ctx.lineTo(w - 20, cy);
+            ctx.stroke();
+
+            // Y Axis
+            ctx.beginPath();
+            ctx.moveTo(cx, 20);
+            ctx.lineTo(cx, h - 20);
+            ctx.stroke();
+
+            // Axis Labels
+            ctx.fillStyle = "#EEF1F3";
+            ctx.font = "bold 9px Inter, sans-serif";
+            ctx.textAlign = "center";
+            
+            ctx.fillText("MESOMORFIA (+Y)", cx, 14);
+            ctx.fillText("ENDOMORFIA (-X)", 45, cy - 6);
+            ctx.fillText("ECTOMORFIA (+X)", w - 45, cy - 6);
+
+            // Scale conversion (1 unit = 12 pixels)
+            const scale = 12;
+            const px = cx + (x * scale);
+            const py = cy - (y * scale); // inverted canvas Y
+
+            // Draw Point
+            ctx.shadowColor = '#DD2C37';
+            ctx.shadowBlur = 10;
+            ctx.fillStyle = "#DD2C37";
+            ctx.beginPath();
+            ctx.arc(px, py, 7, 0, 2 * Math.PI);
+            ctx.fill();
+
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = "#ffffff";
+            ctx.stroke();
+            ctx.shadowBlur = 0; // reset
+        }
+
+        // Initialize Chart.js Instances
+        function initCharts() {
+            // Body Comp Doughnut
+            const ctxComp = document.getElementById('bodyCompChart').getContext('2d');
+            bodyCompChartInstance = new Chart(ctxComp, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Masa Muscular', 'Masa Grasa', 'Masa Ósea', 'Masa Visceral/Resid.'],
+                    datasets: [{
+                        data: [48.2, 8.9, 18.5, 24.4],
+                        backgroundColor: ['#8E1C23', '#ef4444', '#DD2C37', '#38bdf8'],
+                        borderWidth: 2,
+                        borderColor: '#121212'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    cutout: '65%'
+                }
+            });
+
+            // Skinfolds Bar Chart
+            const ctxSf = document.getElementById('skinfoldChart').getContext('2d');
+            skinfoldChartInstance = new Chart(ctxSf, {
+                type: 'bar',
+                data: {
+                    labels: ['Tri', 'Sub', 'Bic', 'Cre', 'Sup', 'Abd', 'Mus', 'Pan'],
+                    datasets: [{
+                        label: 'Pliegue (mm)',
+                        data: [8.5, 10.2, 4.2, 12.0, 7.8, 11.5, 9.8, 6.4],
+                        backgroundColor: 'rgba(221,44,55, 0.7)',
+                        borderColor: '#DD2C37',
+                        borderWidth: 1,
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        x: {
+                            ticks: { color: '#A2A2A2', font: { size: 9 } },
+                            grid: { display: false }
+                        },
+                        y: {
+                            ticks: { color: '#A2A2A2', font: { size: 9 } },
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Update Charts Data
+        function updateCharts(compData, skinfoldArray) {
+            if (bodyCompChartInstance) {
+                bodyCompChartInstance.data.datasets[0].data = [
+                    compData.muscle.toFixed(1),
+                    compData.fat.toFixed(1),
+                    compData.bone.toFixed(1),
+                    compData.residual.toFixed(1)
+                ];
+                bodyCompChartInstance.update();
+            }
+
+            if (skinfoldChartInstance) {
+                skinfoldChartInstance.data.datasets[0].data = skinfoldArray;
+                skinfoldChartInstance.update();
+            }
+        }
+
+        // Generate PDF Function using jsPDF & html2canvas — construye un informe de 5 páginas
+        async function generatePDF() {
+            const g = id => document.getElementById(id);
+            const gv = id => (g(id) ? g(id).value : '');
+            const gt = id => (g(id) ? g(id).innerText : '');
+            const num = str => parseFloat(String(str).replace(/[^\d.\-]/g, '')) || 0;
+
+            const athleteName = gv('athleteName') || 'Atleta';
+            const genderLabel = gv('athleteGender') === 'male' ? 'Masculino' : 'Femenino';
+            const evalDateLabel = gv('evalDate') || new Date().toLocaleDateString();
+            const levelLabel = isakLevel === 1 ? 'ISAK Nivel 1' : 'ISAK Nivel 2';
+
+            // Encabezados y pies repetidos en las 5 páginas
+            document.querySelectorAll('.pdfHeaderName').forEach(el => el.innerText = athleteName);
+            document.querySelectorAll('.pdfFooterDate').forEach(el => el.innerText = evalDateLabel);
+
+            // ---------- PÁGINA 1 ----------
+            g('pdf_athlete_name').innerText = athleteName;
+            g('pdf_athlete_sport').innerText = (gv('athleteSport') || '--') + ' · ' + levelLabel;
+            g('pdf_athlete_gender').innerText = genderLabel;
+            g('pdf_athlete_age').innerText = gv('athleteAge') + ' años';
+            g('pdf_athlete_weight').innerText = gv('m_weight') + ' kg';
+            g('pdf_athlete_height').innerText = gv('m_height') + ' cm';
+
+            g('pdf_kpi_bmi').innerText = gt('kpi_bmi');
+            g('pdf_kpi_bmi_cat').innerText = gt('kpi_bmi_cat');
+            g('pdf_kpi_fat_pct').innerText = gt('kpi_fat_pct');
+            g('pdf_kpi_fat_kg').innerText = gt('kpi_fat_kg');
+            g('pdf_kpi_muscle_pct').innerText = gt('kpi_muscle_pct');
+            g('pdf_kpi_muscle_kg').innerText = gt('kpi_muscle_kg');
+            g('pdf_kpi_sum6').innerText = gt('kpi_sum6');
+
+            const fatPct = num(gt('kpi_fat_pct'));
+            const musclePct = num(gt('kpi_muscle_pct'));
+            const bonePct = num(gt('txt_m_bone'));
+            const resPct = num(gt('txt_m_res'));
+            g('pdf_bar_musc').style.width = musclePct + '%';
+            g('pdf_bar_fat').style.width = fatPct + '%';
+            g('pdf_bar_bone').style.width = bonePct + '%';
+            g('pdf_bar_res').style.width = resPct + '%';
+            g('pdf_bar_musc').innerText = musclePct.toFixed(0) + '%';
+            g('pdf_bar_fat').innerText = fatPct.toFixed(0) + '%';
+            g('pdf_bar_bone').innerText = bonePct.toFixed(0) + '%';
+            g('pdf_bar_res').innerText = resPct.toFixed(0) + '%';
+
+            g('pdf_kpi_weight_height').innerText = gv('m_weight') + ' kg / ' + gv('m_height') + ' cm';
+            g('pdf_reg_sum8').innerText = gt('txt_sum8');
+            g('pdf_reg_fatkg').innerText = gt('kpi_fat_kg');
+            g('pdf_reg_musclekg').innerText = gt('kpi_muscle_kg');
+
+            // Imágenes de los gráficos (doughnut de composición y barras de pliegues)
+            const bodyCompImg = g('bodyCompChart').toDataURL('image/png');
+            const skinfoldImg = g('skinfoldChart').toDataURL('image/png');
+            g('pdf_bodycomp_image1').src = bodyCompImg;
+            g('pdf_skinfold_image1').src = skinfoldImg;
+            g('pdf_bodycomp_image2').src = bodyCompImg;
+
+            // ---------- PÁGINA 2 ----------
+            g('pdf2_bmi').innerText = gt('kpi_bmi');
+            g('pdf2_bmi_cat').innerText = gt('kpi_bmi_cat');
+            g('pdf2_whr').innerText = gt('idx_whr');
+            g('pdf2_whr_risk').innerText = gt('idx_whr_risk');
+            g('pdf2_whtr').innerText = gt('idx_whtr');
+
+            const weight = num(gv('m_weight'));
+            const fatKg = num(gt('kpi_fat_kg'));
+            const mlg = weight - fatKg;
+            g('pdf2_mlg').innerText = mlg.toFixed(1) + ' kg';
+            g('pdf2_mlg_pct').innerText = (weight > 0 ? (100 - fatPct).toFixed(1) : '--') + '% de la masa total';
+            g('pdf2_mb').innerText = gt('idx_mb');
+            g('pdf2_yuhasz').innerText = gt('eq_yuhasz');
+
+            g('pdf2_corr_arm').innerText = gt('g_corr_arm');
+            g('pdf2_corr_calf').innerText = gt('g_corr_calf');
+            g('pdf2_span').innerText = gv('m_span') + ' cm';
+            g('pdf2_sitting').innerText = gv('m_sitting_height') + ' cm';
+
+            g('pdf2_name').innerText = athleteName;
+            g('pdf2_age_gender').innerText = gv('athleteAge') + ' años / ' + genderLabel;
+            g('pdf2_sport').innerText = gv('athleteSport');
+            g('pdf2_evaluator').innerText = gv('evaluatorName');
+            g('pdf2_date').innerText = evalDateLabel;
+            g('pdf2_level').innerText = levelLabel;
+
+            // ---------- PÁGINA 3 ----------
+            g('pdf_somato_class').innerText = gt('somatotypeClass');
+            g('pdf_endo').innerText = gt('val_endo');
+            g('pdf_meso').innerText = gt('val_meso');
+            g('pdf_ecto').innerText = gt('val_ecto');
+            g('pdf_somato_coords').innerText = 'Coordenadas somatocarta: ' + gt('somatoX') + ' · ' + gt('somatoY');
+            g('pdf_somato_image').src = g('somatochartCanvas').toDataURL('image/png');
+
+            const endoV = num(gt('val_endo')), mesoV = num(gt('val_meso')), ectoV = num(gt('val_ecto'));
+            g('pdf3_endo_txt').innerText = endoV.toFixed(1) + ' / 9';
+            g('pdf3_meso_txt').innerText = mesoV.toFixed(1) + ' / 9';
+            g('pdf3_ecto_txt').innerText = ectoV.toFixed(1) + ' / 9';
+            g('pdf3_bar_endo').style.width = Math.min(endoV / 9 * 100, 100) + '%';
+            g('pdf3_bar_meso').style.width = Math.min(mesoV / 9 * 100, 100) + '%';
+            g('pdf3_bar_ecto').style.width = Math.min(ectoV / 9 * 100, 100) + '%';
+
+            g('pdf_skinfolds_tbody').innerHTML = `
+                <tr><td>Tríceps</td><td style="text-align:right;font-weight:600;">${gv('sf_triceps')} mm</td></tr>
+                <tr><td>Subescapular</td><td style="text-align:right;font-weight:600;">${gv('sf_subscapular')} mm</td></tr>
+                <tr><td>Bíceps</td><td style="text-align:right;font-weight:600;">${gv('sf_biceps')} mm</td></tr>
+                <tr><td>Cresta ilíaca</td><td style="text-align:right;font-weight:600;">${gv('sf_iliac_crest')} mm</td></tr>
+                <tr><td>Supraespinal</td><td style="text-align:right;font-weight:600;">${gv('sf_supraspinale')} mm</td></tr>
+                <tr><td>Abdominal</td><td style="text-align:right;font-weight:600;">${gv('sf_abdominal')} mm</td></tr>
+                <tr><td>Muslo anterior</td><td style="text-align:right;font-weight:600;">${gv('sf_thigh')} mm</td></tr>
+                <tr><td>Pantorrilla</td><td style="text-align:right;font-weight:600;">${gv('sf_calf')} mm</td></tr>
+                <tr><td><b>Suma 6 pliegues</b></td><td style="text-align:right;font-weight:800;">${gt('kpi_sum6')}</td></tr>
+                <tr><td><b>Suma 8 pliegues</b></td><td style="text-align:right;font-weight:800;">${gt('txt_sum8')}</td></tr>
+            `;
+
+            // ---------- PÁGINA 4 ----------
+            g('pdf_frac_tbody').innerHTML = `
+                <tr><td>Masa muscular</td><td style="text-align:right;color:#9F9F9F;font-weight:700;">${gt('kpi_muscle_pct')}</td><td style="text-align:right;">${gt('kpi_muscle_kg')}</td></tr>
+                <tr><td>Masa grasa</td><td style="text-align:right;color:#dc2626;font-weight:700;">${gt('kpi_fat_pct')}</td><td style="text-align:right;">${gt('kpi_fat_kg')}</td></tr>
+                <tr><td>Masa ósea</td><td style="text-align:right;color:#b45309;font-weight:700;">${bonePct.toFixed(1)} %</td><td style="text-align:right;">${(weight * bonePct / 100).toFixed(1)} kg</td></tr>
+                <tr><td>Masa residual/visceral</td><td style="text-align:right;color:#575757;font-weight:700;">${resPct.toFixed(1)} %</td><td style="text-align:right;">${(weight * resPct / 100).toFixed(1)} kg</td></tr>
+                <tr><td><b>Masa corporal total</b></td><td style="text-align:right;"></td><td style="text-align:right;font-weight:800;">${weight.toFixed(1)} kg</td></tr>
+            `;
+
+            g('pdf_measures_tbody').innerHTML = `
+                <tr><td>Tríceps / Subescapular</td><td style="text-align:right;font-weight:600;">${gv('sf_triceps')} / ${gv('sf_subscapular')} mm</td></tr>
+                <tr><td>Supraespinal / Abdominal</td><td style="text-align:right;font-weight:600;">${gv('sf_supraspinale')} / ${gv('sf_abdominal')} mm</td></tr>
+                <tr><td>Muslo ant. / Pantorrilla</td><td style="text-align:right;font-weight:600;">${gv('sf_thigh')} / ${gv('sf_calf')} mm</td></tr>
+                <tr><td>Brazo relajado / flexionado</td><td style="text-align:right;font-weight:600;">${gv('g_arm_relaxed')} / ${gv('g_arm_flexed')} cm</td></tr>
+                <tr><td>Cintura / Cadera</td><td style="text-align:right;font-weight:600;">${gv('g_waist')} / ${gv('g_hip')} cm</td></tr>
+                <tr><td>Muslo medio / Pantorrilla máx.</td><td style="text-align:right;font-weight:600;">${gv('g_thigh_mid')} / ${gv('g_calf_max')} cm</td></tr>
+                <tr><td>Antebrazo / Muñeca</td><td style="text-align:right;font-weight:600;">${gv('g_forearm')} / ${gv('g_wrist')} cm</td></tr>
+                <tr><td>Diámetro húmero / fémur</td><td style="text-align:right;font-weight:600;">${gv('d_humerus')} / ${gv('d_femur')} cm</td></tr>
+                <tr><td>Diámetro biacromial / biilíaco</td><td style="text-align:right;font-weight:600;">${gv('d_biacromial')} / ${gv('d_biiliocristal')} cm</td></tr>
+                <tr><td>Índice cintura/cadera (ICC)</td><td style="text-align:right;font-weight:600;">${gt('idx_whr')} (${gt('idx_whr_risk')})</td></tr>
+            `;
+
+            // ---------- PÁGINA 5 ----------
+            g('pdf_sig_evaluator').innerText = gv('evaluatorName') || 'Antropometrista responsable';
+
+            // Ajustar tamaño real de los gráficos Chart.js dentro del contenedor de impresión
+            [g('pdf_bodycomp_image1'), g('pdf_bodycomp_image2')].forEach(img => { img.style.objectFit = 'contain'; });
+
+            // ---------- CAPTURA Y EXPORTACIÓN MULTI-PÁGINA ----------
+            const container = document.getElementById('pdfReportContainer');
+            container.style.position = 'static';
+            container.style.left = '0';
+            container.style.top = '0';
+
+            const pages = Array.from(document.querySelectorAll('.jintra-page'));
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            const pageWmm = 210, pageHmm = 297;
+
+            try {
+                for (let i = 0; i < pages.length; i++) {
+                    const canvas = await html2canvas(pages[i], { scale: 2, backgroundColor: '#ffffff' });
+                    const imgData = canvas.toDataURL('image/png');
+                    if (i > 0) pdf.addPage();
+                    pdf.addImage(imgData, 'PNG', 0, 0, pageWmm, pageHmm);
+                }
+                pdf.save(`JYNTRA_Informe_${athleteName.replace(/\s+/g, '_')}.pdf`);
+            } catch (err) {
+                console.error("PDF Export Error:", err);
+            } finally {
+                container.style.position = 'absolute';
+                container.style.left = '-9999px';
+                container.style.top = '-9999px';
+            }
+        }
+    </script>
+
+    <!-- ===================== BIOIMPEDANCIA · LÓGICA DE EVALUACIÓN ===================== -->
+    <script>
+        let biaWeightChart = null;
+
+        function biaEvalBMI(bmi) {
+            if (bmi < 18.5) return { code: '-', label: 'Bajo Peso (-)', pct: 10 };
+            if (bmi < 25.0) return { code: '0', label: 'Normal (0)', pct: 42 };
+            if (bmi < 30.0) return { code: '+', label: 'Sobrepeso (+)', pct: 68 };
+            return { code: '++', label: 'Obesidad (++)', pct: 90 };
+        }
+
+        function biaEvalFat(gender, age, fat) {
+            let l = (gender === 'F') ? { low: 21, norm: 32.9, high: 38.9 } : { low: 8, norm: 19.9, high: 24.9 };
+            if (fat < l.low) return { code: '-', label: 'Bajo (-)', pct: 10 };
+            if (fat <= l.norm) return { code: '0', label: 'Normal (0)', pct: 38 };
+            if (fat <= l.high) return { code: '+', label: 'Elevado (+)', pct: 68 };
+            return { code: '++', label: 'Muy Elevado (++)', pct: 90 };
+        }
+
+        function biaEvalMuscle(gender, age, muscle) {
+            let l = (gender === 'F') ? { low: 24.3, norm: 30.3, high: 35.3 } : { low: 33.3, norm: 39.3, high: 44.0 };
+            if (muscle < l.low) return { code: '-', label: 'Bajo (-)', pct: 10 };
+            if (muscle <= l.norm) return { code: '0', label: 'Normal (0)', pct: 38 };
+            if (muscle <= l.high) return { code: '+', label: 'Elevado (+)', pct: 65 };
+            return { code: '++', label: 'Muy Elevado (++)', pct: 90 };
+        }
+
+        function biaEvalVisceral(visc) {
+            if (visc <= 9) return { code: '0', label: 'Normal (≤ 9)', pct: 22 };
+            if (visc <= 14) return { code: '+', label: 'Alto (+)', pct: 55 };
+            return { code: '++', label: 'Muy Alto (++)', pct: 85 };
+        }
+
+        function biaBadgeClass(code) {
+            if (code === '0') return "px-2 py-0.5 text-[9px] font-bold rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30";
+            if (code === '+') return "px-2 py-0.5 text-[9px] font-bold rounded bg-gold-500/20 text-gold-300 border border-gold-500/30";
+            if (code === '-') return "px-2 py-0.5 text-[9px] font-bold rounded bg-blue-500/20 text-blue-300 border border-blue-500/30";
+            return "px-2 py-0.5 text-[9px] font-bold rounded bg-rose-500/20 text-rose-300 border border-rose-500/30";
+        }
+
+        function biaStatusClass(code) {
+            if (code === '0') return "font-semibold text-emerald-400";
+            if (code === '+') return "font-semibold text-gold-300";
+            if (code === '-') return "font-semibold text-blue-400";
+            return "font-semibold text-rose-400";
+        }
+
+        function biaCalculateResults() {
+            const g = id => document.getElementById(id);
+            const gender = g('bia_userGender').value;
+            const age = parseInt(g('bia_userAge').value) || 30;
+            const height = parseFloat(g('bia_userHeight').value) || 170;
+            const weight = parseFloat(g('bia_userWeight').value) || 70;
+            const fat = parseFloat(g('bia_bodyFat').value) || 18;
+            const muscle = parseFloat(g('bia_skeletalMuscle').value) || 35;
+            const visceral = parseInt(g('bia_visceralFat').value) || 5;
+            const rm = parseInt(g('bia_basalRM').value) || 1600;
+            const bodyAge = parseInt(g('bia_bodyAge').value) || age;
+
+            const bmi = parseFloat((weight / ((height / 100) * (height / 100))).toFixed(1));
+
+            const rBmi = biaEvalBMI(bmi);
+            const rFat = biaEvalFat(gender, age, fat);
+            const rMuscle = biaEvalMuscle(gender, age, muscle);
+            const rVisceral = biaEvalVisceral(visceral);
+
+            g('bia_cardBmiVal').innerText = bmi;
+            g('bia_cardFatVal').innerText = fat;
+            g('bia_cardMuscleVal').innerText = muscle;
+            g('bia_cardVisceralVal').innerText = visceral;
+
+            g('bia_cardBmiBadge').innerText = rBmi.label; g('bia_cardBmiBadge').className = biaBadgeClass(rBmi.code);
+            g('bia_cardFatBadge').innerText = rFat.label; g('bia_cardFatBadge').className = biaBadgeClass(rFat.code);
+            g('bia_cardMuscleBadge').innerText = rMuscle.label; g('bia_cardMuscleBadge').className = biaBadgeClass(rMuscle.code);
+            g('bia_cardVisceralBadge').innerText = rVisceral.label; g('bia_cardVisceralBadge').className = biaBadgeClass(rVisceral.code);
+
+            g('bia_lblBmiVal').innerText = `${bmi} kg/m²`;
+            g('bia_lblFatVal').innerText = `${fat} %`;
+            g('bia_lblMuscleVal').innerText = `${muscle} %`;
+            g('bia_lblVisceralVal').innerText = `${visceral}`;
+
+            g('bia_lblBmiStatus').innerText = rBmi.label; g('bia_lblBmiStatus').className = biaStatusClass(rBmi.code);
+            g('bia_lblFatStatus').innerText = rFat.label; g('bia_lblFatStatus').className = biaStatusClass(rFat.code);
+            g('bia_lblMuscleStatus').innerText = rMuscle.label; g('bia_lblMuscleStatus').className = biaStatusClass(rMuscle.code);
+            g('bia_lblVisceralStatus').innerText = rVisceral.label; g('bia_lblVisceralStatus').className = biaStatusClass(rVisceral.code);
+
+            g('bia_pinBmi').style.left = `calc(${rBmi.pct}% - 4px)`;
+            g('bia_pinFat').style.left = `calc(${rFat.pct}% - 4px)`;
+            g('bia_pinMuscle').style.left = `calc(${rMuscle.pct}% - 4px)`;
+            g('bia_pinVisceral').style.left = `calc(${rVisceral.pct}% - 4px)`;
+
+            const kgFat = parseFloat(((weight * fat) / 100).toFixed(1));
+            const kgMuscle = parseFloat(((weight * muscle) / 100).toFixed(1));
+            let kgOther = parseFloat((weight - kgFat - kgMuscle).toFixed(1));
+            if (kgOther < 0) kgOther = 0;
+
+            g('bia_kgFatText').innerText = `${kgFat} kg`;
+            g('bia_kgMuscleText').innerText = `${kgMuscle} kg`;
+            g('bia_kgOtherText').innerText = `${kgOther} kg`;
+
+            biaRenderPieChart(kgFat, kgMuscle, kgOther);
+
+            g('bia_basalValueDisplay').innerText = `${rm.toLocaleString()} kcal`;
+            g('bia_tdeeModVal').innerText = `~ ${Math.round(rm * 1.35).toLocaleString()} kcal`;
+            g('bia_tdeeActiveVal').innerText = `~ ${Math.round(rm * 1.55).toLocaleString()} kcal`;
+
+            g('bia_valRealAge').innerText = age;
+            g('bia_valBodyAge').innerText = bodyAge;
+
+            const ageDiff = age - bodyAge;
+            const ageDiffTag = g('bia_ageDiffTag');
+            if (ageDiff > 0) {
+                ageDiffTag.innerText = `-${ageDiff} Años más joven`;
+                ageDiffTag.className = "text-base font-black text-emerald-400";
+            } else if (ageDiff < 0) {
+                ageDiffTag.innerText = `+${Math.abs(ageDiff)} Años mayor`;
+                ageDiffTag.className = "text-base font-black text-rose-400";
+            } else {
+                ageDiffTag.innerText = "Igual a edad real";
+                ageDiffTag.className = "text-base font-black text-gold-300";
+            }
+
+            let score = 100;
+            if (rBmi.code !== '0') score -= 10;
+            if (rFat.code !== '0') score -= 15;
+            if (rMuscle.code === '-') score -= 15;
+            if (rMuscle.code === '+') score += 5;
+            if (rVisceral.code !== '0') score -= 15;
+            score = Math.min(100, Math.max(30, score));
+
+            g('bia_scoreValue').innerText = score;
+            g('bia_scoreCircle').setAttribute('stroke-dasharray', `${score}, 100`);
+
+            const scoreBadge = g('bia_scoreBadge');
+            const scoreTitle = g('bia_scoreTitle');
+            const scoreSubtitle = g('bia_scoreSubtitle');
+
+            if (score >= 85) {
+                scoreBadge.innerText = "Excelente Estructura";
+                scoreBadge.className = "px-2.5 py-0.5 bg-emerald-500/10 text-emerald-400 text-[11px] font-bold rounded-full border border-emerald-500/20";
+                scoreTitle.innerText = "Composición Atlética Balanceada";
+                scoreSubtitle.innerText = "Niveles óptimos de masa magra y control efectivo de tejido graso visceral.";
+            } else if (score >= 70) {
+                scoreBadge.innerText = "Estado Aceptable";
+                scoreBadge.className = "px-2.5 py-0.5 bg-gold-500/10 text-gold-300 text-[11px] font-bold rounded-full border border-gold-500/20";
+                scoreTitle.innerText = "Composición Corporal Moderada";
+                scoreSubtitle.innerText = "Buen nivel físico con margen de optimización en hipertrofia o recomposición.";
+            } else {
+                scoreBadge.innerText = "Atención Requerida";
+                scoreBadge.className = "px-2.5 py-0.5 bg-rose-500/10 text-rose-400 text-[11px] font-bold rounded-full border border-rose-500/20";
+                scoreTitle.innerText = "Recomposición Sugerida";
+                scoreSubtitle.innerText = "Se recomienda ajustar plan nutricional y aumentar estímulo muscular esquelético.";
+            }
+        }
+
+        function biaRenderPieChart(kgFat, kgMuscle, kgOther) {
+            const canvas = document.getElementById('bia_weightPieChart');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            if (biaWeightChart) biaWeightChart.destroy();
+            biaWeightChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Grasa (kg)', 'Músculo (kg)', 'Residual (kg)'],
+                    datasets: [{
+                        data: [kgFat, kgMuscle, kgOther],
+                        backgroundColor: ['#DD2C37', '#DD2C37', '#727272'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    cutout: '70%'
+                }
+            });
+        }
+
+        window.addEventListener('load', function () {
+            biaCalculateResults();
+        });
+    </script>
+
+<script id="jy-cine-cfg">window.__JY_CINE_CFG__ = (window.__JY_CINE_PREP__ || null);</script>
+<script>
+/* ══════════════════════════════════════════════════════════════════
+   PUENTE JYNTRA · Cineantropometría ISAK y Bioimpedancia
+   ------------------------------------------------------------------
+   No toca el motor de cálculo ni los gráficos. Sólo:
+     1) repone la ficha guardada del paciente al abrir,
+     2) precarga la identidad del atleta si la ficha es nueva,
+     3) al pulsar «Guardar» empaqueta el estado y un resumen con los
+        gráficos ya convertidos a PNG, y lo entrega al perfil que
+        contiene esta herramienta.
+   ══════════════════════════════════════════════════════════════════ */
+(function(){
+'use strict';
+var CFG = window.__JY_CINE_CFG__ || {};
+
+function g(id){ return document.getElementById(id); }
+function tx(id){ var e=g(id); return e ? String(e.innerText||e.textContent||'').trim() : ''; }
+function vl(id){ var e=g(id); return e ? String(e.value==null?'':e.value) : ''; }
+function pin(id){ var e=g(id); return e && e.style && e.style.left ? e.style.left : ''; }
+
+/* ── 1 · reponer la ficha ─────────────────────────────────────── */
+function reponer(d){
+  if(!d) return false;
+  var puso = false;
+  Object.keys(d).forEach(function(k){
+    if(k==='isakLevel' || k==='savedAt') return;
+    var el = g(k); if(!el) return;
+    var v = d[k];
+    if(v === null || typeof v === 'object') return;
+    if(el.type==='checkbox' || el.type==='radio'){ el.checked = !!v; puso = true; }
+    else if('value' in el){ el.value = v; puso = true; }
+  });
+  if(d.isakLevel && typeof switchIsakLevel === 'function'){
+    try{ switchIsakLevel(+d.isakLevel); }catch(e){}
+  }
+  return puso;
+}
+
+/* ── 2 · identidad del atleta ─────────────────────────────────── */
+function precargar(){
+  var i = CFG.identidad || {};
+  function set(id, v){ var e=g(id); if(e && v!=null && v!=='') e.value = v; }
+  if(i.nombre) set('athleteName', i.nombre);
+  if(i.edad){ set('athleteAge', i.edad); set('bia_userAge', i.edad); }
+  if(i.sexo){
+    set('athleteGender', i.sexo==='F' ? 'female' : 'male');
+    set('bia_userGender', i.sexo==='F' ? 'F' : 'M');
+  }
+  if(i.talla){ set('m_height', i.talla); set('bia_userHeight', i.talla); }
+  if(i.peso){ set('m_weight', i.peso); set('bia_userWeight', i.peso); }
+  if(CFG.evaluador) set('evaluatorName', CFG.evaluador);
+}
+
+/* ── 3 · captura de los gráficos ──────────────────────────────── */
+function png(id){
+  try{
+    var c = g(id);
+    if(!c || !c.getContext || !c.width || !c.height) return '';
+    var d = c.toDataURL('image/png');
+    return (d && d.length > 3000) ? d : '';
+  }catch(e){ return ''; }
+}
+
+/* los canvas de pestañas ocultas nacen con tamaño 0: se abren un
+   instante, se redibujan, se capturan y todo vuelve a su lugar. */
+function capturar(cb){
+  var paneles = [].slice.call(document.querySelectorAll('.tabpanel'));
+  var antes = paneles.map(function(p){ return p.classList.contains('on'); });
+  paneles.forEach(function(p){ p.classList.add('on'); });
+  try{ if(typeof calculateAll === 'function') calculateAll(); }catch(e){}
+  try{ if(typeof biaCalculateResults === 'function') biaCalculateResults(); }catch(e){}
+  try{ window.dispatchEvent(new Event('resize')); }catch(e){}
+  try{ if(typeof bodyCompChartInstance !== 'undefined' && bodyCompChartInstance) bodyCompChartInstance.resize(); }catch(e){}
+  try{ if(typeof skinfoldChartInstance !== 'undefined' && skinfoldChartInstance) skinfoldChartInstance.resize(); }catch(e){}
+  try{ if(typeof biaWeightChart !== 'undefined' && biaWeightChart) biaWeightChart.resize(); }catch(e){}
+
+  setTimeout(function(){
+    var r = armar();
+    paneles.forEach(function(p,i){ p.classList.toggle('on', antes[i]); });
+    try{ window.dispatchEvent(new Event('resize')); }catch(e){}
+    cb(r);
+  }, 180);
+}
+
+function armar(){
+  return {
+    fecha : new Date().toISOString(),
+    atleta: {
+      nombre   : vl('athleteName'),
+      edad     : vl('athleteAge'),
+      sexo     : vl('athleteGender'),
+      deporte  : vl('athleteSport'),
+      evaluador: vl('evaluatorName'),
+      fecha    : vl('evalDate'),
+      peso     : vl('m_weight'),
+      talla    : vl('m_height'),
+      nivel    : (typeof isakLevel !== 'undefined' ? isakLevel : 1)
+    },
+    isak: {
+      kerr: {
+        muscular: tx('txt_m_musc'),
+        grasa   : tx('txt_m_fat'),
+        osea    : tx('txt_m_bone'),
+        residual: tx('txt_m_res')
+      },
+      pliegues: {
+        sum6: tx('kpi_sum6'),
+        sum8: tx('txt_sum8'),
+        adip: tx('txt_adip_idx')
+      },
+      extra: {
+        imc     : tx('kpi_bmi'),
+        imcCat  : tx('kpi_bmi_cat'),
+        grasaKg : tx('kpi_fat_kg'),
+        musculoKg: tx('kpi_muscle_kg'),
+        endo    : tx('val_endo'),
+        meso    : tx('val_meso'),
+        ecto    : tx('val_ecto')
+      },
+      gKerr    : png('bodyCompChart'),
+      gPliegues: png('skinfoldChart')
+    },
+    bia: {
+      puntaje : tx('bia_scoreValue'),
+      insignia: tx('bia_scoreBadge'),
+      titulo  : tx('bia_scoreTitle'),
+      detalle : tx('bia_scoreSubtitle'),
+      edadTag : tx('bia_ageDiffTag'),
+      edadReal: tx('bia_valRealAge'),
+      edadCorp: tx('bia_valBodyAge'),
+      kpis: [
+        {t:'IMC total',        v:tx('bia_cardBmiVal'),      u:'kg/m²', b:tx('bia_cardBmiBadge')},
+        {t:'% grasa corporal', v:tx('bia_cardFatVal'),      u:'%',     b:tx('bia_cardFatBadge')},
+        {t:'% músculo esq.',   v:tx('bia_cardMuscleVal'),   u:'%',     b:tx('bia_cardMuscleBadge')},
+        {t:'Grasa visceral',   v:tx('bia_cardVisceralVal'), u:'nivel', b:tx('bia_cardVisceralBadge')}
+      ],
+      escalas: [
+        {esc:'imc',      t:'IMC',                   v:tx('bia_lblBmiVal'),      e:tx('bia_lblBmiStatus'),      p:pin('bia_pinBmi')},
+        {esc:'grasa',    t:'% grasa corporal',      v:tx('bia_lblFatVal'),      e:tx('bia_lblFatStatus'),      p:pin('bia_pinFat')},
+        {esc:'musculo',  t:'% músculo esquelético', v:tx('bia_lblMuscleVal'),   e:tx('bia_lblMuscleStatus'),   p:pin('bia_pinMuscle')},
+        {esc:'visceral', t:'Nivel de grasa visceral', v:tx('bia_lblVisceralVal'), e:tx('bia_lblVisceralStatus'), p:pin('bia_pinVisceral')}
+      ],
+      masa: {
+        grasa   : tx('bia_kgFatText'),
+        musculo : tx('bia_kgMuscleText'),
+        residual: tx('bia_kgOtherText'),
+        g       : png('bia_weightPieChart')
+      },
+      energia: {
+        basal    : tx('bia_basalValueDisplay'),
+        moderada : tx('bia_tdeeModVal'),
+        alta     : tx('bia_tdeeActiveVal')
+      }
+    }
+  };
+}
+
+/* ── 4 · guardar ──────────────────────────────────────────────── */
+function avisar(seccion){
+  var estado = {};
+  try{ estado = window.collectAllData ? window.collectAllData() : {}; }catch(e){}
+  capturar(function(resumen){
+    resumen.seccion = seccion || null;
+    try{
+      if(window.parent && window.parent !== window){
+        window.parent.postMessage({
+          __jyCine : true,
+          accion   : 'guardar',
+          paciente : CFG.paciente || null,
+          seccion  : seccion || null,
+          estado   : estado,
+          resumen  : resumen
+        }, '*');
+      }
+    }catch(e){}
+  });
+}
+
+function enganchar(){
+  var previo = window.saveData;
+  window.saveData = function(seccion){
+    try{ if(typeof previo === 'function') previo(seccion); }catch(e){}
+    avisar(seccion);
+  };
+}
+
+function arrancar(){
+  enganchar();
+  var repuesto = reponer(CFG.estado);
+  if(!repuesto) precargar();
+  else if(CFG.identidad && !vl('athleteName')) precargar();
+  try{ if(typeof calculateAll === 'function') calculateAll(); }catch(e){}
+  try{ if(typeof biaCalculateResults === 'function') biaCalculateResults(); }catch(e){}
+  try{
+    if(window.parent && window.parent !== window){
+      window.parent.postMessage({__jyCine:true, accion:'listo', paciente:CFG.paciente||null}, '*');
+    }
+  }catch(e){}
+}
+
+/* window.onload de la herramienta arma los gráficos: hay que entrar después */
+if(document.readyState === 'complete') setTimeout(arrancar, 60);
+else window.addEventListener('load', function(){ setTimeout(arrancar, 60); });
+
+})();
+</script>
+
+</body>
+</html>

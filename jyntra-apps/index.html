@@ -342,6 +342,16 @@ body[data-rol] .brandmark .tag{ color:var(--rol-acc); letter-spacing:.3em; }
 /* el alumno mantiene el dorado general, pero sus marcas van en azul */
 body[data-rol="alumno"] .chip.info,
 body[data-rol="alumno"] .kpi::after{ background:var(--r-alumno); }
+
+.jy-barra{display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  padding:10px 12px;border:1px solid var(--line);background:var(--panel2);}
+.jy-barra-sup{border-radius:var(--rad) var(--rad) 0 0;border-bottom:0;justify-content:space-between}
+.jy-barra-inf{border-radius:0 0 var(--rad) var(--rad);border-top:0;justify-content:flex-end;
+  position:sticky;bottom:0;z-index:5;background:var(--panel2)}
+.jy-sello{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--mute)}
+.jy-barra .hint{margin:0;flex:1;min-width:140px}
+@media(max-width:520px){.jy-barra{justify-content:stretch}.jy-barra .btn{flex:1;justify-content:center}}
 </style>
 </head>
 <body>
@@ -1077,8 +1087,31 @@ function guardarEjercicio(e){
 /* ---------------------------------------------------------------
    §8 · SEMILLA — para que la cáscara se pueda recorrer desde el minuto uno
    --------------------------------------------------------------- */
+/* ---------------------------------------------------------------
+   MODO DE DEMOSTRACIÓN
+   ---------------------------------------------------------------
+   En false, la plataforma arranca vacía: sin cuentas de prueba, sin
+   alumnos inventados, sin agenda de ejemplo. Es lo que corresponde
+   cuando ya la usa gente real, porque esas cuentas tenían contraseña
+   conocida y cualquiera podía entrar con ellas.
+
+   Ponerlo en true vuelve a sembrar los datos de ejemplo, útil para
+   enseñar la plataforma sin tocar información de nadie.
+   --------------------------------------------------------------- */
+const DEMO = false;
+
 function sembrar(){
   if(S.usuarios) return;
+  if(!DEMO){
+    /* Inicializar TODOS los arreglos que usa la aplicación: si quedan
+       null, cualquier .filter() o .find() explota al primer pintado. */
+    ['usuarios','vinculos','registros','metricas','agenda','fichas',
+     'pautas','horario','facturas','bitacora','gifs'].forEach(function(k){
+      if(!S[k]) S[k] = [];
+    });
+    guardar('usuarios');
+    return;
+  }
   const d = (n)=> new Date(Date.now()-n*864e5).toISOString();
   S.usuarios = [
     { id:'u_admin', nombre:'Pedro Jyntra', email:'admin@jyntra.com', clave:'jyntra', rol:'administrador', creado:d(180), telefono:'+56 9 0000 0000' },
@@ -1207,11 +1240,14 @@ function formEntrar(){
   + '<div class="field"><label>Correo</label><input class="inp" name="email" type="email" autocomplete="username" required placeholder="tu@correo.com"></div>'
   + '<div class="field"><label>Contraseña</label><input class="inp" name="clave" type="password" autocomplete="current-password" required></div>'
   + '<button class="btn gold" type="submit" style="justify-content:center">Entrar</button>'
-  + '<div class="hint" style="margin-top:6px">Cuentas de prueba — la contraseña de todas es <span class="mono">jyntra</span></div>'
-  + '<div class="grid g2" style="gap:6px">'
-  +   [['admin@jyntra.com','Administrador'],['profe@jyntra.com','Profesor'],['nutri@jyntra.com','Nutricionista'],['alumno@jyntra.com','Alumno']]
-       .map(c=>'<button type="button" class="btn sm" data-demo="'+c[0]+'" style="justify-content:center">'+c[1]+'</button>').join('')
-  + '</div></form>';
+  + (DEMO
+      ? '<div class="hint" style="margin-top:6px">Cuentas de prueba — la contraseña de todas es <span class="mono">jyntra</span></div>'
+        + '<div class="grid g2" style="gap:6px">'
+        + [['admin@jyntra.com','Administrador'],['profe@jyntra.com','Profesor'],['nutri@jyntra.com','Nutricionista'],['alumno@jyntra.com','Alumno']]
+            .map(c=>'<button type="button" class="btn sm" data-demo="'+c[0]+'" style="justify-content:center">'+c[1]+'</button>').join('')
+        + '</div>'
+      : '<div class="hint" style="margin-top:6px">¿Primera vez? Crea tu cuenta con el enlace de arriba.</div>')
+  + '</form>';
 }
 function formCrear(roles){
   return '<form id="f-crear" class="stack">'
@@ -2657,13 +2693,23 @@ function montarArchivo(caja, ctx, opciones){
   marco.style.minHeight = (opciones.alto || 900) + 'px';
   caja.appendChild(marco);
 
+  /* barra de acciones: arriba el sello y el salto, abajo el guardado */
+  if(opciones.barra) barraHerramienta(caja, ctx, opciones.barra);
+
   function responder(msg){
     try{ marco.contentWindow.postMessage(msg, '*'); }catch(e){}
   }
 
   var oir = function(e){
     var m = e.data;
-    if(!m || e.source !== marco.contentWindow) return;
+    if(!m) return;
+    /* El filtro de origen evita que otra pestaña nos hable. Algunos
+       entornos no rellenan e.source, así que cuando falta se acepta
+       el mensaje sólo si trae una de nuestras marcas: es tan estricto
+       como antes para lo que viene de fuera, y no pierde lo nuestro. */
+    if(e.source && e.source !== marco.contentWindow) return;
+    if(!e.source && !(m.jyntra === true || m.jyEmbed === true ||
+                      m.__jyNutri === true || m.__jyCine === true)) return;
 
     /* alto: lo mandan ambos protocolos */
     if((m.jyntra === true || m.jyEmbed === true) && m.accion === 'alto' && m.px){
@@ -2676,17 +2722,114 @@ function montarArchivo(caja, ctx, opciones){
     if(m.jyntra === true){
       if(m.accion === 'guardar') guardarDesdeArchivo(m.registro || {}, ctx);
       if(m.accion === 'metrica' && ctx.registrarMetrica) ctx.registrarMetrica(m.metrica || {});
-      if(m.accion === 'listo' && opciones.alAbrir) opciones.alAbrir(responder);
+      if(m.accion === 'listo') abrirUnaVez();
       return;
     }
 
-    /* --- protocolo 'jyEmbed': herramientas del alumno --- */
-    if(m.jyEmbed === true){
-      if(m.accion === 'guardarRutina'){
-        var reg = guardarDesdeArchivo({
-          modulo:'planificacion', tipo:'Mi planificación',
-          datos: m.datos || {}
+    /* --- canal propio de la anamnesis nutricional ---
+       Es UNA herramienta con seis pasos y un estado por paciente, que
+       mostramos en dos ranuras (anamnesis 0-2 · plan 3-5). Para que la
+       segunda vea lo que se escribió en la primera, su estado vive en
+       una clave propia y se le devuelve entero al montarla. */
+    if(m.__jyNutri === true){
+      if(m.accion === 'guardar' && m.estado){
+        var sn = (ctx && ctx.alumno && ctx.alumno.id) || (sesion() && sesion().id);
+        if(sn){
+          try{ DB.set('__nutri_' + sn, m.estado); }catch(e){}
+          var sel = caja.parentNode && caja.parentNode.querySelector('.jy-sello');
+          if(sel) sel.textContent = 'Guardado ' + new Date().toLocaleTimeString('es-CL',
+                   {hour:'2-digit', minute:'2-digit'});
+        }
+        return;   /* autoguardado silencioso: el registro lo hace el botón */
+      }
+      if(m.accion === 'publicar' || m.accion === 'crearPlan'){
+        var r = guardarDesdeArchivo({
+          modulo:'nutricion',
+          tipo: m.accion === 'publicar' ? 'Pauta alimentaria publicada' : 'Anamnesis nutricional',
+          visible: m.accion === 'publicar',
+          datos: Object.assign({__nutri:m.estado || m.datos || null}, m.datos || {})
         }, ctx);
+        responder({__jyNutri:true, accion:'pautaGuardada',
+                   error:!r, mensaje: r ? 'Guardado en la ficha' : 'No se pudo guardar'});
+      }
+      return;
+    }
+
+    /* --- canal propio de la cineantropometría --- */
+    if(m.__jyCine === true){
+      if(m.accion === 'guardar'){
+        guardarDesdeArchivo({modulo:'seguimiento', tipo:'Cineantropometría ISAK',
+                             datos:m.datos || m.estado || {}}, ctx);
+      }
+      return;
+    }
+
+    /* --- protocolo 'jyEmbed': herramientas del alumno y anamnesis --- */
+    if(m.jyEmbed === true){
+      /* La anamnesis emite 'estado' medio segundo después de cada cambio.
+         Antes nadie lo escuchaba y el trabajo se perdía al cerrar. Ahora
+         se guarda en borrador, sin toast, para no interrumpir al que
+         escribe; el registro definitivo lo hace el botón Guardar. */
+      if(m.accion === 'estado'){
+        var su = (ctx && ctx.alumno && ctx.alumno.id) || (sesion() && sesion().id);
+        if(su){
+          try{ DB.set('__borrador_' + (opciones.clave || 'anamnesis') + '_' + su,
+                      {datos:m.datos, fecha:new Date().toISOString()}); }catch(e){}
+          var sello = caja.parentNode && caja.parentNode.querySelector('.jy-sello');
+          if(sello) sello.textContent = 'Guardado ' + new Date().toLocaleTimeString('es-CL',
+                     {hour:'2-digit', minute:'2-digit'});
+        }
+        return;
+      }
+      if(m.accion === 'guardarRutina'){
+        /* Pulsar Guardar varias veces seguidas es normal cuando no se
+           ve claro si tomó. Cada clic llegaba como un guardado nuevo y
+           podía dejar rutinas paralelas. Se atiende el primero y se
+           descartan los que lleguen en el segundo y medio siguiente:
+           los datos son los mismos, así que no se pierde nada. */
+        var ahora = Date.now();
+        if(caja.__jyUltGuardado && ahora - caja.__jyUltGuardado < 1500){
+          responder({ jyEmbed:true, accion:'rutinaGuardada', error:false,
+                      mensaje:'Guardado' });
+          return;
+        }
+        caja.__jyUltGuardado = ahora;
+        /* Una rutina es un hilo, no dos papeles sueltos: cuando el
+           alumno responde sobre la que le publicó su profesor, se
+           actualiza ESE registro en vez de crear uno paralelo. Así
+           el profesor ve sus notas y las respuestas en el mismo
+           sitio, y el marcado de ejercicios queda donde toca. */
+        var yo3 = sesion();
+        var abierta = yo3 ? Datos.paraAlumno(yo3.id, 'planificacion')[0] : null;
+        /* Si el alumno pulsa Guardar dos veces seguidas, el segundo
+           clic llegaba antes de que el primero dejara su registro y
+           se creaban dos rutinas paralelas. Se recuerda cuál se creó
+           en este montaje para volver a escribir sobre ella. */
+        if(!abierta && caja.__jyRutinaId){
+          abierta = Datos.listar({modulo:'planificacion'})
+                    .filter(function(r){ return r.id === caja.__jyRutinaId; })[0] || null;
+        }
+        var reg;
+        if(abierta){
+          /* Se reescribe por la API, no mutando el objeto en memoria:
+             el canal que sincroniza entre perfiles recarga S desde
+             disco cada pocos segundos y se llevaba por delante los
+             cambios hechos a mano. Datos.guardar respeta el id, así
+             que actualiza el mismo registro en vez de crear otro. */
+          reg = Datos.guardar(Object.assign({}, abierta, {
+            datos      : m.datos || {},
+            tocado     : new Date().toISOString(),
+            tocadoPor  : yo3.id
+          }));
+          caja.__jyRutinaId = reg && reg.id;
+          toast('Guardado. Tu profesor verá tus notas.','ok');
+        } else {
+          reg = guardarDesdeArchivo({
+            modulo:'planificacion', tipo:'Mi planificación',
+            datos: m.datos || {}
+          }, ctx);
+          if(reg) caja.__jyRutinaId = reg.id;
+        }
         responder({ jyEmbed:true, accion:'rutinaGuardada',
                     error: !reg,
                     mensaje: reg ? 'Guardado en tu historial' : 'No se pudo guardar' });
@@ -2697,12 +2840,26 @@ function montarArchivo(caja, ctx, opciones){
       return;
     }
   };
+  /* Cada montaje dejaba su oyente puesto: al repintar la pantalla se
+     acumulaban y cada mensaje se atendía varias veces (de ahí los
+     avisos repetidos). Se retira el del montaje anterior de esta
+     misma caja antes de poner el nuevo. */
+  if(caja.__jyOir) window.removeEventListener('message', caja.__jyOir);
+  caja.__jyOir = oir;
   window.addEventListener('message', oir);
 
   /* cuando el marco termina de cargar, se le envía lo que corresponda */
-  marco.addEventListener('load', function(){
-    if(opciones.alAbrir) opciones.alAbrir(responder);
-  });
+  /* Enviar la rutina más de una vez la recarga dentro de la
+     herramienta y borra lo que la persona llevaba escrito. El marco
+     avisa por 'load' y por 'listo', así que se atiende sólo el
+     primero de los dos. */
+  var yaAbierto = false;
+  function abrirUnaVez(){
+    if(yaAbierto || !opciones.alAbrir) return;
+    yaAbierto = true;
+    opciones.alAbrir(responder);
+  }
+  marco.addEventListener('load', abrirUnaVez);
 
   return function(){ window.removeEventListener('message', oir); };
 }
@@ -2711,12 +2868,16 @@ function montarArchivo(caja, ctx, opciones){
 function guardarDesdeArchivo(reg, ctx){
   var u = sesion(); if(!u) return null;
   var a = ctx && ctx.alumno;
-  if(a && !vinculado(a.id, u.id)){
+  /* Guardar en la ficha de OTRA persona exige vínculo. Guardar en la
+     propia, no: el alumno registrando sus marcas es el caso normal y
+     nadie está vinculado consigo mismo. */
+  var propio = !a || a.id === u.id;
+  if(!propio && !vinculado(a.id, u.id)){
     toast('No hay vínculo activo con esa persona. No se guardó nada.','bad');
     return null;
   }
   var r = Datos.guardar(Object.assign({ autorId:u.id, sujetoId:(a && a.id) || u.id }, reg));
-  toast(a ? ('Guardado en la ficha de ' + String(a.nombre).split(' ')[0]) : 'Registro guardado','ok');
+  toast(propio ? 'Guardado' : ('Guardado en la ficha de ' + String(a.nombre).split(' ')[0]), 'ok');
   return r;
 }
 
@@ -2763,7 +2924,10 @@ JYNTRA.registrar({
   nombre:'JINTRA PRO · Perfil del atleta y Fuerza 1RM',
   montar: function(caja, ctx){
     return montarArchivo(caja, ctx, {src:HER+'perfil-atleta.html', alto:1400,
-      nombre:'Perfil del atleta y Fuerza 1RM'});
+      nombre:'Perfil del atleta y Fuerza 1RM',
+      barra:{ clave:'atleta', modulo:'evaluacion', tipo:'Perfil del atleta',
+              pie:'Se guarda en la ficha del alumno.',
+              siguiente:{ ruta:'planificacion', texto:'Guardar y planificar' } }});
   }
 });
 
@@ -2772,7 +2936,9 @@ JYNTRA.registrar({
   nombre:'Planificador de entrenamiento',
   montar: function(caja, ctx){
     return montarArchivo(caja, ctx, {src:HER+'planificador-pro.html', alto:1500,
-      nombre:'Planificador de entrenamiento'});
+      nombre:'Planificador de entrenamiento',
+      barra:{ clave:'plan', modulo:'planificacion', tipo:'Rutina publicada',
+              pie:'Al guardar, la rutina queda visible para el alumno.' }});
   }
 });
 
@@ -2781,7 +2947,9 @@ JYNTRA.registrar({
   nombre:'Cineantropometría ISAK 1 y 2',
   montar: function(caja, ctx){
     return montarArchivo(caja, ctx, {src:HER+'cineantropometria.html', alto:1200,
-      nombre:'Cineantropometría ISAK'});
+      nombre:'Cineantropometría ISAK',
+      barra:{ clave:'cine', modulo:'seguimiento', tipo:'Cineantropometría ISAK',
+              pie:'Se guarda en el seguimiento del alumno.' }});
   }
 });
 
@@ -2789,8 +2957,14 @@ JYNTRA.registrar({
   ranura:'nutricionista.anamnesis', id:'jintra-anamnesis',
   nombre:'Anamnesis nutricional y deportiva',
   montar: function(caja, ctx){
-    return montarArchivo(caja, ctx, {src:HER+'anamnesis.html', alto:1500,
-      nombre:'Anamnesis'});
+    /* MISMA herramienta que el plan alimentario, mostrando sus pasos 0-2.
+       Así el validate0() del modo plan encuentra los datos que se
+       escribieron aquí: comparten estado por paciente. */
+    return montarArchivo(caja, ctx, {src:HER+'nutricion.html', alto:1500,
+      nombre:'Anamnesis nutricional', foco:{ modoNutri:'anamnesis' },
+      barra:{ clave:'nutri', modulo:'evaluacion', tipo:'Anamnesis nutricional',
+              pie:'Se guarda en la ficha del paciente. El plan se arma con estos datos.',
+              siguiente:{ ruta:'pauta', texto:'Guardar y crear plan' } }});
   }
 });
 
@@ -2798,8 +2972,11 @@ JYNTRA.registrar({
   ranura:'nutricionista.plan', id:'jintra-nutricion',
   nombre:'JINTRA PRO · Anamnesis nutricional completa',
   montar: function(caja, ctx){
+    /* el nutricionista arma el plan: pasos 3, 4 y 5 */
     return montarArchivo(caja, ctx, {src:HER+'nutricion.html', alto:1600,
-      nombre:'Anamnesis nutricional'});
+      nombre:'Plan alimentario', foco:{ modoNutri:'plan' },
+      barra:{ clave:'pauta', modulo:'nutricion', tipo:'Pauta alimentaria',
+              pie:'Al guardar, la pauta queda visible para el paciente.' }});
   }
 });
 
@@ -2808,7 +2985,9 @@ JYNTRA.registrar({
   nombre:'Cineantropometría ISAK 1 y 2',
   montar: function(caja, ctx){
     return montarArchivo(caja, ctx, {src:HER+'cineantropometria.html', alto:1200,
-      nombre:'Cineantropometría ISAK'});
+      nombre:'Cineantropometría ISAK',
+      barra:{ clave:'cine', modulo:'seguimiento', tipo:'Cineantropometría ISAK',
+              pie:'Se guarda en el seguimiento del alumno.' }});
   }
 });
 
@@ -2833,6 +3012,14 @@ JYNTRA.registrar({
 function rutinaPublicada(alumnoId){
   var pubs = Datos.paraAlumno(alumnoId, 'planificacion');
   if(!pubs.length) return null;
+  /* 'creado' es cuándo nació el registro; 'tocado', cuándo se escribió
+     por última vez. Al ordenar sólo por 'creado', la versión que el
+     profesor acababa de publicar tapaba la que el alumno había
+     anotado después, y sus notas parecían borrarse. Se toma la más
+     reciente de verdad. */
+  pubs = pubs.slice().sort(function(a,b){
+    return String(b.tocado || b.creado).localeCompare(String(a.tocado || a.creado));
+  });
   var d = pubs[0].datos || {};
   if(!Array.isArray(d.sesiones) || !d.sesiones.length) return null;
   /* Sanea la forma: una rutina guardada por una versión antigua puede venir
@@ -2901,11 +3088,84 @@ JYNTRA.registrar({
     var u = sesion(); if(!u) return;
     return montarArchivo(caja, {alumno:u}, {
       src:HER+'nutricion.html', alto:1500, nombre:'Mi pauta',
-      foco:{ modo:'lectura' }
+      /* el alumno consulta la pauta que le armaron: la ve entera, sin editar */
+      foco:{ modo:'lectura', modoNutri:'completo' }
     });
   }
 });
 
+
+/* ---------------------------------------------------------------
+   BARRA DE ACCIONES DE HERRAMIENTA
+   ---------------------------------------------------------------
+   Cada herramienta guarda a su manera: unas emiten 'guardar', otras
+   sólo 'estado', y la anamnesis no emitía nada persistible. Esta
+   barra les da a todas el mismo par de gestos, arriba y abajo:
+
+     · arriba · sello de autoguardado y, donde tiene sentido, el
+                salto a la etapa siguiente (anamnesis → plan)
+     · abajo  · guardar en la ficha, siempre visible
+
+   La barra vive en la cáscara, no dentro del marco, así que no hay
+   que tocar el HTML de ninguna herramienta.
+   --------------------------------------------------------------- */
+function barraHerramienta(caja, ctx, opciones){
+  opciones = opciones || {};
+  var sup = document.createElement('div');
+  sup.className = 'jy-barra jy-barra-sup';
+  sup.innerHTML = '<span class="jy-sello">Sin cambios todavía</span>'
+    + (opciones.siguiente
+        ? '<button type="button" class="btn gold" data-ir="'+opciones.siguiente.ruta+'">'
+          + esc(opciones.siguiente.texto) + ' →</button>'
+        : '');
+
+  var inf = document.createElement('div');
+  inf.className = 'jy-barra jy-barra-inf';
+  inf.innerHTML = '<span class="hint">'+esc(opciones.pie || 'Se guarda en la ficha del alumno.')+'</span>'
+    + '<button type="button" class="btn gold" data-guardar="1">Guardar ✓</button>';
+
+  caja.parentNode.insertBefore(sup, caja);
+  caja.parentNode.appendChild(inf);
+
+  var irBtn = sup.querySelector('[data-ir]');
+  if(irBtn) irBtn.onclick = function(){
+    guardarAhora(function(){ ruta(irBtn.dataset.ir); });
+  };
+  inf.querySelector('[data-guardar]').onclick = function(){ guardarAhora(); };
+
+  /* Guarda lo que haya: primero pide a la herramienta su estado; si no
+     responde, usa el último borrador del autoguardado. */
+  function guardarAhora(despues){
+    var su = (ctx && ctx.alumno && ctx.alumno.id) || (sesion() && sesion().id);
+    var clave = '__borrador_' + (opciones.clave || 'anamnesis') + '_' + su;
+    var b = null;
+    try{ b = DB.get(clave, null); }catch(e){}
+    /* la herramienta nutricional guarda su estado en su propia clave */
+    if(!b && (opciones.clave === 'nutri' || opciones.clave === 'pauta')){
+      var en = null;
+      try{ en = DB.get('__nutri_' + su, null); }catch(e){}
+      if(en) b = {datos:en};
+    }
+
+    var marco = caja.querySelector('iframe');
+    if(marco){
+      try{ marco.contentWindow.postMessage({jyEmbed:true, accion:'guardarYa'}, '*'); }catch(e){}
+      try{ marco.contentWindow.postMessage({jyntra:true,  accion:'guardarYa'}, '*'); }catch(e){}
+    }
+
+    if(!b || !b.datos){
+      toast('Todavía no hay nada que guardar en esta ficha.','warn');
+      if(despues) despues();
+      return;
+    }
+    guardarDesdeArchivo({
+      modulo : opciones.modulo || 'evaluacion',
+      tipo   : opciones.tipo   || 'Anamnesis',
+      datos  : b.datos
+    }, ctx);
+    if(despues) despues();
+  }
+}
 /* ---------------------------------------------------------------
    §18 · ARRANQUE
    --------------------------------------------------------------- */

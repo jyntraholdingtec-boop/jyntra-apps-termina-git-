@@ -263,6 +263,9 @@
     header.top{padding:18px;}
     main{padding:20px 14px 70px;}
   }
+
+.nota-otro{opacity:.72;cursor:default;background:rgba(255,255,255,.02)}
+.nota-otro:focus{outline:none}
 </style>
 
 <style id="jy-embed">
@@ -687,7 +690,7 @@ const MAX_SLOTS = 12;
 const MIN_SLOTS = 1;
 const BASE_SLOTS = 4;
 
-function emptySlot(){ return {eje:"",grupo:"",ejercicio:"",series:"",reps:"",peso:"",descanso:"",obs:"",hecho:false,grupoId:""}; }
+function emptySlot(){ return {eje:"",grupo:"",ejercicio:"",series:"",reps:"",peso:"",descanso:"",obs:"",obsAlumno:"",hecho:false,grupoId:""}; }
 function newSession(n){ return {nombre:`Sesión ${n}`, modalidad:"", ejercicios:Array.from({length:BASE_SLOTS}, emptySlot), grupos:{}}; }
 
 /* ---------------- súper series (bi-series, tri-series sin descanso) ---------------- */
@@ -1055,8 +1058,12 @@ function renderSlots(){
 
       <div class="slot-obs">
         <div class="cell">
-          <span class="field-label">Observación</span>
-          <textarea placeholder="Notas técnicas, cuidados, variantes..." data-field="obs" data-idx="${i}">${slot.obs}</textarea>
+          <span class="field-label">Nota de tu profesor</span>
+          <textarea class="nota-otro" readonly placeholder="Sin indicaciones para este ejercicio.">${slot.obs||""}</textarea>
+        </div>
+        <div class="cell">
+          <span class="field-label">Tu nota</span>
+          <textarea placeholder="¿Cómo te fue? Molestias, peso usado, dudas..." data-field="obsAlumno" data-idx="${i}">${slot.obsAlumno||""}</textarea>
         </div>
         <button class="done-btn ${slot.hecho?'done':''}" data-done="${i}"
                 title="${slot.hecho?'Marcado como realizado':'Marcar como realizado'}"
@@ -1071,7 +1078,7 @@ function renderSlots(){
   document.getElementById("count-label").textContent = `${filled}/${s.ejercicios.length}`;
 
   slotsEl.querySelectorAll("select").forEach(el => el.addEventListener("change", handleFieldChange));
-  slotsEl.querySelectorAll('input[data-field="series"],input[data-field="reps"],input[data-field="peso"],input[data-field="descanso"],textarea[data-field="obs"]').forEach(el => {
+  slotsEl.querySelectorAll('input[data-field="series"],input[data-field="reps"],input[data-field="peso"],input[data-field="descanso"],textarea[data-field="obs"],textarea[data-field="obsAlumno"]').forEach(el => {
     el.addEventListener("input", updateSlotFieldLight);
   });
   slotsEl.querySelectorAll("[data-remove]").forEach(btn => btn.addEventListener("click", handleRemoveSlot));
@@ -1179,6 +1186,12 @@ function handleDone(e){
     btn.classList.add("just");
   }
   renderProgress();
+  /* El marcado viaja al profesor: sin esto se perdía al cerrar.
+     Se agrupa medio segundo para no emitir un registro por clic. */
+  clearTimeout(window.__jyMarcaTmr);
+  window.__jyMarcaTmr = setTimeout(function(){
+    if (typeof window.jyGuardarRutina === "function") window.jyGuardarRutina();
+  }, 500);
 }
 
 /* Avance de la sesión: cuántos ejercicios asignados ya se hicieron */
@@ -1910,6 +1923,15 @@ document.getElementById("pdf-btn").addEventListener("click", async () => {
   });
 })();
 
+</script>
+<script>
+/* El marcado de ejercicios necesita guardar, y el guardado de
+   esta herramienta cuelga del botón. Se expone aquí, al final,
+   cuando el botón ya existe en el documento. */
+window.jyGuardarRutina = function(){
+  var b = document.getElementById("jy-guardar-rutina");
+  if (b) b.click();
+};
 </script>
 </body>
 </html>

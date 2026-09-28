@@ -4,21 +4,34 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>JYNTRA Technologies</title>
-<meta name="theme-color" content="#0D0D0D">
+<meta name="theme-color" content="#171717">
+<!-- app instalable (PWA) -->
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="iconos/favicon-32.png">
+<link rel="icon" type="image/svg+xml" href="iconos/icono.svg">
+<link rel="apple-touch-icon" href="iconos/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="JYNTRA">
+<meta name="description" content="JYNTRA Technologies · entrenamiento y nutrición de alto rendimiento.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
+/* paleta JYNTRA: blanco, negro #171717, rojo #DD2C37, blanco 2 #EEF1F3 */
+:root{--jy-acc:#DD2C37;--jy-acc-hi:#E8434D;--jy-acc-lo:#8E1C23;--jy-acc-glow:rgba(221,44,55,.16);--jy-borde:#3A3A3A;--jy-texto-acc:#FFFFFF;--jy-texto-tenue:#9F9F9F;}
+
 /* ============================================================
    JYNTRA · sistema base
-   Paleta del logo: dorado #C6A15A sobre negro
+   Paleta del logo: dorado #DD2C37 sobre negro
    ============================================================ */
 :root{
   --ink:#0D0D0D; --panel:#161616; --panel2:#1E1E1E; --raise:#262626;
-  --line:#33302A; --line-soft:#262420;
-  --gold:#C6A15A; --gold-hi:#E8CF95; --gold-dim:#7C6535;
-  --bone:#EDE7DA; --mute:#8E877A; --mute2:#6A655C;
-  --r-alumno:#5B93B8; --r-profesor:#C6A15A; --r-nutricionista:#7FB77E; --r-admin:#C0785F;
+  --line:#303030; --line-soft:#242424;
+  --gold:#DD2C37; --gold-hi:#DD2C37; --gold-dim:#8E1C23;
+  --bone:#EEF1F3; --mute:#888888; --mute2:#656565;
+  --r-alumno:#5B93B8; --r-profesor:#DD2C37; --r-nutricionista:#7FB77E; --r-admin:#C0785F;
   --ok:#7FB77E; --warn:#D9A441; --bad:#C9584C; --info:#5B93B8;
   --rail:250px; --top:60px;
   --f-disp:'Barlow Condensed',Impact,sans-serif;
@@ -32,18 +45,18 @@ html,body{margin:0;padding:0}
 body{
   background:var(--ink); color:var(--bone); font-family:var(--f-body);
   font-size:15px; line-height:1.5; -webkit-font-smoothing:antialiased;
-  background-image:radial-gradient(1100px 600px at 82% -14%, rgba(198,161,90,.09), transparent 62%);
+  background-image:radial-gradient(1100px 600px at 82% -14%, rgba(221,44,55,.09), transparent 62%);
   background-attachment:fixed;
 }
-a{color:var(--gold);text-decoration:none}
+a{color:var(--jy-texto-acc);text-decoration:none}
 button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit}
-:focus-visible{outline:2px solid var(--gold-hi);outline-offset:2px}
+:focus-visible{outline:2px solid var(--jy-acc-hi);outline-offset:2px}
 ::-webkit-scrollbar{width:10px;height:10px}
-::-webkit-scrollbar-thumb{background:#2E2A24;border-radius:8px}
+::-webkit-scrollbar-thumb{background:#2A2A2A;border-radius:8px}
 ::-webkit-scrollbar-track{background:transparent}
 
 /* ---------- tipografía utilitaria ---------- */
-.eyebrow{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold-dim)}
+.eyebrow{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--jy-texto-tenue)}
 .h1{font-family:var(--f-disp);font-weight:700;font-size:34px;line-height:1.02;letter-spacing:.01em;text-transform:uppercase;margin:0}
 .h2{font-family:var(--f-disp);font-weight:700;font-size:22px;line-height:1.1;text-transform:uppercase;letter-spacing:.03em;margin:0}
 .h3{font-family:var(--f-head);font-weight:600;font-size:14px;margin:0}
@@ -55,8 +68,9 @@ button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit
 .brandmark{display:flex;align-items:center;gap:10px;min-width:0}
 .brandmark svg{flex:none}
 .brandmark .wm{font-family:var(--f-disp);font-weight:700;font-size:20px;letter-spacing:.26em;text-transform:uppercase;color:var(--bone);white-space:nowrap}
-.brandmark .wm b{color:var(--gold);font-weight:700}
-.brandmark .tag{font-family:var(--f-mono);font-size:8.5px;letter-spacing:.3em;color:var(--gold-dim);text-transform:uppercase;display:block;margin-top:1px}
+.brandmark .wm svg{display:block}
+.brandmark .wm b{color:var(--jy-texto-acc);font-weight:700}
+.brandmark .tag{font-family:var(--f-mono);font-size:8.5px;letter-spacing:.3em;color:var(--jy-texto-tenue);text-transform:uppercase;display:block;margin-top:1px}
 
 /* ============================================================
    ARMAZÓN
@@ -70,7 +84,7 @@ button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit
 }
 .rail-head{padding:16px 16px 12px;border-bottom:1px solid var(--line-soft)}
 .rail-user{padding:12px 16px;border-bottom:1px solid var(--line-soft);display:flex;gap:10px;align-items:center}
-.avatar{width:34px;height:34px;flex:none;border-radius:2px;display:grid;place-items:center;font-family:var(--f-disp);font-weight:700;font-size:15px;color:#0D0D0D;background:var(--gold)}
+.avatar{width:34px;height:34px;flex:none;border-radius:2px;display:grid;place-items:center;font-family:var(--f-disp);font-weight:700;font-size:15px;color:#FFFFFF;background:var(--jy-acc)}
 .rail-user .n{font-weight:600;font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .rail-user .r{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--mute)}
 .nav{padding:10px 8px;overflow-y:auto;flex:1}
@@ -81,8 +95,8 @@ button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit
 }
 .nav a .ic{width:16px;text-align:center;opacity:.75;font-size:13px}
 .nav a:hover{background:#1B1B1B}
-.nav a.on{background:#1E1B15;border-left-color:var(--gold);color:var(--gold-hi)}
-.nav a .pill{margin-left:auto;font-family:var(--f-mono);font-size:9px;letter-spacing:.1em;padding:2px 5px;border-radius:2px;background:#2A2418;color:var(--gold-dim);border:1px solid #3A3222}
+.nav a.on{background:#1B1B1B;border-left-color:var(--jy-acc);color:var(--jy-texto-acc)}
+.nav a .pill{margin-left:auto;font-family:var(--f-mono);font-size:9px;letter-spacing:.1em;padding:2px 5px;border-radius:2px;background:#242424;color:var(--jy-texto-tenue);border:1px solid #333333}
 .rail-foot{padding:10px 12px;border-top:1px solid var(--line-soft);display:flex;gap:8px;align-items:center;justify-content:space-between}
 
 .main{min-width:0;display:flex;flex-direction:column}
@@ -104,21 +118,21 @@ button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit
   border:1px solid var(--line);background:var(--panel2);color:var(--bone);cursor:pointer;
   font-size:13.5px;font-weight:500;transition:background .12s,border-color .12s,transform .06s;
 }
-.btn:hover{background:var(--raise);border-color:#453F33}
+.btn:hover{background:var(--raise);border-color:#3F3F3F}
 .btn:active{transform:translateY(1px)}
-.btn.gold{background:var(--gold);border-color:var(--gold);color:#0D0D0D;font-weight:600}
-.btn.gold:hover{background:var(--gold-hi);border-color:var(--gold-hi)}
+.btn.gold{background:var(--jy-acc);border-color:var(--jy-acc);color:#FFFFFF;font-weight:600}
+.btn.gold:hover{background:var(--jy-acc-hi);border-color:var(--jy-acc-hi)}
 .btn.ghost{background:transparent}
 .btn.danger{border-color:#5A2E28;color:#E0968C}
 .btn.danger:hover{background:#2A1614}
 .btn.sm{padding:5px 10px;font-size:12.5px}
 .btn:disabled{opacity:.4;cursor:not-allowed}
 .chip{display:inline-flex;align-items:center;gap:6px;font-family:var(--f-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;padding:3px 8px;border-radius:2px;border:1px solid var(--line);color:var(--mute)}
-.chip.gold{border-color:var(--gold-dim);color:var(--gold);background:#1C1810}
-.chip.ok{border-color:#31502F;color:var(--ok);background:#141C13}
-.chip.warn{border-color:#54421C;color:var(--warn);background:#1D1810}
+.chip.gold{border-color:var(--jy-borde);color:var(--jy-texto-acc);background:#181818}
+.chip.ok{border-color:#474747;color:var(--ok);background:#1A1A1A}
+.chip.warn{border-color:#434343;color:var(--warn);background:#181818}
 .chip.bad{border-color:#542C27;color:var(--bad);background:#1D1311}
-.chip.info{border-color:#28414F;color:var(--info);background:#111820}
+.chip.info{border-color:#3D3D3D;color:var(--info);background:#171717}
 .dot{width:7px;height:7px;border-radius:50%;background:currentColor;flex:none}
 
 /* ---------- tarjetas / rejillas ---------- */
@@ -134,7 +148,7 @@ button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit
 .stack{display:flex;flex-direction:column;gap:12px}
 
 .kpi{background:var(--panel);border:1px solid var(--line-soft);border-radius:var(--rad);padding:16px;position:relative;overflow:hidden}
-.kpi::after{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--gold);opacity:.5}
+.kpi::after{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--jy-acc);opacity:.5}
 .kpi .lab{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mute);margin-bottom:8px}
 .kpi .num{color:var(--bone)}
 .kpi .foot{font-size:12px;color:var(--mute);margin-top:6px}
@@ -146,7 +160,7 @@ button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit
   background:#121212;border:1px solid var(--line);border-radius:var(--rad);
   padding:9px 11px;width:100%;color:var(--bone);transition:border-color .12s;
 }
-.inp:focus{border-color:var(--gold-dim)}
+.inp:focus{border-color:var(--jy-borde)}
 textarea.inp{min-height:84px;resize:vertical}
 .hint{font-size:12px;color:var(--mute2)}
 
@@ -171,19 +185,19 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
    con su identificador, su contrato de datos y su estado.
    ============================================================ */
 .slot{
-  position:relative;border:1px dashed #3D372B;border-radius:var(--rad);
+  position:relative;border:1px dashed #373737;border-radius:var(--rad);
   background:
-    linear-gradient(180deg,rgba(198,161,90,.035),transparent 46%),
-    repeating-linear-gradient(135deg,transparent 0 13px,rgba(198,161,90,.028) 13px 14px);
+    linear-gradient(180deg,rgba(221,44,55,.035),transparent 46%),
+    repeating-linear-gradient(135deg,transparent 0 13px,rgba(221,44,55,.028) 13px 14px);
   padding:0;overflow:hidden;
 }
 .slot.mounted{border-style:solid;border-color:var(--line);background:var(--panel)}
 .slot-bar{
   display:flex;align-items:center;gap:10px;padding:9px 12px;
-  border-bottom:1px dashed #3D372B;background:#131211;flex-wrap:wrap;
+  border-bottom:1px dashed #373737;background:#131211;flex-wrap:wrap;
 }
 .slot.mounted .slot-bar{border-bottom-style:solid;border-bottom-color:var(--line-soft)}
-.slot-id{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.1em;color:var(--gold);white-space:nowrap}
+.slot-id{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.1em;color:var(--jy-texto-acc);white-space:nowrap}
 .slot-bar .grow{flex:1}
 .slot-body{padding:16px}
 .slot-empty{display:flex;flex-direction:column;align-items:center;gap:12px;padding:34px 18px;text-align:center}
@@ -193,62 +207,62 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
 .contract .cr{display:grid;grid-template-columns:82px 1fr;gap:10px;padding:8px 12px;border-bottom:1px solid var(--line-soft);font-size:12.5px}
 .contract .cr:last-child{border-bottom:0}
 .contract .cr .k{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);padding-top:2px}
-.contract code{font-family:var(--f-mono);font-size:11.5px;color:var(--gold-hi);background:#1A1710;border:1px solid #2C2618;border-radius:2px;padding:1px 5px}
+.contract code{font-family:var(--f-mono);font-size:11.5px;color:var(--jy-texto-acc);background:#171717;border:1px solid #262626;border-radius:2px;padding:1px 5px}
 .slot iframe{width:100%;border:0;display:block;min-height:620px;background:#0D0D0D}
-.slot-corner{position:absolute;width:8px;height:8px;border-color:var(--gold-dim);opacity:.7}
+.slot-corner{position:absolute;width:8px;height:8px;border-color:var(--jy-borde);opacity:.7}
 
 /* ---------- lector / vista de solo lectura para el alumno ---------- */
-.readonly-note{display:flex;gap:9px;align-items:flex-start;border-left:2px solid var(--info);background:#101820;padding:10px 12px;border-radius:0 var(--rad) var(--rad) 0;font-size:13px;color:#BFD6E4}
+.readonly-note{display:flex;gap:9px;align-items:flex-start;border-left:2px solid var(--info);background:#171717;padding:10px 12px;border-radius:0 var(--rad) var(--rad) 0;font-size:13px;color:#D2D3D4}
 
 /* ---------- portada / acceso ---------- */
 .gate{min-height:100vh;display:grid;grid-template-columns:1.05fr .95fr}
 .gate-art{
   position:relative;overflow:hidden;border-right:1px solid var(--line-soft);
-  background:linear-gradient(160deg,#141210,#0B0B0B 62%);
+  background:linear-gradient(160deg,#121212,#0B0B0B 62%);
   display:flex;flex-direction:column;justify-content:space-between;padding:38px;
 }
 .gate-art .rings{position:absolute;inset:-18% -30% auto auto;width:660px;height:660px;opacity:.5;pointer-events:none}
 .gate-claim{font-family:var(--f-disp);font-weight:700;text-transform:uppercase;font-size:clamp(38px,5.4vw,66px);line-height:.92;letter-spacing:.005em;position:relative}
-.gate-claim em{font-style:normal;color:var(--gold);display:block}
+.gate-claim em{font-style:normal;color:var(--jy-texto-acc);display:block}
 .gate-pillars{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--line-soft);border:1px solid var(--line-soft);position:relative}
 .gate-pillars div{background:#101010;padding:11px 13px}
-.gate-pillars .i{font-family:var(--f-mono);font-size:10px;color:var(--gold-dim);letter-spacing:.16em}
+.gate-pillars .i{font-family:var(--f-mono);font-size:10px;color:var(--jy-texto-tenue);letter-spacing:.16em}
 .gate-pillars .t{font-size:13px;margin-top:3px}
 .gate-form{display:flex;align-items:center;justify-content:center;padding:38px}
 .gate-form .box{width:100%;max-width:400px}
 .tabs{display:flex;gap:2px;background:#121212;border:1px solid var(--line-soft);border-radius:var(--rad);padding:3px;margin-bottom:18px}
 .tabs button{flex:1;background:transparent;border:0;padding:8px;border-radius:2px;cursor:pointer;font-family:var(--f-mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
-.tabs button.on{background:var(--gold);color:#0D0D0D;font-weight:600}
+.tabs button.on{background:var(--jy-acc);color:#FFFFFF;font-weight:600}
 .rolepick{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
 .rolepick label{
   border:1px solid var(--line);border-radius:var(--rad);padding:10px;cursor:pointer;background:#121212;
   display:flex;flex-direction:column;gap:2px;transition:border-color .12s,background .12s;
 }
-.rolepick label:hover{border-color:#4A4436}
+.rolepick label:hover{border-color:#444444}
 .rolepick input{position:absolute;opacity:0;pointer-events:none}
-.rolepick input:checked+span{color:var(--gold)}
-.rolepick label:has(input:checked){border-color:var(--gold-dim);background:#191610}
+.rolepick input:checked+span{color:var(--jy-texto-acc)}
+.rolepick label:has(input:checked){border-color:var(--jy-borde);background:#161616}
 .rolepick .rn{font-family:var(--f-disp);font-weight:700;text-transform:uppercase;letter-spacing:.05em;font-size:15px}
 .rolepick .rd{font-size:11.5px;color:var(--mute);line-height:1.35}
 
 /* ---------- planes ---------- */
 .plan{border:1px solid var(--line);border-radius:var(--rad);background:var(--panel);padding:18px;display:flex;flex-direction:column;gap:12px;position:relative}
-.plan.cur{border-color:var(--gold);box-shadow:0 0 0 1px rgba(198,161,90,.25) inset}
+.plan.cur{border-color:var(--jy-acc);box-shadow:0 0 0 1px rgba(221,44,55,.25) inset}
 .plan .pn{font-family:var(--f-disp);font-weight:700;text-transform:uppercase;font-size:24px;letter-spacing:.05em}
-.plan .pp{font-family:var(--f-disp);font-size:30px;font-weight:700;color:var(--gold)}
+.plan .pp{font-family:var(--f-disp);font-size:30px;font-weight:700;color:var(--jy-texto-acc)}
 .plan .pp small{font-family:var(--f-body);font-size:12px;color:var(--mute);font-weight:400}
 .plan ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:7px;font-size:13px;flex:1}
 .plan li{display:flex;gap:8px;align-items:flex-start;color:var(--bone)}
 .plan li.off{color:var(--mute2);text-decoration:line-through}
-.plan li i{font-style:normal;color:var(--gold);flex:none}
+.plan li i{font-style:normal;color:var(--jy-texto-acc);flex:none}
 .plan li.off i{color:var(--mute2)}
-.plan-badge{position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:var(--gold);color:#0D0D0D;font-family:var(--f-mono);font-weight:700;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;padding:3px 11px;border-radius:20px;box-shadow:0 4px 14px rgba(198,161,90,.35);white-space:nowrap}
+.plan-badge{position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:var(--jy-acc);color:#FFFFFF;font-family:var(--f-mono);font-weight:700;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;padding:3px 11px;border-radius:20px;box-shadow:0 4px 14px rgba(221,44,55,.35);white-space:nowrap}
 .plan.svc ul{flex:none}
 .plan.svc{gap:10px}
 
 /* ---------- avisos ---------- */
 .toasts{position:fixed;right:16px;bottom:16px;z-index:200;display:flex;flex-direction:column;gap:8px;max-width:340px}
-.toast{background:#1B1B1B;border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:var(--rad);padding:11px 14px;font-size:13.5px;box-shadow:0 12px 30px rgba(0,0,0,.5);animation:tin .18s ease-out}
+.toast{background:#1B1B1B;border:1px solid var(--line);border-left:3px solid var(--jy-acc);border-radius:var(--rad);padding:11px 14px;font-size:13.5px;box-shadow:0 12px 30px rgba(0,0,0,.5);animation:tin .18s ease-out}
 .toast.ok{border-left-color:var(--ok)} .toast.bad{border-left-color:var(--bad)} .toast.warn{border-left-color:var(--warn)}
 @keyframes tin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 .modal-bg{position:fixed;inset:0;background:rgba(5,5,5,.72);z-index:150;display:grid;place-items:center;padding:18px;animation:tin .14s ease-out}
@@ -257,7 +271,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
 .modal-b{padding:18px}
 .modal-f{padding:14px 18px;border-top:1px solid var(--line-soft);display:flex;gap:8px;justify-content:flex-end}
 
-.locked{border:1px solid #54421C;background:#191510;border-radius:var(--rad);padding:16px;display:flex;gap:12px;align-items:flex-start}
+.locked{border:1px solid #434343;background:#151515;border-radius:var(--rad);padding:16px;display:flex;gap:12px;align-items:flex-start}
 .locked .h3{color:var(--warn)}
 
 /* ---------- responsive ---------- */
@@ -281,12 +295,102 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
 }
 @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 @media print{.rail,.topbar,.toasts{display:none!important}.shell{grid-template-columns:1fr}}
+.jy-week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px}
+.jy-day{background:var(--panel2);border:1px solid var(--line-soft);border-radius:var(--rad);padding:9px;min-height:96px}
+.jy-day.hoy{border-color:var(--jy-borde)}
+.jy-day-h{display:flex;justify-content:space-between;align-items:center;font-family:var(--f-mono);
+  font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);
+  border-bottom:1px solid var(--line-soft);padding-bottom:6px;margin-bottom:8px}
+.jy-day-h b{font-weight:600;color:var(--bone)}
+.jy-day-h span{color:var(--jy-texto-acc)}
+.fold{border:1px solid var(--line);border-radius:var(--rad);background:var(--panel);margin-bottom:18px;overflow:hidden}
+.fold-h{display:flex;align-items:center;gap:12px;width:100%;text-align:left;cursor:pointer;
+  background:var(--panel2);border:0;border-bottom:1px solid transparent;padding:12px 14px;color:inherit;font:inherit}
+.fold.abierto .fold-h{border-bottom-color:var(--line-soft)}
+.fold-h:hover{background:var(--raise)}
+.fold-ic{font-family:var(--f-mono);font-size:12px;color:var(--jy-texto-acc);width:14px;flex:none;transition:transform .15s}
+.fold.abierto .fold-ic{transform:rotate(90deg)}
+.fold-t{font-weight:600;font-size:15px}
+.fold-s{font-size:12px;color:var(--mute);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fold-b{padding:0 12px 12px}
+.fold-b[hidden]{display:none}
+.jy-anam-caja iframe{width:100%;border:0;display:block;background:#0A0A0A;border-radius:8px;min-height:620px}
+.slot-body iframe{width:100%;border:0;display:block;background:#0A0A0A;border-radius:8px;min-height:620px}
+@media(max-width:860px){.jy-week{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:520px){.jy-week{grid-template-columns:1fr}}
+
+/* ===============================================================
+   IDENTIDAD POR ROL
+   ---------------------------------------------------------------
+   La cáscara usa var(--gold) en 19 selectores. En vez de tocarlos
+   uno a uno, se redefinen las variables sobre el <body> según el
+   rol de quien entró: todo lo que hereda de ahí cambia solo.
+
+   · NUTRICIONISTA · verde #7FB77E, igual que su archivo original.
+   · PROFESOR      · dorado, la identidad histórica de la marca.
+   · ALUMNO        · dorado también, pero con acento azul en avatar,
+                     franja del riel y rótulo, para que se distinga
+                     de un vistazo de la vista del profesional.
+   · ADMINISTRADOR · terracota, para que no se confunda con nadie.
+   =============================================================== */
+body{ --rol-acc:var(--gold); --rol-nom:'JYNTRA'; }
+
+body[data-rol="nutricionista"]{
+  --gold:#FFFFFF; --gold-hi:#FFFFFF; --gold-dim:#9AA0A6;
+  --rol-acc:#DD2C37;
+}
+body[data-rol="profesor"]{      --rol-acc:var(--r-profesor); }
+body[data-rol="alumno"]{        --rol-acc:var(--r-alumno); }
+body[data-rol="administrador"]{ --rol-acc:var(--r-admin); }
+
+/* franja de color que identifica el perfil en el riel */
+body[data-rol] .rail{ position:relative; }
+/* en celular el menú es un cajón fijo: sin esto, la regla de arriba lo
+   dejaba ocupando una pantalla entera sobre el contenido */
+@media(max-width:900px){ body[data-rol] .rail{ position:fixed; } }
+body[data-rol] .rail::before{
+  content:''; position:absolute; left:0; top:0; bottom:0; width:3px;
+  background:var(--rol-acc); opacity:.9;
+}
+/* el avatar y el rótulo del rol toman el color del perfil */
+body[data-rol] .rail-head .avatar,
+body[data-rol] .topbar .avatar{ background:var(--rol-acc); }
+body[data-rol] .brandmark .tag{ color:var(--rol-acc); letter-spacing:.3em; }
+
+/* el alumno mantiene el dorado general, pero sus marcas van en azul */
+body[data-rol="alumno"] .chip.info,
+body[data-rol="alumno"] .kpi::after{ background:var(--r-alumno); }
+
+.jy-barra{display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  padding:10px 12px;border:1px solid var(--line);background:var(--panel2);}
+.jy-barra-sup{border-radius:var(--rad) var(--rad) 0 0;border-bottom:0;justify-content:space-between}
+.jy-barra-inf{border-radius:0 0 var(--rad) var(--rad);border-top:0;justify-content:flex-end;
+  position:sticky;bottom:0;z-index:5;background:var(--panel2)}
+.jy-sello{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--mute)}
+.jy-barra .hint{margin:0;flex:1;min-width:140px}
+@media(max-width:520px){.jy-barra{justify-content:stretch}.jy-barra .btn{flex:1;justify-content:center}}
+</style>
+<style>/* paleta JYNTRA · ajustes finales */
+:root{--ink:#171717;--panel:#1F1F1F;--panel2:#262626;--raise:#2E2E2E;--line:#333333;--line-soft:#2A2A2A;
+  --bone:#EEF1F3;--mute:#9F9F9F;--mute2:#6F757B;--gold:#FFFFFF;--gold-hi:#FFFFFF;--gold-dim:#9F9F9F;
+  --r-alumno:#DD2C37;--r-profesor:#DD2C37;--r-nutricionista:#DD2C37;--r-admin:#DD2C37;--bad:#DD2C37;}
 </style>
 </head>
 <body>
 <div id="app"></div>
 <div class="toasts" id="toasts"></div>
 <div id="modal-root"></div>
+<!-- nube: configuración, librería de Firebase (local, sin CDN) y conector -->
+<script>
+/* app instalable: registra el trabajador sin conexión (sólo en https o local) */
+if ('serviceWorker' in navigator && (location.protocol === 'https:' || /^(localhost|127\.0\.0\.1)$/.test(location.hostname))) {
+  window.addEventListener('load', function(){ navigator.serviceWorker.register('/sw.js').catch(function(){}); });
+}
+</script>
+<script src="nube-config.js"></script>
+<script src="vendor/firebase-jyntra.js"></script>
+<script src="nube-backend.js"></script>
 <script>
 /* ================================================================
    JYNTRA TECHNOLOGIES · cáscara de aplicación
@@ -462,6 +566,7 @@ guardar = function(clave){
   }
 };
 
+var jyRepintePendiente = false;
 /* relee del disco las claves que tocó el otro perfil y repinta */
 function jyRecargar(){
   let cambio = false;
@@ -471,8 +576,14 @@ function jyRecargar(){
     if(fresco == null) return;
     if(JSON.stringify(fresco) !== JSON.stringify(S[k])){ S[k] = fresco; cambio = true; }
   });
-  if(cambio && typeof pintar === 'function'){
-    try{ pintar(); }catch(e){}
+  if(cambio || jyRepintePendiente){
+    /* Si la persona está escribiendo dentro de una herramienta, repintar
+       recargaría el marco y perdería lo que lleva: se espera al próximo
+       latido en que no esté dentro de un marco. */
+    var enMarco = document.activeElement && document.activeElement.tagName === 'IFRAME';
+    if(enMarco){ jyRepintePendiente = true; return cambio; }
+    jyRepintePendiente = false;
+    if(typeof pintar === 'function'){ try{ pintar(); }catch(e){} }
   }
   return cambio;
 }
@@ -614,6 +725,7 @@ function jyAbrirCanal(){
   setInterval(function(){
     const s = jySello();
     if(s !== JY_CANAL.sello){ JY_CANAL.sello = s; jyRecargar(); }
+    else if(jyRepintePendiente) jyRecargar();
     if(JY_CANAL.api) jyTraer();
   }, JY_CANAL.latido);
 
@@ -656,6 +768,15 @@ function llaves(alumnoId){
    §4 · PILAR 4 — CANAL DE CONEXIÓN (el puente de datos)
    Sin vínculo activo no se comparte una sola fila.
    --------------------------------------------------------------- */
+/* Un vínculo por pareja: su id es alumnoId_profesionalId. Así las reglas
+   de la nube lo encuentran directo, y pedir de nuevo tras un rechazo
+   reutiliza el mismo documento en vez de duplicarlo. */
+function ponerVinculo(v){
+  v.id = v.alumnoId + '_' + v.profesionalId;
+  S.vinculos = (S.vinculos || []).filter(function(x){ return x.id !== v.id; });
+  S.vinculos.push(v);
+  return v;
+}
 function vinculoDe(alumnoId, proId){
   return S.vinculos.find(v=> v.alumnoId===alumnoId && v.profesionalId===proId);
 }
@@ -849,6 +970,15 @@ function bitacora(tipo, detalle, quien){
      });
    --------------------------------------------------------------- */
 const RANURAS = {
+  'alumno.planificacion':     { nombre:'Mi planificación',         pilar:6, permiso:null,
+    recibe:'la rutina que le publicó su profesor', entrega:'sus propias marcas y series',
+    nota:'Si tiene profesor, abre la rutina publicada. Sin profesor, es su registrador de marcas.' },
+  'alumno.evaluacion':        { nombre:'Mi evaluación',            pilar:5, permiso:null,
+    recibe:'el resultado publicado por su profesional', entrega:'nada — sólo lectura',
+    nota:'Pantalla de lectura: los números los toma y publica el profesional.' },
+  'alumno.nutricion':         { nombre:'Mi pauta alimentaria',     pilar:6, permiso:null,
+    recibe:'la pauta publicada por su nutricionista', entrega:'nada — sólo lectura',
+    nota:'Pantalla de lectura de la pauta.' },
   'profesor.evaluacion':      { nombre:'Evaluación física',        pilar:5, permiso:'evaluacion',
     recibe:'ctx.alumno · ctx.historial(\'evaluacion\')', entrega:'ctx.guardar({modulo:\'evaluacion\', datos:{...}})',
     nota:'Los 9 argumentos mecánicos y sus imágenes agrupadas. El profesor evalúa; el alumno sólo lee el resultado publicado.' },
@@ -939,7 +1069,7 @@ function contextoDe(ranura, extra){
   const u = sesion(); const info = RANURAS[ranura]||{};
   const ctx = Object.assign({
     ranura, usuario:u, rol:u&&u.rol,
-    marca:{ nombre:'JYNTRA', dorado:'#C6A15A', negro:'#0D0D0D', hueso:'#EDE7DA' },
+    marca:{ nombre:'JYNTRA', dorado:'#DD2C37', negro:'#0D0D0D', hueso:'#EEF1F3' },
     alumno:null,
     /* transversal: alumnos/pacientes vinculados al profesional (pilar 4), listos para
        que cualquier herramienta montada (p.ej. la Agenda) los use sin duplicar altas */
@@ -1007,8 +1137,56 @@ function guardarEjercicio(e){
 /* ---------------------------------------------------------------
    §8 · SEMILLA — para que la cáscara se pueda recorrer desde el minuto uno
    --------------------------------------------------------------- */
+/* ---------------------------------------------------------------
+   MODO DE DEMOSTRACIÓN
+   ---------------------------------------------------------------
+   En false, la plataforma arranca vacía: sin cuentas de prueba, sin
+   alumnos inventados, sin agenda de ejemplo. Es lo que corresponde
+   cuando ya la usa gente real, porque esas cuentas tenían contraseña
+   conocida y cualquiera podía entrar con ellas.
+
+   Ponerlo en true vuelve a sembrar los datos de ejemplo, útil para
+   enseñar la plataforma sin tocar información de nadie.
+   --------------------------------------------------------------- */
+const DEMO = false;
+
+/* Correos que pueden crear la cuenta de Administrador desde el portal
+   (tarjeta «Administrador» → Crear cuenta). Agrega o cambia aquí. */
+const ADMIN_CORREOS = ['jyntra.holding.tec@gmail.com'];
+
+/* Cuentas de prueba de versiones anteriores: si quedaron guardadas en
+   el navegador de alguien, se eliminan al abrir (tenían contraseña
+   conocida y cualquiera podía entrar con ellas). */
+const CUENTAS_PRUEBA = ['u_admin','u_prof','u_nutri','u_al1','u_al2','u_al3'];
+
 function sembrar(){
-  if(S.usuarios) return;
+  /* Colecciones: listas y diccionarios por id. Se completan SIEMPRE que
+     falten (también cuando ya hay usuarios guardados), y se escriben a
+     disco para que un F5 no las vuelva a dejar en null. */
+  var LISTAS = ['usuarios','vinculos','registros','metricas','agenda','ejercicios','facturas','bitacora','invitaciones'];
+  var MAPAS  = ['fichas','pautas','horario'];
+  var faltaba = !S.usuarios;
+  if(!DEMO || !faltaba){
+    LISTAS.forEach(function(k){ if(!Array.isArray(S[k])){ S[k] = []; guardar(k); } });
+    if(!DEMO){
+      var esPrueba = function(id){ return CUENTAS_PRUEBA.indexOf(id) >= 0; };
+      var nU = S.usuarios.length;
+      S.usuarios = S.usuarios.filter(function(u){ return u && !esPrueba(u.id); });
+      if(S.usuarios.length !== nU){
+        S.vinculos  = S.vinculos.filter(function(v){ return !esPrueba(v.alumnoId) && !esPrueba(v.profesionalId); });
+        S.registros = S.registros.filter(function(r){ return !esPrueba(r.autorId) && !esPrueba(r.sujetoId); });
+        S.metricas  = S.metricas.filter(function(m){ return !esPrueba(m.alumnoId); });
+        S.agenda    = S.agenda.filter(function(b){ return !esPrueba(b.profesionalId); });
+        S.facturas  = S.facturas.filter(function(f){ return !esPrueba(f.profesionalId) && !esPrueba(f.usuarioId); });
+        ['usuarios','vinculos','registros','metricas','agenda','facturas'].forEach(guardar);
+        if(S.sesion && esPrueba(S.sesion)){ S.sesion = null; guardar('sesion'); }
+      }
+    }
+    MAPAS.forEach(function(k){
+      if(!S[k] || typeof S[k] !== 'object' || Array.isArray(S[k])){ S[k] = {}; guardar(k); }
+    });
+    return;
+  }
   const d = (n)=> new Date(Date.now()-n*864e5).toISOString();
   S.usuarios = [
     { id:'u_admin', nombre:'Pedro Jyntra', email:'admin@jyntra.com', clave:'jyntra', rol:'administrador', creado:d(180), telefono:'+56 9 0000 0000' },
@@ -1088,16 +1266,20 @@ sembrar();
 /* ---------------------------------------------------------------
    §9 · MARCA
    --------------------------------------------------------------- */
-function logo(alto){
-  alto = alto||30;
-  return '<svg width="'+alto+'" height="'+alto+'" viewBox="0 0 40 40" aria-hidden="true">'
-   + '<path d="M4 6 h32 v5 H23.5 v23 a0 0 0 0 1 0 0 H18.5 V11 H4 Z" fill="#C6A15A"/>'
-   + '<path d="M8 27 h6 v3.6 a3.4 3.4 0 0 1-3.4 3.4 H4 v-4.6 h4 Z" fill="#C6A15A" opacity=".72"/>'
-   + '<rect x="27" y="16" width="9" height="3.4" fill="#C6A15A" opacity=".45"/>'
-   + '<rect x="27" y="22" width="9" height="3.4" fill="#C6A15A" opacity=".28"/></svg>';
+/* Logo JYNTRA (vector del logo oficial, en blanco).
+   LOGO_SIMBOLO: el símbolo solo · LOGO_PALABRA: la palabra · LOGO_TODO: ambos. */
+const LOGO_SIMBOLO = { vb:'14 5 295 576', d:'M 289.50 20.01 C 279.60 27.86, 267.80 37.21, 263.28 40.77 L 255.06 47.25 254.76 142.87 C 254.46 238.35, 254.46 238.51, 252.23 246.50 C 246.98 265.27, 240.45 273.69, 216.35 292.74 C 83.46 397.79, 60.99 415.96, 48.82 428.22 C 36.56 440.56, 28.11 455.95, 23.77 473.82 C 21.80 481.90, 21.63 485.83, 21.27 531.25 L 20.87 580 47.82 580 L 74.76 580 75.37 577.75 C 75.70 576.51, 75.97 556.46, 75.98 533.19 C 76.00 485.00, 76.28 482.50, 83.50 467.45 C 86.54 461.11, 89.79 456.30, 94.36 451.36 C 100.49 444.75, 118.18 430.55, 189.14 375.32 C 275.89 307.80, 278.43 305.73, 286.68 295.50 C 294.14 286.26, 301.95 271.08, 305.21 259.50 L 307.47 251.50 307.76 147 C 307.92 89.52, 307.92 34.22, 307.77 24.11 L 307.50 5.73 289.50 20.01 M 223.85 72.29 C 192.12 97.37, 158.55 123.99, 141 137.97 C 130.27 146.51, 104.35 167, 83.39 183.50 C 62.44 200, 38.25 219.05, 29.64 225.84 L 14 238.19 14 269.71 L 14 301.23 17.75 298.38 C 23.18 294.24, 72.91 254.40, 90.50 240.10 C 98.75 233.39, 111.80 222.79, 119.50 216.55 C 139.75 200.12, 166.21 178.53, 175.75 170.64 L 184 163.82 184 231.99 C 184 271.73, 184.37 300.02, 184.89 299.83 C 185.38 299.65, 191.21 294.86, 197.84 289.19 C 220.82 269.54, 228.98 258.93, 234.13 241.98 L 236.41 234.50 236.75 148.75 C 236.94 101.58, 236.74 63.01, 236.30 63.04 C 235.86 63.06, 230.26 67.22, 223.85 72.29 M 137.88 434.63 C 117.16 452.17, 110.84 459.30, 104.12 472.70 C 96.60 487.71, 95.14 499.97, 95.35 546.50 L 95.50 579.50 122.75 579.76 L 150 580.03 150 502.51 C 150 459.88, 149.83 425, 149.63 425 C 149.43 425, 144.14 429.33, 137.88 434.63' };
+const LOGO_PALABRA = { vb:'3 5 927 130', d:'M 330.50 6.16 C 325.66 7.96, 322.36 10.71, 320.62 14.38 C 319.18 17.41, 319 24.25, 319 74.40 L 319 131 337.50 131 L 356 131 356 98 C 356 79.85, 356.33 65.00, 356.75 65.00 C 357.16 65.01, 366.95 73.62, 378.50 84.15 C 436.64 137.14, 431.86 133.56, 443.39 132.82 C 447.84 132.54, 450.51 131.76, 452.90 130.06 C 459.10 125.65, 459 126.75, 459 64.03 L 459 7 441.01 7 L 423.02 7 422.76 41.42 L 422.50 75.84 398.90 54.17 C 385.93 42.25, 369.67 27.25, 362.79 20.84 C 355.90 14.43, 348.89 8.48, 347.21 7.61 C 343.20 5.53, 334.26 4.76, 330.50 6.16 M 817.33 5.95 C 811.23 7.41, 805.49 11.70, 801.00 18.17 C 798.58 21.65, 792.93 29.67, 788.42 36 C 781.35 45.93, 756.28 82.36, 731.82 118.24 C 727.79 124.15, 724.19 128.87, 723.83 128.74 C 722.32 128.19, 694.42 92.14, 695.13 91.64 C 695.33 91.50, 698.61 89.88, 702.42 88.04 C 711.18 83.81, 717.28 77.74, 721.32 69.20 C 724.36 62.78, 724.50 61.97, 724.50 49.97 C 724.50 37.85, 724.39 37.24, 721.21 30.79 C 717.33 22.90, 710.01 15.82, 702.12 12.30 C 690.78 7.25, 687.26 6.95, 642.86 7.23 L 601.63 7.50 589.36 23 C 582.61 31.52, 577.07 38.83, 577.04 39.25 C 577.02 39.66, 598.83 40, 625.53 40 C 678.18 40, 678.52 40.03, 682.83 45.51 C 685.77 49.25, 685.81 56.69, 682.91 60.38 C 678.01 66.61, 679.29 66.47, 624.75 66.79 L 575 67.08 575 99.04 L 575 131 595 131 L 615 131 615 114.50 L 615 98 633.92 98 L 652.84 98 666.60 114.50 L 680.36 131 724.09 131 L 767.81 131 795.77 90.75 C 811.15 68.61, 824.25 50.50, 824.88 50.50 C 825.96 50.50, 857.92 95.64, 857.97 97.23 C 857.98 97.63, 846.24 98.08, 831.86 98.23 L 805.73 98.50 794.75 114.30 C 788.72 123, 783.98 130.31, 784.23 130.56 C 784.47 130.81, 817.17 130.89, 856.88 130.75 L 929.09 130.50 917.74 114.50 C 888.03 72.64, 861.64 35.40, 854.11 24.72 C 849.54 18.25, 844.30 11.80, 842.45 10.39 C 836.33 5.72, 825.98 3.89, 817.33 5.95 M 85.97 44.25 C 85.95 86.10, 85.81 86.98, 78.61 92.48 C 72.26 97.32, 69.04 97.90, 48.41 97.95 L 29.32 98 24.86 103.75 C 22.42 106.91, 16.66 114.37, 12.07 120.32 L 3.73 131.14 42.61 130.76 C 85.65 130.33, 85.34 130.37, 99.48 123.25 C 112.83 116.53, 123.96 102.30, 126.89 88.20 C 127.58 84.88, 128 68.71, 128 44.95 L 128 7 107 7 L 86 7 85.97 44.25 M 144.81 12.75 C 147.56 15.91, 162.44 32.45, 177.86 49.50 L 205.90 80.50 205.95 105.77 L 206 131.04 226.25 130.77 L 246.50 130.50 246.76 105.00 L 247.03 79.51 253.35 73.00 C 260.98 65.14, 304.56 17.26, 311.40 9.23 L 313.31 7 287.21 7 L 261.11 7 244.30 27.43 C 235.06 38.67, 227.27 47.88, 227 47.89 C 226.72 47.91, 218.89 38.71, 209.59 27.46 L 192.69 7 166.25 7 L 139.80 7 144.81 12.75 M 466.22 23.25 L 466.50 39.50 481.95 39.77 C 492.77 39.97, 497.65 40.42, 498.21 41.27 C 498.65 41.95, 498.99 60.50, 498.96 82.50 C 498.93 104.50, 498.93 124.42, 498.95 126.77 L 499 131.04 518.75 130.77 L 538.50 130.50 538.76 85.25 L 539.02 40 548.85 40 L 558.67 40 563.54 33.75 C 566.22 30.31, 571.95 22.88, 576.26 17.25 L 584.12 7 525.03 7 L 465.95 7 466.22 23.25' };
+const LOGO_TODO    = { vb:'1 -1 926 762', d:'M 645.50 14.01 C 635.60 21.86, 623.80 31.21, 619.28 34.77 L 611.06 41.25 610.76 136.87 C 610.46 232.35, 610.46 232.51, 608.23 240.50 C 602.98 259.27, 596.45 267.69, 572.35 286.74 C 439.46 391.79, 416.99 409.96, 404.82 422.22 C 392.56 434.56, 384.11 449.95, 379.77 467.82 C 377.80 475.90, 377.63 479.83, 377.27 525.25 L 376.87 574 403.82 574 L 430.76 574 431.37 571.75 C 431.70 570.51, 431.97 550.46, 431.98 527.19 C 432.00 479.00, 432.28 476.50, 439.50 461.45 C 442.54 455.11, 445.79 450.30, 450.36 445.36 C 456.49 438.75, 474.18 424.55, 545.14 369.32 C 631.89 301.80, 634.43 299.73, 642.68 289.50 C 650.14 280.26, 657.95 265.08, 661.21 253.50 L 663.47 245.50 663.76 141 C 663.92 83.52, 663.92 28.22, 663.77 18.11 L 663.50 -0.27 645.50 14.01 M 579.85 66.29 C 548.12 91.37, 514.55 117.99, 497 131.97 C 486.27 140.51, 460.35 161, 439.39 177.50 C 418.44 194, 394.25 213.05, 385.64 219.84 L 370 232.19 370 263.71 L 370 295.23 373.75 292.38 C 379.18 288.24, 428.91 248.40, 446.50 234.10 C 454.75 227.39, 467.80 216.79, 475.50 210.55 C 495.75 194.12, 522.21 172.53, 531.75 164.64 L 540 157.82 540 225.99 C 540 265.73, 540.37 294.02, 540.89 293.83 C 541.38 293.65, 547.21 288.86, 553.84 283.19 C 576.82 263.54, 584.98 252.93, 590.13 235.98 L 592.41 228.50 592.75 142.75 C 592.94 95.58, 592.74 57.01, 592.30 57.04 C 591.86 57.06, 586.26 61.22, 579.85 66.29 M 493.88 428.63 C 473.16 446.17, 466.84 453.30, 460.12 466.70 C 452.60 481.71, 451.14 493.97, 451.35 540.50 L 451.50 573.50 478.75 573.76 L 506 574.03 506 496.51 C 506 453.88, 505.83 419, 505.63 419 C 505.43 419, 500.14 423.33, 493.88 428.63 M 326.50 633.16 C 321.66 634.96, 318.36 637.71, 316.62 641.38 C 315.18 644.41, 315 651.25, 315 701.40 L 315 758 333.50 758 L 352 758 352 725 C 352 706.85, 352.33 692.00, 352.75 692.00 C 353.16 692.01, 362.95 700.62, 374.50 711.15 C 432.64 764.14, 427.86 760.56, 439.39 759.82 C 443.84 759.54, 446.51 758.76, 448.90 757.06 C 455.10 752.65, 455 753.75, 455 691.03 L 455 634 437.01 634 L 419.02 634 418.76 668.42 L 418.50 702.84 394.90 681.17 C 381.93 669.25, 365.67 654.25, 358.79 647.84 C 351.90 641.43, 344.89 635.48, 343.21 634.61 C 339.20 632.53, 330.26 631.76, 326.50 633.16 M 813.33 632.95 C 807.23 634.41, 801.49 638.70, 797.00 645.17 C 794.58 648.65, 788.93 656.67, 784.42 663 C 777.35 672.93, 752.28 709.36, 727.82 745.24 C 723.79 751.15, 720.19 755.87, 719.83 755.74 C 718.32 755.19, 690.42 719.14, 691.13 718.64 C 691.33 718.50, 694.61 716.88, 698.42 715.04 C 707.18 710.81, 713.28 704.74, 717.32 696.20 C 720.36 689.78, 720.50 688.97, 720.50 676.97 C 720.50 664.85, 720.39 664.24, 717.21 657.79 C 713.33 649.90, 706.01 642.82, 698.12 639.30 C 686.78 634.25, 683.26 633.95, 638.86 634.23 L 597.63 634.50 585.36 650 C 578.61 658.52, 573.07 665.83, 573.04 666.25 C 573.02 666.66, 594.83 667, 621.53 667 C 674.18 667, 674.52 667.03, 678.83 672.51 C 681.77 676.25, 681.81 683.69, 678.91 687.38 C 674.01 693.61, 675.29 693.47, 620.75 693.79 L 571 694.08 571 726.04 L 571 758 591 758 L 611 758 611 741.50 L 611 725 629.92 725 L 648.84 725 662.60 741.50 L 676.36 758 720.09 758 L 763.81 758 791.77 717.75 C 807.15 695.61, 820.25 677.50, 820.88 677.50 C 821.96 677.50, 853.92 722.65, 853.97 724.25 C 853.98 724.66, 842.31 725, 828.03 725 L 802.06 725 791.28 740.54 C 785.35 749.09, 780.35 756.52, 780.16 757.04 C 779.61 758.61, 924.70 758.31, 925.60 756.75 C 925.99 756.06, 925.95 755.82, 925.51 756.22 C 925.07 756.62, 919.69 749.87, 913.55 741.22 C 884.33 700.06, 857.64 662.40, 850.11 651.72 C 845.54 645.25, 840.30 638.80, 838.45 637.39 C 832.33 632.72, 821.98 630.89, 813.33 632.95 M 81.97 671.25 C 81.95 713.10, 81.81 713.98, 74.61 719.48 C 68.26 724.32, 65.04 724.90, 44.38 724.95 L 25.27 725 13.41 740.42 C 6.89 748.90, 1.37 756.36, 1.16 756.99 C 0.88 757.85, 10.51 758.05, 39.14 757.76 C 81.58 757.33, 81.37 757.36, 95.48 750.25 C 108.83 743.53, 119.96 729.30, 122.89 715.20 C 123.58 711.88, 124 695.71, 124 671.95 L 124 634 103 634 L 82 634 81.97 671.25 M 140.81 639.75 C 143.56 642.91, 158.44 659.45, 173.86 676.50 L 201.90 707.50 201.95 732.77 L 202 758.04 222.25 757.77 L 242.50 757.50 242.76 732.00 L 243.03 706.51 249.35 700.00 C 256.98 692.14, 300.56 644.26, 307.40 636.23 L 309.31 634 283.21 634 L 257.11 634 240.30 654.43 C 231.06 665.67, 223.27 674.88, 223 674.89 C 222.72 674.91, 214.89 665.71, 205.59 654.46 L 188.69 634 162.25 634 L 135.80 634 140.81 639.75 M 462.22 650.25 L 462.50 666.50 477.95 666.77 C 488.77 666.97, 493.65 667.42, 494.21 668.27 C 494.65 668.95, 494.99 687.50, 494.96 709.50 C 494.93 731.50, 494.93 751.42, 494.95 753.77 L 495 758.04 514.75 757.77 L 534.50 757.50 534.76 712.25 L 535.02 667 544.85 667 L 554.67 667 559.54 660.75 C 562.22 657.31, 567.95 649.88, 572.26 644.25 L 580.12 634 521.03 634 L 461.95 634 462.22 650.25' };
+function svgLogo(L, alto, color, extra){
+  var p = L.vb.split(' '); var ancho = Math.round(alto * (+p[2]) / (+p[3]));
+  return '<svg width="'+ancho+'" height="'+alto+'" viewBox="'+L.vb+'" aria-hidden="true"'+(extra||'')+'>'
+    + '<path fill-rule="evenodd" fill="'+(color||'#FFFFFF')+'" d="'+L.d+'"/></svg>';
 }
+function logo(alto){ return svgLogo(LOGO_SIMBOLO, alto||30); }
+function logoCompleto(alto){ return svgLogo(LOGO_TODO, alto||120, '#FFFFFF', ' role="img" aria-label="JYNTRA"'); }
 function marca(tag){
-  return '<div class="brandmark">'+logo(30)+'<div><div class="wm">JY<b>N</b>TRA</div>'
+  return '<div class="brandmark">'+logo(30)+'<div><div class="wm" aria-label="JYNTRA">'+svgLogo(LOGO_PALABRA, 15)+'</div>'
     + (tag===false?'':'<span class="tag">'+(tag||'Technologies')+'</span>')+'</div></div>';
 }
 
@@ -1111,8 +1293,8 @@ function vistaAcceso(){
   + '<div class="gate">'
   +  '<div class="gate-art">'
   +    '<svg class="rings" viewBox="0 0 400 400" aria-hidden="true">'
-  +      [0,1,2,3,4].map(i=>'<circle cx="200" cy="200" r="'+(60+i*38)+'" fill="none" stroke="#C6A15A" stroke-opacity="'+(0.30-i*0.05)+'" stroke-width="1"/>').join('')
-  +      '<circle cx="200" cy="200" r="6" fill="#C6A15A"/></svg>'
+  +      [0,1,2,3,4].map(i=>'<circle cx="200" cy="200" r="'+(60+i*38)+'" fill="none" stroke="#FFFFFF" stroke-opacity="'+(0.30-i*0.05)+'" stroke-width="1"/>').join('')
+  +      '<circle cx="200" cy="200" r="6" fill="#FFFFFF"/></svg>'
   +    '<div>'+marca('Technologies')+'</div>'
   +    '<div>'
   +      '<div class="eyebrow" style="margin-bottom:14px">Plataforma de entrenamiento y nutrición</div>'
@@ -1137,11 +1319,14 @@ function formEntrar(){
   + '<div class="field"><label>Correo</label><input class="inp" name="email" type="email" autocomplete="username" required placeholder="tu@correo.com"></div>'
   + '<div class="field"><label>Contraseña</label><input class="inp" name="clave" type="password" autocomplete="current-password" required></div>'
   + '<button class="btn gold" type="submit" style="justify-content:center">Entrar</button>'
-  + '<div class="hint" style="margin-top:6px">Cuentas de prueba — la contraseña de todas es <span class="mono">jyntra</span></div>'
-  + '<div class="grid g2" style="gap:6px">'
-  +   [['admin@jyntra.com','Administrador'],['profe@jyntra.com','Profesor'],['nutri@jyntra.com','Nutricionista'],['alumno@jyntra.com','Alumno']]
-       .map(c=>'<button type="button" class="btn sm" data-demo="'+c[0]+'" style="justify-content:center">'+c[1]+'</button>').join('')
-  + '</div></form>';
+  + (DEMO
+      ? '<div class="hint" style="margin-top:6px">Cuentas de prueba — la contraseña de todas es <span class="mono">jyntra</span></div>'
+        + '<div class="grid g2" style="gap:6px">'
+        + [['admin@jyntra.com','Administrador'],['profe@jyntra.com','Profesor'],['nutri@jyntra.com','Nutricionista'],['alumno@jyntra.com','Alumno']]
+            .map(c=>'<button type="button" class="btn sm" data-demo="'+c[0]+'" style="justify-content:center">'+c[1]+'</button>').join('')
+        + '</div>'
+      : '<div class="hint" style="margin-top:6px">¿Primera vez? Crea tu cuenta con el enlace de arriba.</div>')
+  + '</form>';
 }
 function formCrear(roles){
   return '<form id="f-crear" class="stack">'
@@ -1167,16 +1352,25 @@ function ligarAcceso(){
   if(fc) fc.onsubmit = (e)=>{
     e.preventDefault();
     const email = fc.email.value.trim().toLowerCase();
-    if(S.usuarios.some(u=>u.email===email)) return toast('Ese correo ya tiene una cuenta.','bad');
+    const clave = fc.clave.value;
     const rol = fc.rol.value;
-    const u = { id:uid('u'), nombre:fc.nombre.value.trim(), email, clave:fc.clave.value, rol,
+    const u = { nombre:fc.nombre.value.trim(), email, rol,
                 telefono:fc.telefono.value.trim(), nacimiento:fc.nacimiento.value, creado:new Date().toISOString() };
     if(esProfesional(rol)){ u.plan='base'; u.publico=false; u.especialidades=[]; u.planesServicio=[];
       u.suscripcion={estado:'activa', desde:new Date().toISOString(), renueva:new Date(Date.now()+30*864e5).toISOString()}; }
-    S.usuarios.push(u); guardar('usuarios');
-    bitacora('alta','Cuenta nueva: '+u.nombre+' ('+rol+')', u.id);
-    S.sesion = u.id; guardar('sesion');
-    toast('Cuenta creada. Bienvenido a JYNTRA.','ok'); ruta('inicio');
+    const terminar = (id)=>{
+      u.id = id;
+      S.usuarios.push(u); guardar('usuarios');
+      bitacora('alta','Cuenta nueva: '+u.nombre+' ('+rol+')', u.id);
+      S.sesion = u.id; guardar('sesion');
+      toast('Cuenta creada. Bienvenido a JYNTRA.','ok'); ruta('inicio');
+      return u;
+    };
+    /* con la nube activa, la cuenta (y su contraseña) la guarda Firebase */
+    if(window.__JY_NUBE_CREAR) return window.__JY_NUBE_CREAR(email, clave).then(terminar);
+    if(S.usuarios.some(x=>x.email===email)) return toast('Ese correo ya tiene una cuenta.','bad');
+    u.clave = clave;
+    return terminar(uid('u'));
   };
 }
 function entrar(email, clave){
@@ -1256,7 +1450,7 @@ const MENU = {
 let ctxAlumno = null;   // alumno seleccionado por el profesional
 function ruta(k, extra){
   const h = '#/'+k+(extra?('/'+extra):'');
-  if(location.hash===h) pintar(); else location.hash = h;   // el hash igual no dispara hashchange
+  if(location.hash===h){ pintar(); window.scrollTo(0,0); } else location.hash = h;   // el hash igual no dispara hashchange; siempre se parte arriba
 }
 function rutaActual(){
   const p = (location.hash||'').replace(/^#\/?/,'').split('/').filter(Boolean);
@@ -1270,6 +1464,9 @@ window.addEventListener('hashchange', ()=>{ pintar(); window.scrollTo(0,0); });
 function pintar(){
   const u = sesion();
   const app = $('#app');
+  /* el rol viaja en el <body>: el CSS de más arriba hace el resto */
+  if(u) document.body.setAttribute('data-rol', u.rol);
+  else  document.body.removeAttribute('data-rol');
   if(!u){ app.innerHTML = vistaAcceso(); ligarAcceso(); return; }
   const {k, arg} = rutaActual();
   const menu = MENU[u.rol] || MENU.alumno;
@@ -1420,19 +1617,19 @@ function grafico(puntos, opciones){
   const y = (v)=> H-P - (v-min)/(max-min)*(H-P*1.5);
   const d = puntos.map((p,i)=> (i?'L':'M')+x(i).toFixed(1)+' '+y(p.valor).toFixed(1)).join(' ');
   const area = d+' L'+x(puntos.length-1).toFixed(1)+' '+(H-P)+' L'+x(0).toFixed(1)+' '+(H-P)+' Z';
-  const col = opciones.color||'#C6A15A';
+  const col = opciones.color||'#DD2C37';
   return '<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;height:auto;display:block" role="img" aria-label="'+esc(opciones.titulo||'serie')+'">'
    + '<defs><linearGradient id="g'+opciones.id+'" x1="0" x2="0" y1="0" y2="1">'
    +   '<stop offset="0" stop-color="'+col+'" stop-opacity=".28"/><stop offset="1" stop-color="'+col+'" stop-opacity="0"/></linearGradient></defs>'
-   + [0,.5,1].map(f=>'<line x1="'+P+'" x2="'+(W-P)+'" y1="'+(H-P-f*(H-P*1.5)).toFixed(1)+'" y2="'+(H-P-f*(H-P*1.5)).toFixed(1)+'" stroke="#2A2620" stroke-width="1"/>').join('')
+   + [0,.5,1].map(f=>'<line x1="'+P+'" x2="'+(W-P)+'" y1="'+(H-P-f*(H-P*1.5)).toFixed(1)+'" y2="'+(H-P-f*(H-P*1.5)).toFixed(1)+'" stroke="#262626" stroke-width="1"/>').join('')
    + '<path d="'+area+'" fill="url(#g'+opciones.id+')"/>'
    + '<path d="'+d+'" fill="none" stroke="'+col+'" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>'
    + '<circle cx="'+x(puntos.length-1).toFixed(1)+'" cy="'+y(vs[vs.length-1]).toFixed(1)+'" r="3.5" fill="'+col+'"/>'
-   + '<text x="'+P+'" y="14" fill="#8E877A" font-family="IBM Plex Mono,monospace" font-size="10">'+esc(opciones.titulo||'')+'</text>'
+   + '<text x="'+P+'" y="14" fill="#888888" font-family="IBM Plex Mono,monospace" font-size="10">'+esc(opciones.titulo||'')+'</text>'
    + '<text x="'+(W-P)+'" y="14" text-anchor="end" fill="'+col+'" font-family="Barlow Condensed,sans-serif" font-weight="700" font-size="15">'
    +   esc(vs[vs.length-1])+' '+esc(opciones.unidad||'')+'</text>'
-   + '<text x="'+P+'" y="'+(H-8)+'" fill="#6A655C" font-family="IBM Plex Mono,monospace" font-size="9">'+esc(puntos[0].fecha)+'</text>'
-   + '<text x="'+(W-P)+'" y="'+(H-8)+'" text-anchor="end" fill="#6A655C" font-family="IBM Plex Mono,monospace" font-size="9">'+esc(puntos[puntos.length-1].fecha)+'</text>'
+   + '<text x="'+P+'" y="'+(H-8)+'" fill="#656565" font-family="IBM Plex Mono,monospace" font-size="9">'+esc(puntos[0].fecha)+'</text>'
+   + '<text x="'+(W-P)+'" y="'+(H-8)+'" text-anchor="end" fill="#656565" font-family="IBM Plex Mono,monospace" font-size="9">'+esc(puntos[puntos.length-1].fecha)+'</text>'
    + '</svg>';
 }
 
@@ -1461,7 +1658,7 @@ VISTAS['alumno:inicio'] = (v,u)=>{
   +  kpi('Última evaluación', ev? fecha(ev.creado):'—', ev? 'Publicada por tu profesional':'Sin evaluaciones')
   +  kpi('Plan vigente', pl? 'Sí':'—', pl? fecha(pl.creado):'Tu profesor aún no publica')
   + '</div>'
-  + (pend.length? '<div class="card" style="margin-bottom:16px;border-color:var(--gold-dim)"><div class="row">'
+  + (pend.length? '<div class="card" style="margin-bottom:16px;border-color:var(--jy-borde)"><div class="row">'
       + '<span class="chip gold">Solicitud enviada</span><div class="grow" style="flex:1">Esperas respuesta de '
       + esc(pend.map(p=>(usuario(p.profesionalId)||{}).nombre).join(', '))+'.</div>'
       + '<a class="btn sm" href="#/conexiones">Ver</a></div></div>' : '')
@@ -1488,11 +1685,20 @@ function fichaMini(p){
 
 VISTAS['alumno:mi-evaluacion'] = (v,u)=>{
   const regs = Datos.paraAlumno(u.id,'evaluacion');
-  v.innerHTML = cab('Mi evaluación','El resultado que publicó tu profesional. Aquí sólo se lee.')
-  + '<div class="readonly-note" style="margin-bottom:16px"><span>◔</span><div>Esta pantalla es de lectura. Los números los toma y publica tu profesional; tú los consultas cuando quieras.</div></div>'
+  /* si todavía no la llena, la ficha parte abierta */
+  if(PLEGADO['anam-alu'] === undefined) PLEGADO['anam-alu'] = !anamnesisDe(u.id);
+  v.innerHTML = cab('Mi evaluación','Tu anamnesis deportiva y los resultados que publica tu profesional.')
+  + plegable('anam-alu', 'Mi anamnesis deportiva', 'Datos generales, perfil deportivo y lesiones · la completas tú y la ve tu profesional',
+             '<div class="jy-anam-caja"></div>')
+  + '<div style="height:16px"></div>'
+  + '<div class="readonly-note" style="margin-bottom:16px"><span>◔</span><div>El perfil del atleta y las tomas de 1RM son de lectura: los números los toma y publica tu profesional.</div></div>'
   + historialCorto(regs)
   + ranura('alumno.evaluacion');
   montarRanuras(u);
+  ligarPlegable('anam-alu', function(){
+    const c = $('#foldb-anam-alu .jy-anam-caja');
+    if(c && !c.querySelector('iframe')) montarAnamnesis(c, u, true);
+  });
 };
 VISTAS['alumno:mi-plan'] = (v,u)=>{
   const regs = Datos.paraAlumno(u.id,'planificacion');
@@ -1533,7 +1739,7 @@ VISTAS['alumno:mi-seguimiento'] = (v,u)=>{
   + '<div class="grid g2" style="margin-bottom:18px">'
   +  ['peso','sueno','animo','rpe'].map((c,i)=>'<div class="card"><div class="h3" style="margin-bottom:10px">'+esc(METRICAS[c].nombre)+'</div>'
   +    grafico(serieMetrica(u.id,c,30).map(p=>({valor:p.valor,fecha:p.fecha})),
-        {id:'a'+i, titulo:'30 días', unidad:METRICAS[c].unidad, color: i%2? '#5B93B8':'#C6A15A'})+'</div>').join('')
+        {id:'a'+i, titulo:'30 días', unidad:METRICAS[c].unidad, color: i%2? '#5B93B8':'#DD2C37'})+'</div>').join('')
   + '</div>'
   + ranura('alumno.seguimiento');
   $('#b-met').onclick = ()=>{
@@ -1585,7 +1791,7 @@ function tarjetaPro(p,u,previa){
    + '<div class="avatar" style="width:44px;height:44px;font-size:18px;background:'+ROLES[p.rol].color+'">'+esc(iniciales(p.nombre))+'</div>'
    + '<div style="flex:1;min-width:0"><div class="h2" style="font-size:19px">'+esc(p.nombre)+'</div>'
    + '<div class="sub" style="margin:2px 0 0">'+esc(p.titulo||'')+' · '+esc(p.comuna||'')+'</div></div>'
-   + '<div style="text-align:right"><div class="mono" style="color:var(--gold);font-weight:600">'+money(p.tarifa)+'</div>'
+   + '<div style="text-align:right"><div class="mono" style="color:var(--jy-texto-acc);font-weight:600">'+money(p.tarifa)+'</div>'
    + '<div class="hint">por sesión</div></div></div>'
    + '<p class="sub" style="margin-top:12px">'+esc(p.bio||'')+'</p>'
    + '<div class="row" style="margin:12px 0">'+(p.especialidades||[]).map(e=>'<span class="chip">'+esc(e)+'</span>').join('')+'</div>'
@@ -1615,7 +1821,7 @@ async function solicitarVinculo(u, proId){
     +'<div class="field"><label>Cuéntale qué buscas</label><textarea class="inp" name="mensaje" placeholder="Objetivo, disponibilidad, lesiones previas…"></textarea></div></form>',
     {ok:'Enviar solicitud'});
   if(!r) return;
-  S.vinculos.push({ id:uid('v'), alumnoId:u.id, profesionalId:proId, estado:'pendiente',
+  ponerVinculo({ alumnoId:u.id, profesionalId:proId, estado:'pendiente',
     desde:new Date().toISOString(), servicio: p.rol==='profesor'?'Entrenamiento':'Nutrición',
     plan:'Por definir', mensaje:(r.mensaje||'') });
   guardar('vinculos'); bitacora('vinculo','Solicitud a '+p.nombre, u.id);
@@ -1746,15 +1952,20 @@ function listaAlumnos(v,u,arg){
     const r = await preguntar('Invitar',
       '<form class="stack"><div class="field"><label>Correo de la persona</label><input class="inp" name="email" type="email" required placeholder="alumno@correo.com"></div>'
       +'<div class="field"><label>Plan que le asignas</label><input class="inp" name="plan" value="8 sesiones / mes"></div>'
-      +'<p class="hint" style="margin:0">Si ya tiene cuenta, queda vinculada al instante. Si no, le llegará la invitación.</p></form>',{ok:'Invitar'});
+      +'<p class="hint" style="margin:0">La persona verá tu invitación al entrar a JYNTRA con ese correo y decide si la acepta. Hasta entonces no ves ninguno de sus datos.</p></form>',{ok:'Enviar invitación'});
     if(!r) return;
-    const a = S.usuarios.find(x=>x.email===String(r.email).trim().toLowerCase() && x.rol==='alumno');
-    if(!a) return toast('Nadie con ese correo tiene cuenta de alumno todavía.','warn');
-    if(vinculoDe(a.id,u.id)) return toast('Ya existe un vínculo con esa persona.','warn');
+    const email = String(r.email||'').trim().toLowerCase();
+    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return toast('Ese correo no es válido.','warn');
     const c = cupoAlumnos(u); if(c.usados>=c.tope) return toast('Tu plan llegó al tope de alumnos.','warn');
-    S.vinculos.push({id:uid('v'), alumnoId:a.id, profesionalId:u.id, estado:'activo', desde:new Date().toISOString(),
-      servicio: u.rol==='profesor'?'Entrenamiento':'Nutrición', plan:r.plan});
-    guardar('vinculos'); toast(a.nombre+' quedó vinculado','ok'); pintar();
+    /* La persona tiene que aceptar: nadie queda conectado (ni expone sus
+       datos de salud) sin haberlo decidido. */
+    if(!Array.isArray(S.invitaciones)) S.invitaciones = [];
+    const id = u.id + '_' + email;
+    S.invitaciones = S.invitaciones.filter(x=> x.id !== id);
+    S.invitaciones.push({ id, profesionalId:u.id, profesionalNombre:u.nombre, rolProfesional:u.rol, email,
+      servicio: u.rol==='profesor'?'Entrenamiento':'Nutrición', plan:r.plan, creado:new Date().toISOString() });
+    guardar('invitaciones');
+    toast('Invitación enviada. Cuando '+email+' entre a JYNTRA con ese correo, la verá y podrá aceptarla.','ok'); pintar();
   };
 }
 VISTAS['profesor:alumnos'] = listaAlumnos;
@@ -1777,7 +1988,7 @@ function fichaAlumno(v,u,id){
   + '</div>'
   + '<div class="grid g2" style="margin-bottom:18px">'
   +  ['peso','sueno'].map((c,i)=>'<div class="card"><div class="h3" style="margin-bottom:10px">'+esc(METRICAS[c].nombre)+'</div>'
-  +    grafico(serieMetrica(a.id,c,30).map(p=>({valor:p.valor,fecha:p.fecha})),{id:'f'+i,titulo:'30 días',unidad:METRICAS[c].unidad,color:i?'#5B93B8':'#C6A15A'})+'</div>').join('')
+  +    grafico(serieMetrica(a.id,c,30).map(p=>({valor:p.valor,fecha:p.fecha})),{id:'f'+i,titulo:'30 días',unidad:METRICAS[c].unidad,color:i?'#5B93B8':'#DD2C37'})+'</div>').join('')
   + '</div>'
   + '<div class="card pad0"><div style="padding:14px 16px" class="h2">Historial compartido</div>'
   + (Datos.listar({sujetoId:a.id}).length
@@ -1807,7 +2018,24 @@ function pantallaHerramienta(ranuraId, titulo, bajada, base){
     if(elegido) montarRanuras(elegido);
   };
 }
-VISTAS['profesor:evaluacion']     = pantallaHerramienta('profesor.evaluacion','Evaluación física','Toma de datos, cálculo y publicación del resultado.','evaluacion');
+VISTAS['profesor:evaluacion'] = (v,u,arg)=>{
+  const lista = alumnosDe(u.id);
+  const a = (arg && lista.find(x=>x.id===arg)) || lista[0] || null;
+  v.innerHTML = cab('Evaluación física','Anamnesis deportiva, perfil del atleta y fuerza 1RM.')
+    + selectorAlumno(u, a, 'evaluacion')
+    + (a ? plegable('anam-pro', 'Anamnesis deportiva', 'Datos generales, perfil deportivo y lesiones · ficha compartida con '+String(a.nombre).split(' ')[0],
+                    '<div class="jy-anam-caja"></div>')
+         + '<div style="height:16px"></div>'
+         + ranura('profesor.evaluacion', {extra:'<span class="chip info">'+esc(a.nombre)+'</span>'}) : '');
+  ligarSelectorAlumno('evaluacion');
+  if(a){
+    montarRanuras(a);
+    ligarPlegable('anam-pro', function(){
+      const c = $('#foldb-anam-pro .jy-anam-caja');
+      if(c && !c.querySelector('iframe')) montarAnamnesis(c, a, false);
+    });
+  }
+};
 VISTAS['profesor:planificacion']  = pantallaHerramienta('profesor.planificacion','Planificación','Diseña el mesociclo y publícalo en la pantalla del alumno.','planificacion');
 VISTAS['profesor:seguimiento']    = pantallaHerramienta('profesor.seguimiento','Seguimiento','Los mismos datos que registra el alumno, con tu capa de análisis.','seguimiento');
 VISTAS['nutricionista:anamnesis'] = pantallaHerramienta('nutricionista.anamnesis','Anamnesis','Ficha inicial, antropometría y hábitos.','anamnesis');
@@ -1823,33 +2051,214 @@ VISTAS['profesor:seguimiento'] = (v,u,arg)=>{
    + selectorAlumno(u,a,'seguimiento')
    + (a? '<div class="grid g2" style="margin-bottom:18px">'
      + ['peso','sueno','animo','rpe'].map((c,i)=>'<div class="card"><div class="h3" style="margin-bottom:10px">'+esc(METRICAS[c].nombre)+'</div>'
-       + grafico(serieMetrica(a.id,c,30).map(p=>({valor:p.valor,fecha:p.fecha})),{id:'s'+i,titulo:'30 días',unidad:METRICAS[c].unidad,color:i%2?'#5B93B8':'#C6A15A'})+'</div>').join('')
+       + grafico(serieMetrica(a.id,c,30).map(p=>({valor:p.valor,fecha:p.fecha})),{id:'s'+i,titulo:'30 días',unidad:METRICAS[c].unidad,color:i%2?'#5B93B8':'#DD2C37'})+'</div>').join('')
      + '</div>' + ranura('profesor.seguimiento',{extra:'<span class="chip info">'+esc(a.nombre)+'</span>'}) : '');
   ligarSelectorAlumno('seguimiento'); if(a) montarRanuras(a);
 };
 
+const DIA_ORDEN = [1,2,3,4,5,6,0];          // la semana parte el lunes
+const DIA_CORTO = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+
+function bloqueSano(b){
+  return Object.assign({ horaFin:'', servicio:'', lugar:'', nota:'', cupos:1, alumnoId:'' }, b);
+}
+function sumaHora(hora, minutos){
+  const p = String(hora||'').split(':');
+  if(p.length < 2) return '';
+  let t = (+p[0])*60 + (+p[1]) + minutos;
+  t = Math.max(0, Math.min(23*60+59, t));
+  return String(Math.floor(t/60)).padStart(2,'0')+':'+String(t%60).padStart(2,'0');
+}
+function agendaDe(proId){
+  return S.agenda.filter(b=> b.profesionalId===proId).map(bloqueSano)
+    .sort((a,b)=> DIA_ORDEN.indexOf(a.dia)-DIA_ORDEN.indexOf(b.dia) || String(a.hora).localeCompare(String(b.hora)));
+}
+function bloqueDe(id){ return S.agenda.find(b=> b.id===id); }
+
+/* --- la grilla que resume todo lo cargado --- */
+function grillaSemanal(proId){
+  const bl = agendaDe(proId);
+  const hoyDia = new Date().getDay();
+  return '<div class="jy-week">' + DIA_ORDEN.map(d=>{
+    const del = bl.filter(x=> x.dia===d);
+    return '<div class="jy-day'+(d===hoyDia?' hoy':'')+'">'
+     + '<div class="jy-day-h"><b>'+diasES[d]+'</b><span>'+(del.length||'')+'</span></div>'
+     + (del.length ? del.map(x=>{
+          const a = x.alumnoId ? usuario(x.alumnoId) : null;
+          return '<div class="jy-slot'+(a?' asignado':'')+'">'
+           + '<div class="hh">'+esc(x.hora||'--:--')+(x.horaFin? ' – '+esc(x.horaFin):'')+'</div>'
+           + '<div class="nn">'+esc(a ? a.nombre : ((x.cupos>1? x.cupos+' cupos' : 'Cupo')+' libre'))+'</div>'
+           + '<div class="ss">'+esc(x.servicio||'—')+(x.lugar? ' · '+esc(x.lugar):'')
+           + (x.nota? '<br>'+esc(x.nota):'')+'</div></div>';
+        }).join('')
+      : '<div class="jy-vacio">libre</div>')
+     + '</div>';
+  }).join('') + '</div>';
+}
+
+/* --- calendario publicado, visto desde la ficha de la persona --- */
+function bloqueCalendario(a, u){
+  const bl = agendaDe(u.id).filter(b=> b.alumnoId===a.id);
+  const pub = Datos.ultimo({sujetoId:a.id, modulo:'agenda', autorId:u.id});
+  return '<div class="card pad0" style="margin-bottom:18px">'
+   + '<div style="padding:14px 16px" class="row"><div class="h2" style="flex:1">Calendario semanal</div>'
+   + (pub? '<span class="chip ok">publicado '+fecha(pub.creado)+'</span>' : '<span class="chip">sin publicar</span>')
+   + '<a class="btn sm gold" href="#/agenda">Editar agenda</a></div>'
+   + (bl.length
+      ? '<table class="tbl"><thead><tr><th>Día</th><th>Horario</th><th>Servicio</th><th>Lugar</th><th>Nota</th></tr></thead><tbody>'
+        + bl.map(b=>'<tr><td>'+diasES[b.dia]+'</td>'
+           + '<td class="mono" style="font-size:12px">'+esc(b.hora)+(b.horaFin? ' – '+esc(b.horaFin):'')+'</td>'
+           + '<td>'+esc(b.servicio||'—')+'</td><td>'+esc(b.lugar||'—')+'</td>'
+           + '<td class="hint">'+esc(b.nota||'')+'</td></tr>').join('')
+        + '</tbody></table>'
+      : '<div class="empty" style="border:0;margin:0 16px 16px"><div class="h3">Sin horarios asignados</div>'
+        + '<div>Asígnale días y horas desde la columna «Alumno» de tu agenda.</div></div>')
+   + '</div>';
+}
+
+function publicarCalendarios(u){
+  const asignados = agendaDe(u.id).filter(b=> b.alumnoId);
+  const porPersona = {};
+  asignados.forEach(b=>{ (porPersona[b.alumnoId] = porPersona[b.alumnoId] || []).push(b); });
+  const ids = Object.keys(porPersona).filter(id=> vinculado(id, u.id));
+  if(!ids.length) return toast('Todavía no hay horarios asignados a una persona vinculada.','warn');
+  ids.forEach(id=>{
+    Datos.listar({sujetoId:id, modulo:'agenda', autorId:u.id}).forEach(r=> Datos.borrar(r.id));
+    Datos.guardar({
+      modulo:'agenda', tipo:'Calendario semanal', autorId:u.id, sujetoId:id, visible:true,
+      datos:{
+        profesional: u.nombre, rol: u.rol, actualizado: new Date().toISOString(),
+        bloques: porPersona[id].map(b=>({ dia:b.dia, diaNombre:diasES[b.dia], hora:b.hora,
+          horaFin:b.horaFin, servicio:b.servicio, lugar:b.lugar, nota:b.nota }))
+      }
+    });
+  });
+  toast('Calendario publicado para '+ids.length+' persona'+(ids.length===1?'':'s'),'ok');
+  pintar();
+}
+
 function pantallaAgenda(v,u){
-  const mios = S.agenda.filter(b=>b.profesionalId===u.id).sort((a,b)=>a.dia-b.dia||a.hora.localeCompare(b.hora));
-  v.innerHTML = cab('Agenda','Tu disponibilidad es lo que ve el alumno en el buscador.',
-      '<button class="btn gold" id="b-bloque">Agregar horario</button>')
-  + '<div class="card pad0" style="margin-bottom:18px">'
-  + (mios.length? '<table class="tbl"><thead><tr><th>Día</th><th>Hora</th><th>Servicio</th><th>Cupos</th><th class="right"></th></tr></thead><tbody>'
-    + mios.map(b=>'<tr><td>'+diasES[b.dia]+'</td><td class="mono">'+esc(b.hora)+'</td><td>'+esc(b.servicio)+'</td><td>'+b.cupos+'</td>'
-      +'<td class="right"><button class="btn sm danger" data-delb="'+b.id+'">Quitar</button></td></tr>').join('')+'</tbody></table>'
-    : '<div class="empty" style="border:0"><div class="h3">Sin horarios cargados</div><div>Agrega al menos uno para aparecer en el buscador.</div></div>')+'</div>'
-  + ranura(u.rol==='profesor'?'profesor.agenda':'nutricionista.agenda');
+  const esNutri = u.rol==='nutricionista';
+  const rotulo  = esNutri ? 'paciente' : 'alumno';
+  const gente   = alumnosDe(u.id);
+  const bl      = agendaDe(u.id);
+  const asignados = bl.filter(b=> b.alumnoId).length;
+
+  const opcionesGente = (sel)=> '<option value="">— cupo libre —</option>'
+    + gente.map(a=>'<option value="'+a.id+'" '+(sel===a.id?'selected':'')+'>'+esc(a.nombre)+'</option>').join('');
+  const opcionesDia = (sel)=> DIA_ORDEN.map(d=>'<option value="'+d+'" '+(sel===d?'selected':'')+'>'+diasES[d]+'</option>').join('');
+
+  v.innerHTML = cab('Agenda','Carga tus horarios, asígnalos a cada '+rotulo+' y el horario semanal se arma solo.',
+      '<button class="btn" id="b-bloque">Agregar horario</button>'
+    + '<button class="btn gold" id="b-publicar">Publicar calendarios</button>')
+
+  + '<div class="row" style="margin-bottom:14px">'
+  +   '<span class="chip">'+bl.length+' bloques cargados</span>'
+  +   '<span class="chip '+(asignados?'ok':'')+'">'+asignados+' asignados a una persona</span>'
+  +   '<span class="chip">'+(bl.length-asignados)+' abiertos al buscador</span>'
+  + '</div>'
+
+  /* ---- tabla editable ---- */
+  + '<div class="card pad0" style="margin-bottom:18px"><div class="tbl-scroll">'
+  + (bl.length
+    ? '<table class="tbl" id="t-agenda"><thead><tr>'
+      + '<th>Día</th><th>Inicio</th><th>Término</th><th>Servicio</th>'
+      + '<th>'+(esNutri?'Paciente':'Alumno')+'</th><th>Lugar</th><th>Cupos</th><th>Nota</th><th class="right"></th>'
+      + '</tr></thead><tbody>'
+      + bl.map(b=>'<tr>'
+        + '<td><select class="inp mini" data-b="'+b.id+'" data-campo="dia">'+opcionesDia(b.dia)+'</select></td>'
+        + '<td><input class="inp mini" type="time" data-b="'+b.id+'" data-campo="hora" value="'+esc(b.hora||'')+'"></td>'
+        + '<td><input class="inp mini" type="time" data-b="'+b.id+'" data-campo="horaFin" value="'+esc(b.horaFin||'')+'"></td>'
+        + '<td><input class="inp" data-b="'+b.id+'" data-campo="servicio" value="'+esc(b.servicio||'')+'"></td>'
+        + '<td><select class="inp" data-b="'+b.id+'" data-campo="alumnoId">'+opcionesGente(b.alumnoId)+'</select></td>'
+        + '<td><input class="inp" data-b="'+b.id+'" data-campo="lugar" value="'+esc(b.lugar||'')+'" placeholder="Sala, box, online…"></td>'
+        + '<td><input class="inp mini" type="number" min="1" data-b="'+b.id+'" data-campo="cupos" value="'+(b.cupos||1)+'" style="max-width:70px"></td>'
+        + '<td><input class="inp" data-b="'+b.id+'" data-campo="nota" value="'+esc(b.nota||'')+'" placeholder="Opcional"></td>'
+        + '<td class="right" style="white-space:nowrap">'
+        +   '<button class="btn sm" data-dupb="'+b.id+'" title="Duplicar este bloque">⧉</button> '
+        +   '<button class="btn sm danger" data-delb="'+b.id+'">Quitar</button></td>'
+        + '</tr>').join('')
+      + '</tbody></table>'
+    : '<div class="empty" style="border:0"><div class="h3">Sin horarios cargados</div>'
+      + '<div>Agrega el primero: elige los días, la hora y a quién se lo asignas.</div></div>')
+  + '</div></div>'
+
+  /* ---- horario semanal ---- */
+  + '<div class="card" style="margin-bottom:18px"><div class="card-head">'
+  +   '<div class="h2">Horario semanal</div><div class="grow"></div>'
+  +   '<span class="chip gold">se arma con todo lo cargado arriba</span></div>'
+  +   '<div id="jy-grid">'+grillaSemanal(u.id)+'</div></div>'
+
+  + '<p class="hint" style="margin:0 0 18px">Los bloques con una persona asignada se envían a su ficha con «Publicar calendarios»: '
+  + 'cada '+rotulo+' queda con un único calendario, el que carga su profesional conectado.</p>'
+
+  + ranura(esNutri?'nutricionista.agenda':'profesor.agenda');
+
+  /* ---- edición en vivo, sin repintar la pantalla ---- */
+  const refrescar = ()=>{ const g = $('#jy-grid'); if(g) g.innerHTML = grillaSemanal(u.id); };
+  $$('#t-agenda [data-campo]').forEach(el=>{
+    el.addEventListener('change', ()=>{
+      const b = bloqueDe(el.dataset.b); if(!b) return;
+      const c = el.dataset.campo;
+      if(c==='dia')        b.dia = +el.value;
+      else if(c==='cupos') b.cupos = Math.max(1, +el.value||1);
+      else                 b[c] = el.value;
+      if(c==='hora' && !b.horaFin) {
+        b.horaFin = sumaHora(el.value, 60);
+        const f = $('#t-agenda [data-b="'+b.id+'"][data-campo="horaFin"]'); if(f) f.value = b.horaFin;
+      }
+      if(c==='alumnoId' && b.alumnoId) b.cupos = 1;
+      guardar('agenda'); refrescar();
+    });
+  });
+
+  $$('[data-delb]').forEach(b=> b.onclick = ()=>{
+    S.agenda = S.agenda.filter(x=> x.id!==b.dataset.delb);
+    guardar('agenda'); toast('Horario quitado','warn'); pintar();
+  });
+  $$('[data-dupb]').forEach(b=> b.onclick = ()=>{
+    const o = bloqueDe(b.dataset.dupb); if(!o) return;
+    S.agenda.push(Object.assign({}, bloqueSano(o), {id:uid('b')}));
+    guardar('agenda'); toast('Bloque duplicado','ok'); pintar();
+  });
+
+  $('#b-publicar').onclick = ()=> publicarCalendarios(u);
+
   $('#b-bloque').onclick = async ()=>{
     const r = await preguntar('Nuevo horario',
-      '<form class="stack"><div class="grid g2">'
-      +'<div class="field"><label>Día</label><select class="inp" name="dia">'+diasES.map((d,i)=>'<option value="'+i+'">'+d+'</option>').join('')+'</select></div>'
-      +'<div class="field"><label>Hora</label><input class="inp" name="hora" type="time" value="19:00"></div></div>'
-      +'<div class="grid g2"><div class="field"><label>Servicio</label><input class="inp" name="servicio" value="'+(u.rol==='profesor'?'Entrenamiento':'Consulta nutricional')+'"></div>'
-      +'<div class="field"><label>Cupos</label><input class="inp" name="cupos" type="number" min="1" value="1"></div></div></form>',{ok:'Agregar'});
+      '<form class="stack">'
+      + '<div class="field"><label>Días de la semana</label><div class="row" style="flex-wrap:wrap;gap:10px">'
+      +   DIA_ORDEN.map(d=>'<label class="row" style="gap:6px;cursor:pointer;font-size:13px">'
+      +     '<input type="checkbox" name="d'+d+'" '+(d===1?'checked':'')+'>'+DIA_CORTO[d]+'</label>').join('')
+      + '</div><p class="hint" style="margin:6px 0 0">Marca varios y se crea un bloque por día.</p></div>'
+      + '<div class="grid g2">'
+      +   '<div class="field"><label>Hora de inicio</label><input class="inp" name="hora" type="time" value="19:00"></div>'
+      +   '<div class="field"><label>Hora de término</label><input class="inp" name="horaFin" type="time" value="20:00"></div>'
+      + '</div>'
+      + '<div class="field"><label>'+(esNutri?'Paciente':'Alumno')+'</label>'
+      +   '<select class="inp" name="alumnoId">'+opcionesGente('')+'</select>'
+      +   '<p class="hint" style="margin:6px 0 0">Déjalo en «cupo libre» si es un horario abierto de tu ficha pública.</p></div>'
+      + '<div class="grid g2">'
+      +   '<div class="field"><label>Servicio</label><input class="inp" name="servicio" value="'+(esNutri?'Consulta nutricional':'Entrenamiento')+'"></div>'
+      +   '<div class="field"><label>Lugar</label><input class="inp" name="lugar" placeholder="Sala, box, online…"></div>'
+      + '</div>'
+      + '<div class="grid g2">'
+      +   '<div class="field"><label>Cupos</label><input class="inp" name="cupos" type="number" min="1" value="1"></div>'
+      +   '<div class="field"><label>Nota</label><input class="inp" name="nota" placeholder="Opcional"></div>'
+      + '</div></form>', {ok:'Agregar a la agenda'});
     if(!r) return;
-    S.agenda.push({id:uid('b'), profesionalId:u.id, dia:+r.dia, hora:r.hora, servicio:r.servicio, cupos:+r.cupos||1});
-    guardar('agenda'); toast('Horario agregado','ok'); pintar();
+    const dias = DIA_ORDEN.filter(d=> r['d'+d]);
+    if(!dias.length) return toast('Marca al menos un día.','warn');
+    dias.forEach(d=> S.agenda.push({
+      id:uid('b'), profesionalId:u.id, dia:d, hora:r.hora, horaFin:r.horaFin,
+      servicio:r.servicio, lugar:r.lugar||'', nota:r.nota||'',
+      cupos: r.alumnoId ? 1 : (Math.max(1, +r.cupos||1)), alumnoId: r.alumnoId||''
+    }));
+    guardar('agenda');
+    toast(dias.length+' bloque'+(dias.length===1?'':'s')+' agregado'+(dias.length===1?'':'s'),'ok');
+    pintar();
   };
-  $$('[data-delb]').forEach(b=> b.onclick = ()=>{ S.agenda = S.agenda.filter(x=>x.id!==b.dataset.delb); guardar('agenda'); toast('Horario quitado','warn'); pintar(); });
+
   montarRanuras(null);
 }
 VISTAS['profesor:agenda'] = pantallaAgenda;
@@ -2028,7 +2437,7 @@ async function solicitarVinculoConPlan(u, proId, plan){
     +'<div class="field"><label>Mensaje para '+esc(p.nombre.split(' ')[0])+'</label><textarea class="inp" name="mensaje" placeholder="Objetivo, disponibilidad, lesiones previas…">'+esc(mensajeDefault)+'</textarea></div></form>',
     {ok:'Enviar solicitud'});
   if(!r) return;
-  S.vinculos.push({ id:uid('v'), alumnoId:u.id, profesionalId:proId, estado:'pendiente',
+  ponerVinculo({ alumnoId:u.id, profesionalId:proId, estado:'pendiente',
     desde:new Date().toISOString(), servicio: p.rol==='profesor'?'Entrenamiento':'Nutrición',
     plan: plan? (plan.titulo+' — '+money(plan.precio)+' / '+(plan.periodo||'mes')) : 'Por definir',
     planServicioId: plan? plan.id : null, mensaje:(r.mensaje||'') });
@@ -2094,9 +2503,9 @@ VISTAS['administrador:inicio'] = (v,u)=>{
   +   Object.values(PLANES).map(p=>{ const n=pros.filter(x=>(x.plan||'base')===p.id).length;
        const pc = pros.length? Math.round(n/pros.length*100):0;
        return '<div style="margin-bottom:12px"><div class="row" style="justify-content:space-between"><span>'+p.nombre+'</span>'
-       +'<span class="mono" style="color:var(--gold)">'+n+' · '+pc+'%</span></div>'
-       +'<div style="height:6px;background:#242017;border-radius:3px;overflow:hidden;margin-top:5px">'
-       +'<div style="height:100%;width:'+pc+'%;background:var(--gold)"></div></div></div>'; }).join('')+'</div>'
+       +'<span class="mono" style="color:var(--jy-texto-acc)">'+n+' · '+pc+'%</span></div>'
+       +'<div style="height:6px;background:#202020;border-radius:3px;overflow:hidden;margin-top:5px">'
+       +'<div style="height:100%;width:'+pc+'%;background:var(--jy-acc)"></div></div></div>'; }).join('')+'</div>'
   +  '<div class="card"><div class="card-head"><div class="h2">Uso por módulo</div></div>'
   +   (S.registros.length? Object.entries(S.registros.reduce((a,r)=>{a[r.modulo]=(a[r.modulo]||0)+1;return a;},{}))
         .map(([k,n])=>'<div class="row" style="justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--line-soft)"><span>'+esc(k)+'</span><span class="chip gold">'+n+'</span></div>').join('')
@@ -2239,7 +2648,7 @@ VISTAS['administrador:bastidor'] = (v)=>{
   + '</div></div>';
   $('#b-demo').onclick = ()=>{
     if(MODULOS['profesor.evaluacion']){ JYNTRA.quitar('profesor.evaluacion'); toast('Ranura liberada','warn'); }
-    else { montarDemo(); toast('Herramienta de ejemplo montada en profesor.evaluacion','ok'); }
+    else { /* montarDemo(); — la ranura la ocupa la herramienta real */ toast('Herramienta de ejemplo montada en profesor.evaluacion','ok'); }
     pintar();
   };
 };
@@ -2351,6 +2760,9 @@ function montarDemo(){
    en JYNTRA.registrarArchivo: recibe ctx.usuario/ctx.alumnos y
    devuelve eventos de guardado al pilar 5 (Datos) para la bitácora.
    --------------------------------------------------------------- */
+/* La agenda externa (JYNTRA_Agenda_Profesional_v3.html) no está entre los
+   archivos disponibles: la pantalla usa la agenda semanal nativa. Para
+   reactivarla, deja el archivo en ./herramientas/ y quita este comentario.
 JYNTRA.registrarArchivo({
   ranura : 'profesor.agenda',
   id     : 'agenda-profesional',
@@ -2366,6 +2778,654 @@ JYNTRA.registrarArchivo({
   alto   : '900px'
 });
 
+
+/* ---------------------------------------------------------------
+   FOCO · lo único que las herramientas necesitan saber para armar
+   su contexto. Se deja escrito en el mismo almacén que comparte
+   toda la plataforma, justo antes de montar el marco; el preámbulo
+   _puente.js lo lee de forma síncrona al arrancar la herramienta.
+   --------------------------------------------------------------- */
+function fijarFoco(ctx, extra){
+  var u = sesion();
+  var a = ctx && ctx.alumno;
+  var f = Object.assign({
+    usuarioId : u ? u.id : null,
+    alumnoId  : a ? a.id : null,
+    modo      : 'edicion',
+    llaves    : {}
+  }, extra || {});
+  try{ DB.set('__foco', f); }catch(e){}
+  return f;
+}
+
+/* Monta una herramienta que vive en su propio archivo. Entiende los
+   dos protocolos que conviven: 'jyntra' (profesor) y 'jyEmbed'
+   (alumno), más el canal propio de la cineantropometría. */
+function montarArchivo(caja, ctx, opciones){
+  opciones = opciones || {};
+  /* Cada marco lleva SU foco en la dirección: con dos herramientas en la
+     misma pantalla, el foco compartido de una pisaba al de la otra (la
+     anamnesis en edición dejaba el 1RM del alumno editable). */
+  var foco = fijarFoco(ctx, opciones.foco);
+
+  var montadoEn = Date.now();
+  var marco = document.createElement('iframe');
+  marco.src   = opciones.src + (opciones.src.indexOf('?') < 0 ? '?' : '&')
+              + 'jyfoco=' + encodeURIComponent(JSON.stringify(foco));
+  marco.title = opciones.nombre || opciones.src;
+  marco.setAttribute('allow','camera; microphone; clipboard-write');
+  marco.style.minHeight = (opciones.alto || 900) + 'px';
+  caja.appendChild(marco);
+
+  /* barra de acciones: arriba el sello y el salto, abajo el guardado */
+  if(opciones.barra) barraHerramienta(caja, ctx, opciones.barra);
+
+  function responder(msg){
+    try{ marco.contentWindow.postMessage(msg, '*'); }catch(e){}
+  }
+
+  var oir = function(e){
+    var m = e.data;
+    if(!m) return;
+    /* El filtro de origen evita que otra pestaña nos hable. Algunos
+       entornos no rellenan e.source, así que cuando falta se acepta
+       el mensaje sólo si trae una de nuestras marcas: es tan estricto
+       como antes para lo que viene de fuera, y no pierde lo nuestro. */
+    if(e.source && e.source !== marco.contentWindow) return;
+    if(!e.source && !(m.jyntra === true || m.jyEmbed === true ||
+                      m.__jyNutri === true || m.__jyCine === true)) return;
+
+    /* alto: lo mandan ambos protocolos */
+    if((m.jyntra === true || m.jyEmbed === true) && m.accion === 'alto' && m.px){
+      var px = Math.max(420, Math.min(9000, Math.round(m.px) + 16));
+      if(Math.abs(parseInt(marco.style.minHeight,10) - px) > 24) marco.style.minHeight = px + 'px';
+      return;
+    }
+
+    /* --- protocolo 'jyntra': herramientas del profesional --- */
+    if(m.jyntra === true){
+      if(m.accion === 'guardar' && opciones.foco && opciones.foco.modo === 'lectura'){
+        toast('Esta ficha la completa tu profesional. Aquí sólo la consultas.','warn');
+        return;
+      }
+      if(m.accion === 'guardar') guardarDesdeArchivo(m.registro || {}, ctx);
+      if(m.accion === 'metrica' && ctx.registrarMetrica) ctx.registrarMetrica(m.metrica || {});
+      if(m.accion === 'listo') abrirUnaVez();
+      return;
+    }
+
+    /* --- canal propio de la anamnesis nutricional ---
+       Es UNA herramienta con seis pasos y un estado por paciente, que
+       mostramos en dos ranuras (anamnesis 0-2 · plan 3-5). Para que la
+       segunda vea lo que se escribió en la primera, su estado vive en
+       una clave propia y se le devuelve entero al montarla. */
+    if(m.__jyNutri === true){
+      if(m.accion === 'guardar' && m.estado){
+        var sn = (ctx && ctx.alumno && ctx.alumno.id) || (sesion() && sesion().id);
+        if(sn){
+          try{ DB.set('__nutri_' + sn, m.estado); }catch(e){}
+          var sel = caja.parentNode && caja.parentNode.querySelector('.jy-sello');
+          if(sel) sel.textContent = 'Guardado ' + new Date().toLocaleTimeString('es-CL',
+                   {hour:'2-digit', minute:'2-digit'});
+        }
+        return;   /* autoguardado silencioso: el registro lo hace el botón */
+      }
+      if(m.accion === 'publicar' || m.accion === 'crearPlan'){
+        var r = guardarDesdeArchivo({
+          modulo:'nutricion',
+          tipo: m.accion === 'publicar' ? 'Pauta alimentaria publicada' : 'Anamnesis nutricional',
+          visible: m.accion === 'publicar',
+          datos: Object.assign({__nutri:m.estado || m.datos || null}, m.datos || {})
+        }, ctx);
+        responder({__jyNutri:true, accion:'pautaGuardada',
+                   error:!r, mensaje: r ? 'Guardado en la ficha' : 'No se pudo guardar'});
+      }
+      return;
+    }
+
+    /* --- canal propio de la cineantropometría --- */
+    if(m.__jyCine === true){
+      if(m.accion === 'guardar'){
+        /* Se guarda con la forma que el puente sabe reponer (__cine) y
+           sin los gráficos en PNG: pesan cientos de KB y llenaban el
+           almacén del navegador, que entonces dejaba de guardar. */
+        guardarDesdeArchivo({modulo:'seguimiento', tipo:'Cineantropometría ISAK',
+                             datos:{ __cine : sinImagenes(m.estado || m.datos || {}),
+                                     resumen: sinImagenes(m.resumen || {}),
+                                     seccion: m.seccion || null }}, ctx);
+      }
+      return;
+    }
+
+    /* --- protocolo 'jyEmbed': herramientas del alumno y anamnesis --- */
+    if(m.jyEmbed === true){
+      if(m.accion === 'listo'){
+        if(opciones.alListo) opciones.alListo(responder);
+        return;
+      }
+      /* Recién montada, la herramienta puede emitir un 'estado' con el
+         formulario todavía vacío, antes de recibir la ficha guardada:
+         ese estado no debe pisar lo que ya había. */
+      if(m.accion === 'estado' && Date.now() - montadoEn < 2500 && estadoVacio(m.datos)){
+        return;
+      }
+      /* La anamnesis emite 'estado' medio segundo después de cada cambio.
+         Antes nadie lo escuchaba y el trabajo se perdía al cerrar. Ahora
+         se guarda en borrador, sin toast, para no interrumpir al que
+         escribe; el registro definitivo lo hace el botón Guardar. */
+      if(m.accion === 'estado'){
+        var su = (ctx && ctx.alumno && ctx.alumno.id) || (sesion() && sesion().id);
+        if(su){
+          try{ DB.set('__borrador_' + (opciones.clave || 'anamnesis') + '_' + su,
+                      {datos:m.datos, fecha:new Date().toISOString()}); }catch(e){}
+          var sello = caja.parentNode && caja.parentNode.querySelector('.jy-sello');
+          if(sello) sello.textContent = 'Guardado ' + new Date().toLocaleTimeString('es-CL',
+                     {hour:'2-digit', minute:'2-digit'});
+        }
+        return;
+      }
+      if(m.accion === 'guardarAnamnesis'){
+        var sa = (ctx && ctx.alumno && ctx.alumno.id) || (sesion() && sesion().id);
+        if(sa){ try{ DB.set('__borrador_anamnesis_' + sa, {datos:m.datos, fecha:new Date().toISOString()}); }catch(e){} }
+        var ra = guardarDesdeArchivo({ modulo:'evaluacion', tipo:'Anamnesis deportiva',
+                  datos: Object.assign({ __anam: m.datos || null }, m.resumen || {}) }, ctx);
+        responder({ jyEmbed:true, accion:'anamnesisGuardada', error:!ra,
+                    mensaje: ra ? 'Guardado en tu ficha' : 'No se pudo guardar' });
+        return;
+      }
+      if(m.accion === 'guardarRutina'){
+        /* Pulsar Guardar varias veces seguidas es normal cuando no se
+           ve claro si tomó. Cada clic llegaba como un guardado nuevo y
+           podía dejar rutinas paralelas. Se atiende el primero y se
+           descartan los que lleguen en el segundo y medio siguiente:
+           los datos son los mismos, así que no se pierde nada. */
+        var ahora = Date.now();
+        if(caja.__jyUltGuardado && ahora - caja.__jyUltGuardado < 1500){
+          responder({ jyEmbed:true, accion:'rutinaGuardada', error:false,
+                      mensaje:'Guardado' });
+          return;
+        }
+        caja.__jyUltGuardado = ahora;
+        /* Una rutina es un hilo, no dos papeles sueltos: cuando el
+           alumno responde sobre la que le publicó su profesor, se
+           actualiza ESE registro en vez de crear uno paralelo. Así
+           el profesor ve sus notas y las respuestas en el mismo
+           sitio, y el marcado de ejercicios queda donde toca. */
+        var yo3 = sesion();
+        var abierta = yo3 ? Datos.paraAlumno(yo3.id, 'planificacion')[0] : null;
+        /* Si el alumno pulsa Guardar dos veces seguidas, el segundo
+           clic llegaba antes de que el primero dejara su registro y
+           se creaban dos rutinas paralelas. Se recuerda cuál se creó
+           en este montaje para volver a escribir sobre ella. */
+        if(!abierta && caja.__jyRutinaId){
+          abierta = Datos.listar({modulo:'planificacion'})
+                    .filter(function(r){ return r.id === caja.__jyRutinaId; })[0] || null;
+        }
+        var reg;
+        if(abierta){
+          /* Se reescribe por la API, no mutando el objeto en memoria:
+             el canal que sincroniza entre perfiles recarga S desde
+             disco cada pocos segundos y se llevaba por delante los
+             cambios hechos a mano. Datos.guardar respeta el id, así
+             que actualiza el mismo registro en vez de crear otro. */
+          reg = Datos.guardar(Object.assign({}, abierta, {
+            datos      : m.datos || {},
+            tocado     : new Date().toISOString(),
+            tocadoPor  : yo3.id
+          }));
+          caja.__jyRutinaId = reg && reg.id;
+          toast('Guardado. Tu profesor verá tus notas.','ok');
+        } else {
+          reg = guardarDesdeArchivo({
+            modulo:'planificacion', tipo:'Mi planificación',
+            datos: m.datos || {}
+          }, ctx);
+          if(reg) caja.__jyRutinaId = reg.id;
+        }
+        responder({ jyEmbed:true, accion:'rutinaGuardada',
+                    error: !reg,
+                    mensaje: reg ? 'Guardado en tu historial' : 'No se pudo guardar' });
+      }
+      if(m.accion === 'rutinaAbierta' && m.mensaje){
+        toast(m.mensaje, m.error ? 'warn' : 'ok');
+      }
+      return;
+    }
+  };
+  /* Cada montaje dejaba su oyente puesto: al repintar la pantalla se
+     acumulaban y cada mensaje se atendía varias veces (de ahí los
+     avisos repetidos). Se retira el del montaje anterior de esta
+     misma caja antes de poner el nuevo. */
+  if(caja.__jyOir) window.removeEventListener('message', caja.__jyOir);
+  caja.__jyOir = oir;
+  window.addEventListener('message', oir);
+
+  /* cuando el marco termina de cargar, se le envía lo que corresponda */
+  /* Enviar la rutina más de una vez la recarga dentro de la
+     herramienta y borra lo que la persona llevaba escrito. El marco
+     avisa por 'load' y por 'listo', así que se atiende sólo el
+     primero de los dos. */
+  var yaAbierto = false;
+  function abrirUnaVez(){
+    if(yaAbierto || !opciones.alAbrir) return;
+    yaAbierto = true;
+    opciones.alAbrir(responder);
+  }
+  marco.addEventListener('load', abrirUnaVez);
+
+  return function(){ window.removeEventListener('message', oir); };
+}
+
+/* ¿El formulario vino vacío? (sin nombre, edad, peso ni talla) */
+function estadoVacio(d){
+  var v = (d && d.vals) || {};
+  return !['f_nom','f_ed','f_pe','f_ta'].some(function(k){ return v[k] != null && String(v[k]).trim() !== ''; });
+}
+
+/* Quita imágenes incrustadas (data:...) de un objeto antes de guardarlo. */
+function sinImagenes(o){
+  if(o == null) return o;
+  if(typeof o === 'string') return /^data:/.test(o) ? '' : o;
+  if(Array.isArray(o)) return o.map(sinImagenes);
+  if(typeof o === 'object'){
+    var r = {}; Object.keys(o).forEach(function(k){ r[k] = sinImagenes(o[k]); }); return r;
+  }
+  return o;
+}
+
+/* Ficha de anamnesis deportiva de una persona: borrador compartido
+   (lo escriben el alumno y su profesor) o el último guardado. */
+function anamnesisDe(alumnoId){
+  var b = null;
+  try{ b = DB.get('__borrador_anamnesis_' + alumnoId, null); }catch(e){}
+  if(b && b.datos) return b.datos;
+  var l = Datos.listar({sujetoId:alumnoId, modulo:'evaluacion'})
+            .filter(function(r){ return r.datos && r.datos.__anam; })
+            .sort(function(x,y){ return String(y.tocado||y.creado).localeCompare(String(x.tocado||x.creado)); });
+  return l[0] ? l[0].datos.__anam : null;
+}
+function montarAnamnesis(caja, alumno, esAlumno){
+  return montarArchivo(caja, {alumno:alumno}, {
+    src   : HER + (esAlumno ? 'anamnesis-alu.html' : 'anamnesis.html'),
+    alto  : 1300,
+    nombre: 'Anamnesis deportiva',
+    clave : 'anamnesis',
+    /* módulo 2 (hábitos y perfil deportivo): se abre al conectar con un
+       profesional, como en la v14. Sólo viajan los booleanos. */
+    foco  : { modo:'edicion', llaves:{ habitos: esAlumno ? !!llaves(alumno.id).habitos : true } },
+    barra : esAlumno ? null : { clave:'anamnesis', modulo:'evaluacion', tipo:'Anamnesis deportiva',
+              pie:'Se guarda en la ficha del alumno. Él ve y completa esta misma ficha.' },
+    /* se envía al cargar el marco y otra vez cuando la herramienta
+       avisa que está lista: lo que llegue primero ya repone la ficha */
+    alAbrir: function(responder){
+      var d = anamnesisDe(alumno.id);
+      if(d) responder({ jyEmbed:true, accion:'cargar', datos:d });
+      else {
+        /* ficha nueva: nombre y edad salen de la cuenta */
+        var v = { f_nom: alumno.nombre || '' };
+        if(alumno.nacimiento){
+          var ed = Math.floor((Date.now() - new Date(alumno.nacimiento).getTime()) / 31557600000);
+          if(ed > 0 && ed < 120) v.f_ed = String(ed);
+        }
+        responder({ jyEmbed:true, accion:'cargar', datos:{ vals:v, chips:{} } });
+      }
+    },
+    alListo: function(responder){
+      var d = anamnesisDe(alumno.id);
+      if(d) responder({ jyEmbed:true, accion:'cargar', datos:d });
+    }
+  });
+}
+
+/* Guarda sin repintar: el marco no se pierde a mitad de trabajo. */
+function guardarDesdeArchivo(reg, ctx){
+  var u = sesion(); if(!u) return null;
+  var a = ctx && ctx.alumno;
+  /* Guardar en la ficha de OTRA persona exige vínculo. Guardar en la
+     propia, no: el alumno registrando sus marcas es el caso normal y
+     nadie está vinculado consigo mismo. */
+  var propio = !a || a.id === u.id;
+  if(!propio && !vinculado(a.id, u.id)){
+    toast('No hay vínculo activo con esa persona. No se guardó nada.','bad');
+    return null;
+  }
+  var r = Datos.guardar(Object.assign({ autorId:u.id, sujetoId:(a && a.id) || u.id }, reg));
+  toast(propio ? 'Guardado' : ('Guardado en la ficha de ' + String(a.nombre).split(' ')[0]), 'ok');
+  return r;
+}
+
+/* ---------------------------------------------------------------
+   TARJETA PLEGABLE — para que una herramienta alta no ocupe toda
+   la pantalla mientras se trabaja en otra cosa.
+   --------------------------------------------------------------- */
+var PLEGADO = {};
+function plegable(clave, titulo, bajada, cuerpo, extra){
+  var ab = !!PLEGADO[clave];
+  return '<section class="fold'+(ab?' abierto':'')+'" id="fold-'+clave+'">'
+   + '<button type="button" class="fold-h" data-fold="'+clave+'" aria-expanded="'+ab+'">'
+   +   '<span class="fold-ic">▸</span>'
+   +   '<span class="fold-t">'+esc(titulo)+'</span>'
+   +   '<span class="fold-s">'+esc(bajada||'')+'</span>'
+   +   (extra||'')
+   +   '<span class="chip">'+(ab?'ocultar':'desplegar')+'</span>'
+   + '</button>'
+   + '<div class="fold-b" id="foldb-'+clave+'"'+(ab?'':' hidden')+'>'+cuerpo+'</div>'
+   + '</section>';
+}
+function ligarPlegable(clave, alAbrir){
+  var b = $('[data-fold="'+clave+'"]'); if(!b) return;
+  b.onclick = function(){
+    var abierto = !PLEGADO[clave];
+    PLEGADO[clave] = abierto;
+    $('#fold-'+clave).classList.toggle('abierto', abierto);
+    b.setAttribute('aria-expanded', String(abierto));
+    b.querySelector('.chip').textContent = abierto ? 'ocultar' : 'desplegar';
+    var cuerpo = $('#foldb-'+clave);
+    if(abierto){ cuerpo.removeAttribute('hidden'); if(alAbrir) alAbrir(); }
+    else cuerpo.setAttribute('hidden','');
+  };
+  if(PLEGADO[clave] && alAbrir) alAbrir();
+}
+
+/* ---------------------------------------------------------------
+   REGISTRO DE LAS HERRAMIENTAS · cada una en su archivo
+   --------------------------------------------------------------- */
+var HER = './herramientas/';
+
+JYNTRA.registrar({
+  ranura:'profesor.evaluacion', id:'jintra-perfil-1rm',
+  nombre:'JYNTRA · Perfil del atleta y Fuerza 1RM',
+  montar: function(caja, ctx){
+    return montarArchivo(caja, ctx, {src:HER+'perfil-atleta.html', alto:1400,
+      nombre:'Perfil del atleta y Fuerza 1RM',
+      barra:{ clave:'atleta', modulo:'evaluacion', tipo:'Perfil del atleta',
+              pie:'Se guarda en la ficha del alumno.',
+              siguiente:{ ruta:'planificacion', texto:'Guardar y planificar' } }});
+  }
+});
+
+JYNTRA.registrar({
+  ranura:'profesor.planificacion', id:'jyntra-planificador',
+  nombre:'Planificador de entrenamiento',
+  montar: function(caja, ctx){
+    return montarArchivo(caja, ctx, {src:HER+'planificador-pro.html', alto:1500,
+      nombre:'Planificador de entrenamiento',
+      barra:{ clave:'plan', modulo:'planificacion', tipo:'Rutina publicada',
+              pie:'Al guardar, la rutina queda visible para el alumno.' }});
+  }
+});
+
+JYNTRA.registrar({
+  ranura:'profesor.seguimiento', id:'cine-profesor',
+  nombre:'Cineantropometría ISAK 1 y 2',
+  montar: function(caja, ctx){
+    return montarArchivo(caja, ctx, {src:HER+'cineantropometria.html', alto:1200,
+      nombre:'Cineantropometría ISAK',
+      barra:{ clave:'cine', modulo:'seguimiento', tipo:'Cineantropometría ISAK',
+              pie:'Se guarda en el seguimiento del alumno.' }});
+  }
+});
+
+JYNTRA.registrar({
+  ranura:'nutricionista.anamnesis', id:'jintra-anamnesis',
+  nombre:'Anamnesis nutricional y deportiva',
+  montar: function(caja, ctx){
+    /* MISMA herramienta que el plan alimentario, mostrando sus pasos 0-2.
+       Así el validate0() del modo plan encuentra los datos que se
+       escribieron aquí: comparten estado por paciente. */
+    return montarArchivo(caja, ctx, {src:HER+'nutricion.html', alto:1500,
+      nombre:'Anamnesis nutricional', foco:{ modoNutri:'anamnesis' },
+      barra:{ clave:'nutri', modulo:'evaluacion', tipo:'Anamnesis nutricional',
+              pie:'Se guarda en la ficha del paciente. El plan se arma con estos datos.',
+              siguiente:{ ruta:'pauta', texto:'Guardar y crear plan' } }});
+  }
+});
+
+JYNTRA.registrar({
+  ranura:'nutricionista.plan', id:'jintra-nutricion',
+  nombre:'JYNTRA · Anamnesis nutricional completa',
+  montar: function(caja, ctx){
+    /* el nutricionista arma el plan: pasos 3, 4 y 5 */
+    return montarArchivo(caja, ctx, {src:HER+'nutricion.html', alto:1600,
+      nombre:'Plan alimentario', foco:{ modoNutri:'plan' },
+      barra:{ clave:'pauta', modulo:'nutricion', tipo:'Pauta alimentaria',
+              pie:'Al guardar, la pauta queda visible para el paciente.' }});
+  }
+});
+
+JYNTRA.registrar({
+  ranura:'nutricionista.seguimiento', id:'cine-nutricionista',
+  nombre:'Cineantropometría ISAK 1 y 2',
+  montar: function(caja, ctx){
+    return montarArchivo(caja, ctx, {src:HER+'cineantropometria.html', alto:1200,
+      nombre:'Cineantropometría ISAK',
+      barra:{ clave:'cine', modulo:'seguimiento', tipo:'Cineantropometría ISAK',
+              pie:'Se guarda en el seguimiento del alumno.' }});
+  }
+});
+
+
+/* ---------------------------------------------------------------
+   EL LADO DEL ALUMNO
+   ---------------------------------------------------------------
+   Dos situaciones distintas en la misma pantalla:
+
+   · CON PROFESOR · la cáscara le envía la rutina publicada con
+     'abrirRutina' y la herramienta la despliega. Las súper series
+     quedan abiertas porque vienen diseñadas por el profesional.
+
+   · SIN PROFESOR · la aplicación es un registrador de marcas y un
+     seguidor de métricas propias. Se cierra la llave 'superserie',
+     que la herramienta usa para ocultar por CSS los grupos y
+     conectores.
+
+   El protocolo es 'jyEmbed', distinto del 'jyntra' que hablan las
+   herramientas del profesional; montarArchivo() atiende los dos.
+   --------------------------------------------------------------- */
+function rutinaPublicada(alumnoId){
+  var pubs = Datos.paraAlumno(alumnoId, 'planificacion');
+  if(!pubs.length) return null;
+  /* 'creado' es cuándo nació el registro; 'tocado', cuándo se escribió
+     por última vez. Al ordenar sólo por 'creado', la versión que el
+     profesor acababa de publicar tapaba la que el alumno había
+     anotado después, y sus notas parecían borrarse. Se toma la más
+     reciente de verdad. */
+  pubs = pubs.slice().sort(function(a,b){
+    return String(b.tocado || b.creado).localeCompare(String(a.tocado || a.creado));
+  });
+  var d = pubs[0].datos || {};
+  if(!Array.isArray(d.sesiones) || !d.sesiones.length) return null;
+  /* Sanea la forma: una rutina guardada por una versión antigua puede venir
+     sin 'grupos' o sin 'ejercicios', y la herramienta del alumno recorre esos
+     campos sin comprobarlos. Se completan aquí antes de enviarla. */
+  var sesiones = d.sesiones.map(function(s){
+    return Object.assign({}, s, {
+      nombre    : s.nombre || 'Sesión',
+      modalidad : s.modalidad || '',
+      ejercicios: Array.isArray(s.ejercicios) ? s.ejercicios : [],
+      grupos    : (s.grupos && typeof s.grupos === 'object') ? s.grupos : {}
+    });
+  });
+  d = Object.assign({}, d, {sesiones: sesiones});
+  return {
+    nombre         : d.nombre || pubs[0].tipo || 'Rutina de tu profesor',
+    sesiones       : d.sesiones,
+    totalSesiones  : d.totalSesiones  || d.sesiones.length,
+    totalEjercicios: d.totalEjercicios
+                     || d.sesiones.reduce(function(n,s){
+                          return n + ((s.ejercicios||[]).filter(function(e){ return e && e.ejercicio; }).length);
+                        }, 0),
+    guardadoEn     : pubs[0].creado
+  };
+}
+
+JYNTRA.registrar({
+  ranura:'alumno.planificacion', id:'planificador-alumno',
+  nombre:'Mi planificación',
+  montar: function(caja, ctx){
+    var u = sesion(); if(!u) return;
+    var rutina   = rutinaPublicada(u.id);
+    var conPlan  = !!rutina;
+
+    return montarArchivo(caja, {alumno:u}, {
+      src    : HER + 'planificador-alu.html',
+      alto   : 1500,
+      nombre : 'Mi planificación',
+      /* las llaves viajan en el foco y la herramienta las lee al arrancar */
+      foco   : { llaves: { superserie: conPlan, planRecibido: conPlan } },
+      /* cuando el marco avisa que cargó, se le manda la rutina publicada */
+      alAbrir: function(responder){
+        if(!rutina) return;
+        responder({ jyEmbed:true, accion:'abrirRutina', datos:rutina });
+      }
+    });
+  }
+});
+
+JYNTRA.registrar({
+  ranura:'alumno.evaluacion', id:'evaluacion-alumno',
+  nombre:'Mi evaluación',
+  montar: function(caja, ctx){
+    var u = sesion(); if(!u) return;
+    return montarArchivo(caja, {alumno:u}, {
+      src:HER+'perfil-atleta.html', alto:1200, nombre:'Mi evaluación',
+      foco:{ modo:'lectura' }
+    });
+  }
+});
+
+JYNTRA.registrar({
+  ranura:'alumno.nutricion', id:'nutricion-alumno',
+  nombre:'Mi pauta alimentaria',
+  montar: function(caja, ctx){
+    var u = sesion(); if(!u) return;
+    return montarArchivo(caja, {alumno:u}, {
+      src:HER+'nutricion.html', alto:1500, nombre:'Mi pauta',
+      /* el alumno consulta la pauta que le armaron: la ve entera, sin editar */
+      foco:{ modo:'lectura', modoNutri:'completo' }
+    });
+  }
+});
+
+
+/* ---------------------------------------------------------------
+   BARRA DE ACCIONES DE HERRAMIENTA
+   ---------------------------------------------------------------
+   Cada herramienta guarda a su manera: unas emiten 'guardar', otras
+   sólo 'estado', y la anamnesis no emitía nada persistible. Esta
+   barra les da a todas el mismo par de gestos, arriba y abajo:
+
+     · arriba · sello de autoguardado y, donde tiene sentido, el
+                salto a la etapa siguiente (anamnesis → plan)
+     · abajo  · guardar en la ficha, siempre visible
+
+   La barra vive en la cáscara, no dentro del marco, así que no hay
+   que tocar el HTML de ninguna herramienta.
+   --------------------------------------------------------------- */
+function barraHerramienta(caja, ctx, opciones){
+  opciones = opciones || {};
+  var sup = document.createElement('div');
+  sup.className = 'jy-barra jy-barra-sup';
+  sup.innerHTML = '<span class="jy-sello">Sin cambios todavía</span>'
+    + (opciones.siguiente
+        ? '<button type="button" class="btn gold" data-ir="'+opciones.siguiente.ruta+'">'
+          + esc(opciones.siguiente.texto) + ' →</button>'
+        : '');
+
+  var inf = document.createElement('div');
+  inf.className = 'jy-barra jy-barra-inf';
+  inf.innerHTML = '<span class="hint">'+esc(opciones.pie || 'Se guarda en la ficha del alumno.')+'</span>'
+    + '<button type="button" class="btn gold" data-guardar="1">Guardar ✓</button>';
+
+  caja.parentNode.insertBefore(sup, caja);
+  caja.parentNode.appendChild(inf);
+
+  var irBtn = sup.querySelector('[data-ir]');
+  if(irBtn) irBtn.onclick = function(){
+    guardarAhora(function(){ ruta(irBtn.dataset.ir); });
+  };
+  inf.querySelector('[data-guardar]').onclick = function(){ guardarAhora(); };
+
+  /* Guarda lo que haya: primero pide a la herramienta su estado; si no
+     responde, usa el último borrador del autoguardado. */
+  /* Cada herramienta tiene su propio guardado (su botón o su función).
+     La barra lo acciona directamente: antes sólo buscaba un borrador
+     que esas herramientas nunca escriben y respondía «no hay nada que
+     guardar» aunque la ficha estuviera llena. */
+  function guardadoPropio(){
+    var marco = caja.querySelector('iframe');
+    var w = null, d = null;
+    try{ w = marco && marco.contentWindow; d = w && w.document; }catch(e){ return false; }
+    if(!d) return false;
+    if(opciones.clave === 'cine' && typeof w.saveData === 'function'){
+      try{ w.saveData('barra'); return true; }catch(e){}
+    }
+    var ids = ['#jy-guardar-btn','#jy-guardar-rutina','#jy-guardar-anamnesis'];
+    for(var i=0;i<ids.length;i++){
+      var b = d.querySelector(ids[i]);
+      if(b && !b.disabled){ b.click(); return true; }
+    }
+    if(opciones.clave === 'atleta'){
+      var cand = [].slice.call(d.querySelectorAll('button')).filter(function(x){
+        return /^\s*guardar/i.test(x.textContent || '') && x.offsetParent !== null && !x.disabled;
+      });
+      if(cand.length){ cand[0].click(); return true; }
+      toast('Abre la pestaña que quieres guardar (perfil o toma de 1RM) y pulsa Guardar allí.','warn');
+      return true;
+    }
+    return false;
+  }
+
+  function guardarAhora(despues){
+    var antes = (S.registros || []).length;
+    if(opciones.clave !== 'nutri' && opciones.clave !== 'pauta' && opciones.clave !== 'anamnesis' && guardadoPropio()){
+      /* Si la herramienta no guardó (p. ej. rutina sin ejercicios), su
+         aviso sale arriba, lejos del botón: se repite aquí abajo. */
+      setTimeout(function(){
+        if((S.registros || []).length !== antes) return;
+        var aviso = '';
+        try{
+          var d = caja.querySelector('iframe').contentWindow.document;
+          ['#jy-estado','#jy-eco-anam','#jy-eco'].some(function(sel){
+            var e = d.querySelector(sel); aviso = e ? String(e.textContent || '').trim() : '';
+            return !!aviso;
+          });
+        }catch(e){}
+        if(aviso) toast(aviso, 'warn');
+      }, 700);
+      if(despues) setTimeout(despues, 400);
+      return;
+    }
+    var su = (ctx && ctx.alumno && ctx.alumno.id) || (sesion() && sesion().id);
+    var clave = '__borrador_' + (opciones.clave || 'anamnesis') + '_' + su;
+    var b = null;
+    try{ b = DB.get(clave, null); }catch(e){}
+    /* la herramienta nutricional guarda su estado en su propia clave */
+    if(!b && (opciones.clave === 'nutri' || opciones.clave === 'pauta')){
+      var en = null;
+      try{ en = DB.get('__nutri_' + su, null); }catch(e){}
+      if(en) b = {datos:en};
+    }
+
+    var marco = caja.querySelector('iframe');
+    if(marco){
+      try{ marco.contentWindow.postMessage({jyEmbed:true, accion:'guardarYa'}, '*'); }catch(e){}
+      try{ marco.contentWindow.postMessage({jyntra:true,  accion:'guardarYa'}, '*'); }catch(e){}
+    }
+
+    if(!b || !b.datos){
+      toast('Todavía no hay nada que guardar en esta ficha.','warn');
+      if(despues) despues();
+      return;
+    }
+    guardarDesdeArchivo({
+      modulo : opciones.modulo || 'evaluacion',
+      tipo   : opciones.tipo   || 'Anamnesis',
+      datos  : opciones.clave === 'anamnesis' ? { __anam: b.datos } : b.datos
+    }, ctx);
+    if(despues) despues();
+  }
+}
 /* ---------------------------------------------------------------
    §18 · ARRANQUE
    --------------------------------------------------------------- */
@@ -2418,7 +3478,7 @@ jyAbrirCanal();   /* §3b · escucha al otro perfil */
 var SESIONES_OPC = [1,2,4,8,12,16];
 var DIAS_ORD     = [1,2,3,4,5,6,0];
 var LIBRES_MAX   = 4;                 /* bloques propios del alumno sin conexión */
-var COLOR_ROL    = { profesor:'#C6A15A', nutricionista:'#4FAE7B' };
+var COLOR_ROL    = { profesor:'#DD2C37', nutricionista:'#969696' };
 
 function q(sel, ctx){ return (ctx||document).querySelector(sel); }
 function qq(sel, ctx){ return Array.prototype.slice.call((ctx||document).querySelectorAll(sel)); }
@@ -3461,7 +4521,7 @@ if(typeof fichaMini === 'function'){
   st.id = 'jy-estilos-20';
   st.textContent = [
     '.jy-sesiones{color:#fff}',
-    '.jy-sesiones option{color:#fff;background:#17130f}',
+    '.jy-sesiones option{color:#fff;background:#141414}',
     '.jy-ro{display:inline-block;padding:6px 2px;font-size:13px;opacity:.85}',
     '.jy-pro-chip{display:inline-flex;align-items:center;gap:6px;border:1px solid;border-radius:999px;',
     ' padding:3px 9px;font-size:11.5px;white-space:nowrap}',
@@ -3476,7 +4536,7 @@ if(typeof fichaMini === 'function'){
     '.jy-cal-d{background:var(--panel);min-height:72px;padding:4px 5px;display:flex;flex-direction:column;gap:2px}',
     '.jy-cal-d.off{background:var(--panel2);opacity:.35}',
     '.jy-cal-d .n{font-size:11px;opacity:.6}',
-    '.jy-cal-d.hoy{outline:1px solid var(--gold);outline-offset:-1px}',
+    '.jy-cal-d.hoy{outline:1px solid var(--jy-acc);outline-offset:-1px}',
     '.jy-cal-d i{font-style:normal;font-size:10px;line-height:1.25;padding:2px 4px;border-radius:3px;',
     ' overflow:hidden;text-overflow:ellipsis;white-space:nowrap}',
     '.jy-cal-d u{font-size:9.5px;opacity:.6;text-decoration:none}',
@@ -3592,55 +4652,55 @@ var ADMITIDOS = null;
   if(document.getElementById('jy21-css')) return;
   var st = document.createElement('style'); st.id = 'jy21-css';
   st.textContent = [
-    '.jy21-bg{position:fixed;inset:0;background:rgba(6,8,10,.72);backdrop-filter:blur(3px);z-index:9600;',
+    '.jy21-bg{position:fixed;inset:0;background:rgba(8,8,8,.72);backdrop-filter:blur(3px);z-index:9600;',
     ' display:flex;align-items:center;justify-content:center;padding:18px}',
-    '.jy21-caja{background:#12161a;color:#E6E3DC;border:1px solid rgba(198,161,90,.34);border-radius:12px;',
+    '.jy21-caja{background:#151515;color:#EEF1F3;border:1px solid rgba(221,44,55,.34);border-radius:12px;',
     ' width:min(880px,100%);max-height:92vh;display:flex;flex-direction:column;box-shadow:0 24px 60px rgba(0,0,0,.55)}',
     '.jy21-h{padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.09);display:flex;align-items:center;gap:12px}',
     '.jy21-h b{font-size:15px;letter-spacing:.02em}',
-    '.jy21-h small{color:#9AA0A6;font-size:11px;display:block;margin-top:2px}',
+    '.jy21-h small{color:#9F9F9F;font-size:11px;display:block;margin-top:2px}',
     '.jy21-b{padding:6px 20px 14px;overflow:auto;flex:1}',
     '.jy21-f{padding:12px 20px;border-top:1px solid rgba(255,255,255,.09);display:flex;gap:8px;',
     ' justify-content:flex-end;flex-wrap:wrap;align-items:center}',
-    '.jy21-doc{font-size:13px;line-height:1.62;color:#D8D5CE}',
-    '.jy21-doc h2{font-size:17px;color:#C6A15A;margin:14px 0 2px}',
-    '.jy21-doc h3{font-size:13.5px;color:#C6A15A;margin:20px 0 6px;letter-spacing:.01em}',
+    '.jy21-doc{font-size:13px;line-height:1.62;color:#D5D6D7}',
+    '.jy21-doc h2{font-size:17px;color:#FFFFFF;margin:14px 0 2px}',
+    '.jy21-doc h3{font-size:13.5px;color:#FFFFFF;margin:20px 0 6px;letter-spacing:.01em}',
     '.jy21-doc p{margin:0 0 8px}',
     '.jy21-doc ul{margin:0 0 10px 0;padding-left:18px}',
     '.jy21-doc li{margin-bottom:5px}',
-    '.jy21-doc b{color:#F0EDE6}',
-    '.jy21-sub{color:#9AA0A6;font-size:11.5px;margin:0 0 2px}',
-    '.jy21-nota{background:rgba(198,161,90,.10);border:1px solid rgba(198,161,90,.28);border-radius:8px;',
-    ' padding:9px 11px;margin:0 0 10px;font-size:12.2px;color:#C9C5BC}',
+    '.jy21-doc b{color:#EEF1F3}',
+    '.jy21-sub{color:#9F9F9F;font-size:11.5px;margin:0 0 2px}',
+    '.jy21-nota{background:rgba(221,44,55,.10);border:1px solid rgba(221,44,55,.28);border-radius:8px;',
+    ' padding:9px 11px;margin:0 0 10px;font-size:12.2px;color:#C5C5C5}',
     '.jy21-tw{overflow-x:auto;margin:0 0 12px}',
     '.jy21-doc table{border-collapse:collapse;width:100%;font-size:11.6px;min-width:520px}',
-    '.jy21-doc th{background:rgba(198,161,90,.18);color:#E9DFC8;text-align:left;padding:7px 8px;',
+    '.jy21-doc th{background:rgba(221,44,55,.18);color:#FFFFFF;text-align:left;padding:7px 8px;',
     ' border:1px solid rgba(255,255,255,.10);font-weight:600}',
     '.jy21-doc td{padding:7px 8px;border:1px solid rgba(255,255,255,.08);vertical-align:top}',
     '.jy21-btn{appearance:none;cursor:pointer;border-radius:8px;padding:9px 14px;font-size:12.5px;',
-    ' border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.05);color:#E6E3DC;font-family:inherit}',
+    ' border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.05);color:#EEF1F3;font-family:inherit}',
     '.jy21-btn:hover{background:rgba(255,255,255,.10)}',
-    '.jy21-btn.oro{background:#C6A15A;border-color:#C6A15A;color:#14100A;font-weight:600}',
+    '.jy21-btn.oro{background:#DD2C37;border-color:#DD2C37;color:#101010;font-weight:600}',
     '.jy21-btn.oro:disabled{opacity:.42;cursor:not-allowed}',
     '.jy21-flot{position:fixed;right:14px;bottom:14px;z-index:9400;font-size:11.5px;padding:7px 12px;',
-    ' border-radius:999px;background:rgba(18,22,26,.92);border:1px solid rgba(198,161,90,.36);color:#D9CDB0;',
+    ' border-radius:999px;background:rgba(21,21,21,.92);border:1px solid rgba(221,44,55,.36);color:#FFFFFF;',
     ' cursor:pointer;font-family:inherit;box-shadow:0 6px 18px rgba(0,0,0,.35)}',
-    '.jy21-flot:hover{background:rgba(198,161,90,.18)}',
+    '.jy21-flot:hover{background:rgba(221,44,55,.18)}',
     '@media(max-width:640px){.jy21-flot{right:10px;bottom:10px;font-size:11px;padding:6px 10px}}',
     /* cuadro de consentimiento en el formulario de registro */
-    '.jy21-cons{border:1px solid rgba(198,161,90,.34);border-radius:10px;padding:12px;margin:4px 0 2px;',
-    ' background:rgba(198,161,90,.06)}',
-    '.jy21-cons .jy21-tit{font-size:11px;letter-spacing:.10em;text-transform:uppercase;color:#C6A15A;margin-bottom:8px}',
+    '.jy21-cons{border:1px solid rgba(221,44,55,.34);border-radius:10px;padding:12px;margin:4px 0 2px;',
+    ' background:rgba(221,44,55,.06)}',
+    '.jy21-cons .jy21-tit{font-size:11px;letter-spacing:.10em;text-transform:uppercase;color:#FFFFFF;margin-bottom:8px}',
     '.jy21-ck{display:flex;gap:9px;align-items:flex-start;margin-bottom:9px;font-size:12.2px;line-height:1.5}',
-    '.jy21-ck input{margin-top:2px;flex:none;width:15px;height:15px;accent-color:#C6A15A}',
-    '.jy21-ck .req{color:#C6A15A;font-weight:700}',
-    '.jy21-ck a{color:#C6A15A;text-decoration:underline;cursor:pointer}',
+    '.jy21-ck input{margin-top:2px;flex:none;width:15px;height:15px;accent-color:#DD2C37}',
+    '.jy21-ck .req{color:#FFFFFF;font-weight:700}',
+    '.jy21-ck a{color:#FFFFFF;text-decoration:underline;cursor:pointer}',
     '.jy21-menor{border-top:1px dashed rgba(255,255,255,.16);margin-top:6px;padding-top:9px;display:none}',
     '.jy21-menor.on{display:block}',
     '.jy21-menor input[type=text],.jy21-menor input[type=email]{width:100%;box-sizing:border-box;margin-bottom:7px;',
-    ' background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.16);border-radius:7px;color:#E6E3DC;',
+    ' background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.16);border-radius:7px;color:#EEF1F3;',
     ' padding:8px 10px;font-size:12.5px;font-family:inherit}',
-    '.jy21-aviso{font-size:11.4px;color:#9AA0A6;margin-top:4px}'
+    '.jy21-aviso{font-size:11.4px;color:#9F9F9F;margin-top:4px}'
   ].join('');
   document.head.appendChild(st);
 })();
@@ -3678,12 +4738,12 @@ function imprimirPolitica(){
   w.document.write('<!doctype html><html lang="es"><head><meta charset="utf-8">'
     + '<title>JYNTRA · Políticas de privacidad v'+POL.version+'</title><style>'
     + 'body{font:13px/1.6 Georgia,serif;color:#1b1b1b;max-width:860px;margin:32px auto;padding:0 22px}'
-    + 'h2{font-size:21px;color:#8A6D2F;margin:0 0 4px}h3{font-size:14px;color:#8A6D2F;margin:20px 0 6px}'
+    + 'h2{font-size:21px;color:#9F9F9F;margin:0 0 4px}h3{font-size:14px;color:#9F9F9F;margin:20px 0 6px}'
     + '.jy21-sub{color:#666;font-size:11.5px;margin:0 0 2px}'
-    + '.jy21-nota{background:#F3EDE0;border:1px solid #CFC6B4;border-radius:6px;padding:9px 11px;margin:0 0 10px}'
+    + '.jy21-nota{background:#EEF1F3;border:1px solid #C7C7C7;border-radius:6px;padding:9px 11px;margin:0 0 10px}'
     + 'table{border-collapse:collapse;width:100%;font-size:11px;margin:0 0 12px}'
-    + 'th{background:#8A6D2F;color:#fff;text-align:left;padding:6px 7px;border:1px solid #CFC6B4}'
-    + 'td{padding:6px 7px;border:1px solid #CFC6B4;vertical-align:top}'
+    + 'th{background:#8E1C23;color:#fff;text-align:left;padding:6px 7px;border:1px solid #C7C7C7}'
+    + 'td{padding:6px 7px;border:1px solid #C7C7C7;vertical-align:top}'
     + 'ul{padding-left:20px}li{margin-bottom:4px}'
     + '</style></head><body>'+POL.html+'</body></html>');
   w.document.close();
@@ -3828,17 +4888,21 @@ if(typeof ligarAcceso === 'function'){
       if(!chequeo.ok) return toast(chequeo.msg, 'bad');
       var antes = (S.usuarios||[]).length;
       creandoCuenta = true;                       /* el portero no molesta durante el alta */
-      try{ if(typeof orig === 'function') orig.call(fc, e); }
-      finally{
-        if((S.usuarios||[]).length > antes){
-          var u = S.usuarios[S.usuarios.length-1];
+      var alta;
+      try{ alta = (typeof orig === 'function') ? orig.call(fc, e) : null; }
+      catch(err){ creandoCuenta = false; throw err; }
+      /* el alta puede terminar al tiro (modo local) o más tarde (nube) */
+      Promise.resolve(alta).then(function(nuevo){
+        var u = (nuevo && nuevo.id) ? nuevo
+              : ((S.usuarios||[]).length > antes ? S.usuarios[S.usuarios.length-1] : null);
+        if(u){
           registrarConsentimiento(u.id, chequeo.items, { representante: chequeo.representante });
           creandoCuenta = false;
           try{ if(typeof JY22 !== 'undefined' && JY22.irAPerfil) JY22.irAPerfil(u); }catch(err){}
         } else {
           creandoCuenta = false;
         }
-      }
+      }, function(){ creandoCuenta = false; });
     };
   };
 }
@@ -3887,7 +4951,7 @@ function panelPrivacidad(){
   if(!u) return abrirPolitica();
   var c = consentimientoDe(u.id);
   var fila = function(k,v){ return '<tr><td style="width:42%">'+k+'</td><td>'+v+'</td></tr>'; };
-  var si = '<b style="color:#8FBF7F">Sí</b>', no = '<span style="opacity:.65">No</span>';
+  var si = '<b style="color:#B0B0B0">Sí</b>', no = '<span style="opacity:.65">No</span>';
   var bg = document.createElement('div'); bg.className = 'jy21-bg';
   bg.innerHTML = '<div class="jy21-caja" role="dialog" aria-modal="true">'
    + '<div class="jy21-h"><div style="flex:1"><b>Mi privacidad</b>'
@@ -4007,10 +5071,10 @@ if(window.JY22) return;
 
 /* ---------- 22.1 · a qué archivo va cada perfil ---------- */
 var ARCHIVOS = {
-  alumno:        'jyntra-alumno_v14.html',
-  profesor:      'jyntra-profesor_v12.html',
-  nutricionista: 'jyntra-nutricionista_v8.html',
-  administrador: null      /* null = se queda en esta cáscara */
+  alumno:        null,
+  profesor:      null,
+  nutricionista: null,
+  administrador: null      /* null = todos trabajan dentro de esta cáscara */
 };
 
 var PERFILES = [
@@ -4030,32 +5094,32 @@ var elegido = null;
     '.jy22-portal{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:38px 20px 76px}',
     '.jy22-in{width:min(980px,100%)}',
     '.jy22-cabe{text-align:center;margin-bottom:30px}',
-    '.jy22-cabe .jy22-eb{font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--mute,#9AA0A6);margin-bottom:12px}',
+    '.jy22-cabe .jy22-eb{font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--mute,#9F9F9F);margin-bottom:12px}',
     '.jy22-cabe h1{font-size:clamp(28px,5vw,46px);line-height:1.06;margin:0 0 12px;letter-spacing:-.01em}',
-    '.jy22-cabe h1 em{font-style:normal;color:#C6A15A;display:block}',
-    '.jy22-cabe p{max-width:56ch;margin:0 auto;color:var(--mute,#9AA0A6);font-size:13.5px;line-height:1.6}',
+    '.jy22-cabe h1 em{font-style:normal;color:#FFFFFF;display:block}',
+    '.jy22-cabe p{max-width:56ch;margin:0 auto;color:var(--mute,#9F9F9F);font-size:13.5px;line-height:1.6}',
     '.jy22-marca{display:flex;justify-content:center;margin-bottom:22px}',
     '.jy22-rej{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px}',
     '.jy22-card{text-align:left;cursor:pointer;font-family:inherit;padding:20px 18px 18px;border-radius:14px;',
     ' background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.10);color:inherit;',
     ' transition:transform .16s ease,border-color .16s ease,background .16s ease;display:flex;',
     ' flex-direction:column;gap:8px;min-height:158px}',
-    '.jy22-card:hover{transform:translateY(-3px);border-color:rgba(198,161,90,.55);background:rgba(198,161,90,.09)}',
-    '.jy22-card .ic{font-size:19px;color:#C6A15A;line-height:1}',
+    '.jy22-card:hover{transform:translateY(-3px);border-color:rgba(221,44,55,.55);background:rgba(221,44,55,.09)}',
+    '.jy22-card .ic{font-size:19px;color:#FFFFFF;line-height:1}',
     '.jy22-card .tt{font-size:16px;font-weight:600;letter-spacing:.01em}',
-    '.jy22-card .ln{font-size:12.2px;color:var(--mute,#9AA0A6);line-height:1.5;flex:1}',
-    '.jy22-card .go{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#C6A15A}',
+    '.jy22-card .ln{font-size:12.2px;color:var(--mute,#9F9F9F);line-height:1.5;flex:1}',
+    '.jy22-card .go{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#FFFFFF}',
     '.jy22-pie{margin-top:26px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap;align-items:center}',
     '.jy22-pie button{appearance:none;cursor:pointer;font-family:inherit;font-size:12px;padding:9px 15px;',
-    ' border-radius:999px;border:1px solid rgba(198,161,90,.38);background:transparent;color:#D9CDB0}',
-    '.jy22-pie button:hover{background:rgba(198,161,90,.14)}',
+    ' border-radius:999px;border:1px solid rgba(221,44,55,.38);background:transparent;color:#FFFFFF}',
+    '.jy22-pie button:hover{background:rgba(221,44,55,.14)}',
     '.jy22-pie .nota{font-size:11.4px;color:var(--mute2,#6C7378);text-align:center;width:100%;line-height:1.5}',
     '.jy22-vuelta{display:flex;align-items:center;gap:10px;margin-bottom:14px}',
     '.jy22-vuelta button{appearance:none;cursor:pointer;font-family:inherit;font-size:11.5px;padding:6px 12px;',
     ' border-radius:999px;border:1px solid rgba(255,255,255,.16);background:transparent;color:inherit}',
-    '.jy22-vuelta button:hover{border-color:rgba(198,161,90,.5)}',
-    '.jy22-vuelta .et{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#C6A15A}',
-    '.jy22-lock{font-size:11.6px;color:var(--mute,#9AA0A6);border:1px dashed rgba(198,161,90,.34);',
+    '.jy22-vuelta button:hover{border-color:rgba(221,44,55,.5)}',
+    '.jy22-vuelta .et{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#FFFFFF}',
+    '.jy22-lock{font-size:11.6px;color:var(--mute,#9F9F9F);border:1px dashed rgba(221,44,55,.34);',
     ' border-radius:9px;padding:8px 11px;margin-bottom:10px}',
     '@media(max-width:640px){.jy22-portal{padding:24px 14px 80px}.jy22-card{min-height:0}}'
   ].join('');
@@ -4065,7 +5129,7 @@ var elegido = null;
 /* ---------- 22.3 · la pantalla del portal ---------- */
 function portalHTML(){
   return '<div class="jy22-portal"><div class="jy22-in">'
-   + '<div class="jy22-marca">'+marca('Technologies')+'</div>'
+   + '<div class="jy22-marca" style="display:flex;justify-content:center;margin-bottom:6px">'+logoCompleto(118)+'</div>'
    + '<div class="jy22-cabe">'
    +   '<div class="jy22-eb">Plataforma de entrenamiento y nutrición</div>'
    +   '<h1>Elige tu perfil<em>y entra a tu espacio</em></h1>'
@@ -4142,9 +5206,28 @@ ligarAcceso = function(){
         }
       }
     } else if(elegido === 'administrador'){
+      /* El administrador NO se crea desde el portal público, salvo los
+         correos autorizados en ADMIN_CORREOS (el dueño de la plataforma).
+         Antes el formulario enviaba igual el rol por defecto (alumno) y
+         se creaba una cuenta de alumno sin avisar. */
+      var pick2 = fc.querySelector('.rolepick');
+      if(pick2) pick2.style.display = 'none';
+      var rad = document.createElement('input');
+      rad.type = 'radio'; rad.name = 'rol'; rad.value = 'administrador';
+      rad.hidden = true; rad.checked = true;
+      fc.appendChild(rad);
       var aviso = document.createElement('div'); aviso.className = 'jy22-lock';
-      aviso.innerHTML = 'Las cuentas de administrador no se crean desde el portal público.';
+      aviso.innerHTML = 'Sólo los correos autorizados pueden crear una cuenta de <b>Administrador</b>.';
       fc.insertBefore(aviso, fc.firstChild);
+      var enviarAdmin = fc.onsubmit;
+      fc.onsubmit = function(e){
+        var em = String(fc.email.value || '').trim().toLowerCase();
+        if(ADMIN_CORREOS.indexOf(em) < 0){
+          e.preventDefault();
+          return toast('Ese correo no está autorizado para crear un administrador.', 'bad');
+        }
+        return enviarAdmin ? enviarAdmin.call(fc, e) : undefined;
+      };
     }
   }
 };
@@ -4183,6 +5266,763 @@ window.JY22 = {
 
 try{ if(typeof pintar === 'function') pintar(); }catch(e){}
 
+})();
+
+
+/* ================================================================
+   §24 · INVITACIONES POR CORREO
+   El profesional invita; el alumno ve la invitación al entrar con ese
+   correo y decide. Recién al aceptar nace el vínculo activo.
+   ================================================================ */
+(function(){
+'use strict';
+if(!Array.isArray(S.invitaciones)) S.invitaciones = DB.get('invitaciones', []) || [];
+
+function misInvitaciones(u){
+  var correo = String(u.email||'').toLowerCase();
+  return (S.invitaciones||[]).filter(function(x){ return x && x.email === correo && !vinculado(u.id, x.profesionalId); });
+}
+function tarjeta(u){
+  var l = misInvitaciones(u);
+  if(!l.length) return null;
+  var d = document.createElement('div');
+  d.className = 'card'; d.id = 'jy-invitaciones';
+  d.style.cssText = 'margin-bottom:18px;border-color:var(--jy-borde)';
+  d.innerHTML = '<div class="card-head"><div class="h2">Invitaciones</div><div class="grow"></div>'
+    + '<span class="chip gold">'+l.length+'</span></div>'
+    + l.map(function(x){
+        return '<div class="row" style="justify-content:space-between;gap:10px;padding:10px 0;border-top:1px solid var(--line-soft);flex-wrap:wrap">'
+          + '<div><div style="font-weight:600">'+esc(x.profesionalNombre||'Un profesional')+'</div>'
+          + '<div class="hint">'+esc(x.servicio||'')+(x.plan?' · '+esc(x.plan):'')+'</div></div>'
+          + '<div class="row" style="gap:8px"><button class="btn sm" data-inv-no="'+esc(x.id)+'">Rechazar</button>'
+          + '<button class="btn sm gold" data-inv-si="'+esc(x.id)+'">Aceptar</button></div></div>';
+      }).join('')
+    + '<p class="hint" style="margin:10px 0 0">Al aceptar, esa persona podrá ver tus registros y publicarte evaluaciones y planes. Puedes cortar el vínculo cuando quieras.</p>';
+  d.querySelectorAll('[data-inv-si]').forEach(function(b){ b.onclick = function(){ responder(b.dataset.invSi, true, u); }; });
+  d.querySelectorAll('[data-inv-no]').forEach(function(b){ b.onclick = function(){ responder(b.dataset.invNo, false, u); }; });
+  return d;
+}
+function responder(id, si, u){
+  var x = (S.invitaciones||[]).filter(function(i){ return i.id === id; })[0];
+  if(!x) return;
+  if(si){
+    if(typeof porQueNoConectar === 'function'){
+      var veto = porQueNoConectar(u.id, x.profesionalId);
+      if(veto) return toast(veto, 'warn');
+    }
+    ponerVinculo({ alumnoId:u.id, profesionalId:x.profesionalId, estado:'activo',
+      desde:new Date().toISOString(), servicio:x.servicio||'', plan:x.plan||'', via:'invitacion' });
+    guardar('vinculos');
+    try{ bitacora('vinculo','Aceptó la invitación de '+(x.profesionalNombre||''), u.id); }catch(e){}
+    toast('Listo: quedaste conectado con '+String(x.profesionalNombre||'').split(' ')[0]+'.','ok');
+  } else {
+    toast('Invitación rechazada.','warn');
+  }
+  /* la invitación se borra DESPUÉS de crear el vínculo: la nube la exige al crearlo */
+  setTimeout(function(){
+    S.invitaciones = (S.invitaciones||[]).filter(function(i){ return i.id !== id; });
+    guardar('invitaciones'); pintar();
+  }, si ? 1200 : 0);
+  pintar();
+}
+function pendientesDelPro(u){
+  return (S.invitaciones||[]).filter(function(x){ return x && x.profesionalId === u.id; });
+}
+
+var pintarInv = pintar;
+pintar = function(){
+  pintarInv();
+  try{
+    var u = sesion(); if(!u) return;
+    var k = rutaActual().k;
+    var main = document.querySelector('.content') || document.querySelector('.main .view') || document.querySelector('.main');
+    if(u.rol === 'alumno' && (k === 'inicio' || k === 'conexiones') && !document.getElementById('jy-invitaciones')){
+      var t = tarjeta(u); var cab = document.querySelector('.page-head, .cab, .view > :first-child');
+      var v = document.getElementById('vista') || (cab && cab.parentNode) || main;
+      if(t && v){ if(cab && cab.parentNode === v) v.insertBefore(t, cab.nextSibling); else v.insertBefore(t, v.firstChild); }
+    }
+    if(esProfesional(u.rol) && k === 'alumnos' && !rutaActual().arg && !document.getElementById('jy-inv-pro')){
+      var l = pendientesDelPro(u); if(!l.length) return;
+      var d = document.createElement('div'); d.id = 'jy-inv-pro'; d.className = 'card';
+      d.style.cssText = 'margin-top:16px';
+      d.innerHTML = '<div class="h3" style="margin-bottom:8px">Invitaciones enviadas, sin respuesta</div>'
+        + l.map(function(x){ return '<div class="row" style="justify-content:space-between;padding:6px 0;border-top:1px solid var(--line-soft)">'
+          + '<span>'+esc(x.email)+' <span class="hint">· '+esc(x.plan||'')+'</span></span>'
+          + '<button class="btn sm" data-inv-cancelar="'+esc(x.id)+'">Cancelar</button></div>'; }).join('');
+      var tabla = document.querySelector('.card.pad0');
+      (tabla && tabla.parentNode ? tabla.parentNode : (main || document.body)).appendChild(d);
+      d.querySelectorAll('[data-inv-cancelar]').forEach(function(b){ b.onclick = function(){
+        S.invitaciones = S.invitaciones.filter(function(i){ return i.id !== b.dataset.invCancelar; });
+        guardar('invitaciones'); toast('Invitación cancelada.','warn'); pintar();
+      }; });
+    }
+  }catch(e){ console.error(e); }
+};
+})();
+
+/* ================================================================
+   §23 · NUBE — cuentas reales y datos sincronizados entre dispositivos
+   ----------------------------------------------------------------
+   Con nube-config.js en activa:true:
+     · las cuentas son de Firebase Auth (la contraseña nunca se guarda
+       en el navegador ni en la base de datos);
+     · cada guardar(clave) de siempre sube a Firestore SÓLO lo que
+       cambió, documento por documento;
+     · lo que cambia en otro dispositivo llega en vivo, se escribe en
+       S y en la copia local (de la que leen las herramientas) y la
+       pantalla se repinta sola.
+   El resto de la aplicación no sabe que existe la nube.
+   ================================================================ */
+(function(){
+'use strict';
+var CFG = window.JYNTRA_NUBE || null;
+if(!CFG || !CFG.activa) return;
+var fabrica = window.JYNUBE_BACKENDS && window.JYNUBE_BACKENDS[CFG.backend];
+if(!fabrica){ console.error('[nube] conector no disponible: ' + CFG.backend); return; }
+var B;
+try{ B = fabrica(CFG); }
+catch(e){ console.error('[nube] no se pudo iniciar', e); return; }
+window.JYNUBE = { activa:true, backend:B,
+  /* diagnóstico: JYNUBE.estado() en la consola del navegador */
+  estado: function(){ return { yo:yoUid, correo:yoCorreo, verificado:yoVerificado, autenticado:autenticado,
+    inicialListo:inicialListo(), escuchas:Object.keys(subs), entregado:Object.assign({}, entregado),
+    rutasConocidas:Object.keys(conocidos).length }; } };
+
+/* ---------- 23.1 · qué va a dónde ---------- */
+var PRIV = ['email','telefono','nacimiento','sexo','altura','peso','objetivo','rut','direccion'];
+var alumnoDeRuta = function(x, campo){ return x && x[campo] ? String(x[campo]) : ''; };
+var MAPA = {
+  vinculos:  { tipo:'lista', ruta:function(x){ return 'vinculos/' + x.id; },
+               indice:['alumnoId','profesionalId','estado'],
+               mio:function(x){ return x.alumnoId === yoUid || x.profesionalId === yoUid || soyAdmin(); } },
+  invitaciones:{ tipo:'lista', ruta:function(x){ return 'invitaciones/' + x.id; },
+               indice:['profesionalId','email'],
+               mio:function(x){ return x.profesionalId === yoUid || x.email === yoCorreo; } },
+  agenda:    { tipo:'lista', ruta:function(x){ return 'agenda/' + x.id; }, indice:['profesionalId'],
+               mio:function(x){ return x.profesionalId === yoUid; } },
+  registros: { tipo:'lista', ruta:function(x){ var a = alumnoDeRuta(x,'sujetoId'); return a ? 'alumnos/'+a+'/registros/'+x.id : ''; },
+               indice:['autorId','sujetoId'], mio:function(x){ return puedoAlumno(x.sujetoId); } },
+  metricas:  { tipo:'lista', ruta:function(x){ var a = alumnoDeRuta(x,'alumnoId'); return a ? 'alumnos/'+a+'/metricas/'+x.id : ''; },
+               indice:['alumnoId'], mio:function(x){ return puedoAlumno(x.alumnoId); } },
+  quemas:    { tipo:'lista', ruta:function(x){ var a = alumnoDeRuta(x,'alumnoId'); return a ? 'alumnos/'+a+'/quemas/'+x.id : ''; },
+               indice:['alumnoId','profesionalId'], mio:function(x){ return puedoAlumno(x.alumnoId); } },
+  consentimientos:{ tipo:'lista', ruta:function(x){ return 'consentimientos/' + x.id; }, indice:['usuarioId'],
+               mio:function(x){ return x.usuarioId === yoUid; } },
+  facturas:  { tipo:'lista', ruta:function(x){ return 'facturas/' + x.id; }, indice:['usuarioId'],
+               mio:function(x){ return x.usuarioId === yoUid || soyAdmin(); } },
+  bitacora:  { tipo:'lista', soloAgregar:true, ruta:function(x){ return 'bitacora/' + x.id; }, indice:['quien'],
+               mio:function(x){ return x.quien === yoUid; } },
+  ejercicios:{ tipo:'lista', ruta:function(x){ return 'ejercicios/' + x.id; }, indice:[],
+               mio:function(){ return soyAdmin(); } },
+  horario:   { tipo:'mapa', ruta:function(k){ return 'alumnos/' + k + '/horario/actual'; },
+               mio:function(k){ return puedoAlumno(k); } },
+  pautas:    { tipo:'mapa', ruta:function(k){ return 'alumnos/' + k + '/pautas/actual'; },
+               mio:function(k){ return puedoAlumno(k); } }
+};
+/* borradores y estados de herramienta que viven como claves sueltas */
+var FICHA_RE = /^__(borrador_[a-z]+|nutri)_([A-Za-z0-9]+)$/;
+
+/* ---------- 23.2 · estado de la sesión ---------- */
+var yoUid = null, yoCorreo = null, yoVerificado = false;
+var autenticado = false;        // ya respondió Firebase si hay sesión o no
+var creando = false;            // hay un alta en curso
+var conocidos = {};             // ruta -> json que sabemos que está en la nube
+var fuentes = {};               // clave -> { escucha -> {ruta: objeto} }
+var subs = {};                  // escucha -> función para soltar
+var claveDe = {};               // escucha -> clave de S que alimenta
+var entregado = {};             // escucha -> ya llegó su primera respuesta
+var vistoServidor = {};         // ruta -> alguna vez vino de la nube
+var sesionIniciada = null;
+var esperaVencida = false, esperaTmr = null;
+var avisados = {};
+var INICIALES = ['usuarios','priv-yo','v-al','v-pro','cons-yo'];
+function inicialListo(){ return INICIALES.every(function(id){ return entregado[id]; }); }
+/* no se sube una clave hasta que la nube haya contestado qué tiene:
+   así una pantalla que crea algo "por defecto" no pisa lo guardado */
+function claveLista(clave){
+  var ids = Object.keys(claveDe).filter(function(id){
+    return claveDe[id] === clave || (clave === 'usuarios' && claveDe[id] === 'privado');
+  });
+  return ids.every(function(id){ return entregado[id]; });
+}
+
+function soyAdmin(){
+  var u = yoUid && usuario(yoUid);
+  return !!(u && u.rol === 'administrador' && yoVerificado);
+}
+function puedoAlumno(aid){
+  if(!aid || !yoUid) return false;
+  return aid === yoUid || vinculado(aid, yoUid);
+}
+
+/* ---------- 23.3 · codificar / decodificar ---------- */
+/* Los datos viajan como JSON en un campo 'json' (así no importan los
+   arreglos anidados ni los undefined que Firestore no acepta). Al lado
+   van, en claro, los campos que usan las reglas de seguridad. */
+function limpiar(o){ return JSON.parse(JSON.stringify(o == null ? null : o)); }
+function codificar(obj, indice){
+  var d = { json: JSON.stringify(obj), v: 2, t: Date.now() };
+  (indice || []).forEach(function(k){ d[k] = (obj && obj[k] != null) ? obj[k] : null; });
+  if(d.json.length > 900000){
+    d.json = JSON.stringify(sinImagenes(obj));
+    aviso('grande', 'Una ficha era demasiado pesada y se guardó sin sus imágenes.');
+  }
+  return d;
+}
+function decodificar(datos, indice){
+  var o = null;
+  try{ o = JSON.parse(datos.json); }catch(e){ return null; }
+  if(o && typeof o === 'object' && !Array.isArray(o)){
+    (indice || []).forEach(function(k){ if(datos[k] !== undefined) o[k] = datos[k]; });
+  }
+  return o;
+}
+function aviso(clave, texto, tipo){
+  if(avisados[clave]) return;
+  avisados[clave] = true;
+  try{ toast(texto, tipo || 'warn'); }catch(e){}
+  setTimeout(function(){ delete avisados[clave]; }, 15000);
+}
+function errorNube(err, que){
+  var code = (err && err.code) || '';
+  console.warn('[nube] ' + que + ':', code, err && err.message);
+  if(/permission/.test(code)) return;          // lo esperable al cortar un vínculo
+  if(/unavailable|network/.test(code)) return aviso('red', 'Sin conexión: los cambios se guardan y se enviarán al volver la red.');
+  aviso('err-' + que, 'No se pudo sincronizar (' + (code || 'error') + ').', 'bad');
+}
+
+/* ---------- 23.4 · subir lo que cambió ---------- */
+var pendientes = {};
+function programarSubida(clave){
+  if(pendientes[clave]) return;
+  pendientes[clave] = setTimeout(function(){ delete pendientes[clave]; subir(clave); }, 0);
+}
+function escribir(ruta, datos){
+  B.set(ruta, datos).catch(function(err){ delete conocidos[ruta]; errorNube(err, 'guardar ' + ruta.split('/')[0]); });
+}
+function borrar(ruta){
+  B.del(ruta).catch(function(err){ errorNube(err, 'borrar ' + ruta.split('/')[0]); });
+}
+function subir(clave){
+  if(!yoUid) return;
+  if(!claveLista(clave)){ setTimeout(function(){ programarSubida(clave); }, 400); return; }
+  if(clave === 'usuarios') return subirUsuarios();
+  var m = MAPA[clave]; if(!m) return;
+  var prefijoConocido = '§' + clave + '§';
+  var actuales = {};
+  if(m.tipo === 'lista'){
+    (S[clave] || []).forEach(function(x){
+      if(!x || !x.id) return;
+      var r = m.ruta(x); if(!r) return;
+      actuales[r] = x;
+    });
+  } else {
+    var obj = S[clave] || {};
+    Object.keys(obj).forEach(function(k){ actuales[m.ruta(k)] = { __k:k, v:obj[k] }; });
+  }
+  Object.keys(actuales).forEach(function(r){
+    var x = actuales[r];
+    var dueno = m.tipo === 'lista' ? m.mio(x) : m.mio(x.__k);
+    if(!dueno) return;
+    /* una ficha única (horario, pauta) sólo se escribe cuando ya se
+       sabe qué hay en la nube para esa persona */
+    if(m.tipo === 'mapa' && !rutaEntregada(r)){ setTimeout(function(){ programarSubida(clave); }, 600); return; }
+    var datos = m.tipo === 'lista' ? codificar(limpiar(x), m.indice)
+                                   : codificar(limpiar(x.v), []);
+    if(m.tipo === 'mapa') datos.alumnoId = x.__k;
+    var huella = datos.json;
+    if(conocidos[r] === huella) return;
+    conocidos[r] = huella;
+    registrarRuta(clave, r);
+    escribir(r, datos);
+  });
+  if(m.soloAgregar) return;
+  (rutasDe[clave] || []).slice().forEach(function(r){
+    if(actuales[r] || conocidos[r] === undefined) return;
+    var previo = objetoDeRuta(clave, r);
+    if(previo && m.tipo === 'lista' && !m.mio(previo)) return;
+    delete conocidos[r];
+    quitarRuta(clave, r);
+    borrar(r);
+  });
+}
+function rutaEntregada(r){
+  var ids = Object.keys(subs).concat(Object.keys(entregado));
+  for(var i=0;i<ids.length;i++){
+    var id = ids[i];
+    if(consultaDe[id] && consultaDe[id].doc === r) return !!entregado[id];
+  }
+  return false;
+}
+/* qué rutas conocemos de cada clave (para detectar borrados) */
+var rutasDe = {};
+var ultimoObjeto = {};
+function registrarRuta(clave, r){ (rutasDe[clave] = rutasDe[clave] || []); if(rutasDe[clave].indexOf(r) < 0) rutasDe[clave].push(r); }
+function quitarRuta(clave, r){ var l = rutasDe[clave] || []; var i = l.indexOf(r); if(i >= 0) l.splice(i, 1); delete ultimoObjeto[r]; }
+function objetoDeRuta(clave, r){ return ultimoObjeto[r] || null; }
+
+function partirUsuario(u){
+  var pub = {}, priv = {};
+  Object.keys(u).forEach(function(k){
+    if(k === 'clave') return;                       // la contraseña jamás sube
+    if(PRIV.indexOf(k) >= 0) priv[k] = u[k]; else pub[k] = u[k];
+  });
+  return { pub:limpiar(pub), priv:limpiar(priv) };
+}
+function subirUsuarios(){
+  var vistos = {};
+  (S.usuarios || []).forEach(function(u){
+    if(!u || !u.id) return;
+    vistos[u.id] = true;
+    if(u.id !== yoUid && !soyAdmin()) return;
+    var p = partirUsuario(u);
+    var dPub = codificar(p.pub, []); dPub.rol = u.rol || 'alumno'; dPub.estado = u.estado || 'activo';
+    var rPub = 'usuarios/' + u.id, rPriv = 'privado/' + u.id;
+    if(conocidos[rPub] !== dPub.json){ conocidos[rPub] = dPub.json; registrarRuta('usuarios', rPub); escribir(rPub, dPub); }
+    var dPriv = codificar(p.priv, []);
+    if(conocidos[rPriv] !== dPriv.json){ conocidos[rPriv] = dPriv.json; registrarRuta('usuarios', rPriv); escribir(rPriv, dPriv); }
+  });
+  if(!soyAdmin()) return;
+  (rutasDe.usuarios || []).slice().forEach(function(r){
+    var id = r.split('/')[1];
+    if(vistos[id] || conocidos[r] === undefined) return;
+    delete conocidos[r]; quitarRuta('usuarios', r); borrar(r);
+  });
+}
+
+/* ---------- 23.5 · recibir lo que cambió ---------- */
+var repintarTmr = null, repintarPendiente = false;
+function programarRepintado(){
+  clearTimeout(repintarTmr);
+  repintarTmr = setTimeout(function(){
+    var a = document.activeElement;
+    var ocupado = a && (a.tagName === 'IFRAME' ||
+      ((a.tagName === 'INPUT' || a.tagName === 'TEXTAREA' || a.tagName === 'SELECT') && a.closest && a.closest('#app')));
+    if(ocupado || document.querySelector('.modal-bg')){ repintarPendiente = true; programarRepintadoLuego(); return; }
+    repintarPendiente = false;
+    try{ pintar(); }catch(e){ console.error(e); }
+  }, 150);
+}
+var luegoTmr = null;
+function programarRepintadoLuego(){
+  clearTimeout(luegoTmr);
+  luegoTmr = setTimeout(function(){ if(repintarPendiente) programarRepintado(); }, 1500);
+}
+
+function recibir(clave, escucha, lista){
+  var mapa = {};
+  lista.forEach(function(d){ mapa[d.ruta] = d.datos; });
+  (fuentes[clave] = fuentes[clave] || {})[escucha] = mapa;
+  recomponer(clave);
+}
+function union(clave){
+  var u = {};
+  var f = fuentes[clave] || {};
+  Object.keys(f).forEach(function(e){ Object.keys(f[e]).forEach(function(r){ u[r] = f[e][r]; }); });
+  return u;
+}
+function recomponer(clave){
+  var antes = JSON.stringify(S[clave]);
+  if(clave === 'usuarios' || clave === 'privado'){ recomponerUsuarios(); clave = 'usuarios'; antes = null; }
+  else if(clave === 'fichas'){ return recomponerFichas(); }
+  else {
+    var m = MAPA[clave]; var u = union(clave);
+    if(m.tipo === 'lista'){
+      var porId = {};
+      Object.keys(u).forEach(function(r){
+        var o = decodificar(u[r], m.indice); if(!o || !o.id) return;
+        porId[o.id] = o; conocidos[r] = u[r].json; registrarRuta(clave, r); ultimoObjeto[r] = o;
+        vistoServidor[r] = true;
+      });
+      /* conserva el orden local y agrega lo nuevo al final; lo creado
+         aquí que todavía no vuelve de la nube se mantiene */
+      var nueva = [];
+      (S[clave] || []).forEach(function(x){
+        if(!x) return;
+        if(porId[x.id]){ nueva.push(porId[x.id]); delete porId[x.id]; return; }
+        var r = x.id ? m.ruta(x) : '';
+        if(r && !vistoServidor[r] && m.mio(x)) nueva.push(x);
+      });
+      Object.keys(porId).forEach(function(id){ nueva.push(porId[id]); });
+      if(clave === 'bitacora') nueva.sort(function(a,b){ return String(b.cuando||'').localeCompare(String(a.cuando||'')); });
+      S[clave] = nueva;
+    } else {
+      var obj = {};
+      Object.keys(u).forEach(function(r){
+        var v = decodificar(u[r], []); var k = u[r].alumnoId || r.split('/')[1];
+        obj[k] = v; conocidos[r] = u[r].json; registrarRuta(clave, r); vistoServidor[r] = true;
+      });
+      var local = S[clave] || {};
+      Object.keys(local).forEach(function(k){
+        var r = m.ruta(k);
+        if(obj[k] === undefined && !vistoServidor[r] && !rutaEntregada(r) && m.mio(k)) obj[k] = local[k];
+      });
+      S[clave] = obj;
+    }
+  }
+  guardarLocal(clave);
+  if(clave === 'vinculos') ajustarEscuchasDinamicas();
+  if(antes === null || JSON.stringify(S[clave]) !== antes) programarRepintado();
+}
+function recomponerUsuarios(){
+  var pub = union('usuarios'), priv = union('privado');
+  var lista = [];
+  var privPorId = {};
+  Object.keys(priv).forEach(function(r){
+    var id = r.split('/')[1]; var o = decodificar(priv[r], []);
+    if(o){ privPorId[id] = o; conocidos[r] = priv[r].json; registrarRuta('usuarios', r); }
+  });
+  var antes = JSON.stringify(S.usuarios);
+  Object.keys(pub).forEach(function(r){
+    var id = r.split('/')[1]; var o = decodificar(pub[r], []);
+    if(!o) return;
+    conocidos[r] = pub[r].json; registrarRuta('usuarios', r);
+    o.id = id; o.rol = pub[r].rol || o.rol;
+    if(privPorId[id]) Object.assign(o, privPorId[id]);
+    if(id === yoUid && yoCorreo && !o.email) o.email = yoCorreo;
+    lista.push(o);
+  });
+  /* mi propio usuario recién creado todavía puede no haber vuelto */
+  (S.usuarios || []).forEach(function(x){
+    if(x && x.id === yoUid && !lista.some(function(y){ return y.id === x.id; })) lista.push(x);
+  });
+  S.usuarios = lista;
+  guardarLocal('usuarios');
+  if(JSON.stringify(S.usuarios) !== antes){ ajustarEscuchasDinamicas(); programarRepintado(); }
+}
+function recomponerFichas(){
+  var u = union('fichas');
+  Object.keys(u).forEach(function(r){
+    var d = u[r]; if(!d || !d.clave) return;
+    conocidos['ficha:' + d.clave] = d.json;
+    var v = decodificar(d, []);
+    var actual = null;
+    try{ actual = JSON.stringify(DB.get(d.clave, null)); }catch(e){}
+    if(actual !== d.json) dbSetLocal(d.clave, v);
+  });
+}
+
+/* ---------- 23.6 · fichas sueltas (borradores de herramientas) ---------- */
+var dbSetLocal = DB.set.bind(DB);
+DB.set = function(k, v){
+  var r = dbSetLocal(k, v);
+  var m = FICHA_RE.exec(k);
+  if(m && yoUid && puedoAlumno(m[2])){
+    var datos = codificar(limpiar(v), []);
+    datos.alumnoId = m[2]; datos.clave = k;
+    if(conocidos['ficha:' + k] !== datos.json){
+      conocidos['ficha:' + k] = datos.json;
+      escribir('alumnos/' + m[2] + '/fichas/' + m[1], datos);
+    }
+  }
+  return r;
+};
+
+/* ---------- 23.7 · escuchas ---------- */
+var consultaDe = {};
+function escuchar(id, clave, q){
+  if(subs[id]) return;
+  claveDe[id] = clave; consultaDe[id] = q;
+  subs[id] = B.escuchar(q, function(lista){
+    var primera = !entregado[id];
+    entregado[id] = true;
+    recibir(clave, id, lista);
+    if(primera && INICIALES.indexOf(id) >= 0 && inicialListo()) setTimeout(function(){ try{ pintar(); }catch(e){} }, 0);
+  }, function(err){
+    entregado[id] = true;
+    delete subs[id];
+    if(fuentes[clave] && fuentes[clave][id]){ delete fuentes[clave][id]; recomponer(clave); }
+    errorNube(err, 'escuchar ' + clave);
+  });
+}
+function soltar(id){
+  if(!subs[id]) return;
+  try{ subs[id](); }catch(e){}
+  delete subs[id]; delete claveDe[id]; delete entregado[id]; delete consultaDe[id];
+  Object.keys(fuentes).forEach(function(c){
+    if(fuentes[c][id]){ delete fuentes[c][id]; recomponer(c); }
+  });
+}
+function soltarTodo(){ Object.keys(subs).forEach(soltar); }
+
+function espacioAlumno(aid, pre){
+  escuchar(pre+'reg:'+aid, 'registros', {col:'alumnos/'+aid+'/registros'});
+  escuchar(pre+'met:'+aid, 'metricas',  {col:'alumnos/'+aid+'/metricas'});
+  escuchar(pre+'que:'+aid, 'quemas',    {col:'alumnos/'+aid+'/quemas'});
+  escuchar(pre+'fic:'+aid, 'fichas',    {col:'alumnos/'+aid+'/fichas'});
+  escuchar(pre+'hor:'+aid, 'horario',   {doc:'alumnos/'+aid+'/horario/actual'});
+  escuchar(pre+'pau:'+aid, 'pautas',    {doc:'alumnos/'+aid+'/pautas/actual'});
+}
+function iniciarEscuchas(){
+  var uid = yoUid;
+  escuchar('usuarios', 'usuarios', {col:'usuarios'});
+  escuchar('priv-yo', 'privado', {doc:'privado/'+uid});
+  escuchar('v-al', 'vinculos', {col:'vinculos', donde:['alumnoId', uid]});
+  escuchar('v-pro', 'vinculos', {col:'vinculos', donde:['profesionalId', uid]});
+  escuchar('agenda', 'agenda', {col:'agenda'});
+  escuchar('ejercicios', 'ejercicios', {col:'ejercicios'});
+  escuchar('cons-yo', 'consentimientos', {col:'consentimientos', donde:['usuarioId', uid]});
+  escuchar('fac-yo', 'facturas', {col:'facturas', donde:['usuarioId', uid]});
+  escuchar('inv-pro', 'invitaciones', {col:'invitaciones', donde:['profesionalId', uid]});
+  if(yoCorreo) escuchar('inv-al', 'invitaciones', {col:'invitaciones', donde:['email', yoCorreo]});
+  espacioAlumno(uid, 'yo-');
+}
+/* según mis vínculos activos: el espacio de cada alumno que atiendo y
+   los datos personales de cada persona con quien estoy conectado */
+function ajustarEscuchasDinamicas(){
+  if(!yoUid) return;
+  var quiero = {};
+  (S.vinculos || []).forEach(function(v){
+    if(!v || v.estado !== 'activo') return;
+    if(v.profesionalId === yoUid && v.alumnoId){
+      ['reg','met','que','fic','hor','pau'].forEach(function(p){ quiero['al-'+p+':'+v.alumnoId] = v.alumnoId; });
+      quiero['priv:'+v.alumnoId] = v.alumnoId;
+    }
+    if(v.alumnoId === yoUid && v.profesionalId) quiero['priv:'+v.profesionalId] = v.profesionalId;
+  });
+  Object.keys(subs).forEach(function(id){
+    if(/^(al-|priv:)/.test(id) && !quiero[id]) soltar(id);
+  });
+  Object.keys(quiero).forEach(function(id){
+    if(subs[id]) return;
+    var aid = quiero[id];
+    if(id.indexOf('priv:') === 0) escuchar(id, 'privado', {doc:'privado/'+aid});
+    else espacioAlumno(aid, 'al-');
+  });
+  /* administrador verificado: personas, consentimientos, facturas y bitácora de todos */
+  if(soyAdmin()){
+    escuchar('adm-priv', 'privado', {col:'privado'});
+    escuchar('adm-cons', 'consentimientos', {col:'consentimientos'});
+    escuchar('adm-fac', 'facturas', {col:'facturas'});
+    escuchar('adm-bit', 'bitacora', {col:'bitacora'});
+  }
+}
+
+/* ---------- 23.8 · guardar() de siempre, ahora también en la nube ---------- */
+var guardarPrevio = guardar;
+guardar = function(clave){
+  guardarPrevio(clave);
+  if(clave === 'usuarios' || MAPA[clave]) programarSubida(clave);
+};
+
+/* ---------- 23.9 · cuentas ---------- */
+function mensajeAuth(err){
+  var c = (err && err.code) || '';
+  if(/email-already-in-use/.test(c)) return 'Ese correo ya tiene una cuenta. Usa «Entrar».';
+  if(/weak-password/.test(c))        return 'La contraseña debe tener al menos 6 caracteres.';
+  if(/invalid-email/.test(c))        return 'Ese correo no es válido.';
+  if(/invalid-credential|wrong-password|user-not-found|invalid-login/.test(c)) return 'Correo o contraseña incorrectos.';
+  if(/too-many-requests/.test(c))    return 'Demasiados intentos. Espera unos minutos y vuelve a intentar.';
+  if(/network/.test(c))              return 'Sin conexión a internet.';
+  if(/operation-not-allowed|configuration-not-found/.test(c)) return 'El acceso con correo todavía no está activado en Firebase (Authentication → Correo/contraseña).';
+  return 'No se pudo completar (' + (c || 'error') + ').';
+}
+function limpiarCache(){
+  try{
+    Object.keys(localStorage).forEach(function(k){
+      if(k.indexOf('jyntra.') === 0) localStorage.removeItem(k);
+    });
+  }catch(e){}
+  ['usuarios','vinculos','registros','metricas','agenda','ejercicios','facturas','bitacora',
+   'quemas','consentimientos','invitaciones'].forEach(function(k){ S[k] = []; });
+  ['fichas','pautas','horario'].forEach(function(k){ S[k] = {}; });
+  conocidos = {}; fuentes = {}; rutasDe = {}; ultimoObjeto = {}; vistoServidor = {};
+}
+
+/* alta: la llama el formulario de «Crear cuenta» (§10) */
+window.__JY_NUBE_CREAR = function(email, clave){
+  creando = true;
+  return B.auth.crear(email, clave).then(function(u){
+    yoUid = u.uid; yoCorreo = u.email; yoVerificado = !!u.verificado;
+    B.auth.verificar().catch(function(){});
+    setTimeout(function(){ creando = false; }, 4000);
+    return u.uid;
+  }).catch(function(err){
+    creando = false;
+    toast(mensajeAuth(err), 'bad');
+    throw err;
+  });
+};
+
+function esperarPerfil(uid, ms){
+  return new Promise(function(ok){
+    var t0 = Date.now();
+    (function mirar(){
+      var u = usuario(uid);
+      if(u) return ok(u);
+      if(inicialListo() && Date.now() - t0 > 2500) return ok(null);
+      if(Date.now() - t0 > (ms || 12000)) return ok(null);
+      setTimeout(mirar, 120);
+    })();
+  });
+}
+
+entrar = function(email, clave){
+  if(!email || !clave) return toast('Escribe tu correo y tu contraseña.', 'warn');
+  ocupado(true);
+  B.auth.entrar(email, clave).then(function(u){
+    yoUid = u.uid; yoCorreo = u.email; yoVerificado = !!u.verificado;
+    return esperarPerfil(u.uid);
+  }).then(function(perfil){
+    ocupado(false);
+    var elegido = (window.JY22 && JY22.elegido) ? JY22.elegido() : null;
+    if(!perfil){
+      /* existe la cuenta pero no su ficha (alta interrumpida): se completa */
+      var rol = (elegido && elegido !== 'administrador') ? elegido : 'alumno';
+      perfil = { id:yoUid, nombre:String(yoCorreo||'').split('@')[0], email:yoCorreo, rol:rol, creado:new Date().toISOString() };
+      if(esProfesional(rol)){ perfil.plan='base'; perfil.publico=false; perfil.especialidades=[]; perfil.planesServicio=[]; }
+      S.usuarios.push(perfil); guardar('usuarios');
+    }
+    if(elegido && perfil.rol !== elegido){
+      toast('Esa cuenta es de ' + (ROLES[perfil.rol] ? ROLES[perfil.rol].nombre : perfil.rol)
+        + '. Vuelve a «Perfiles» y elige el correcto.', 'bad');
+      return B.auth.salir();
+    }
+    S.sesion = perfil.id; guardarLocal('sesion');
+    try{ bitacora('acceso','Entró a la plataforma', perfil.id); }catch(e){}
+    toast('Hola, ' + String(perfil.nombre||'').split(' ')[0] + '.', 'ok');
+    if(window.JY22 && JY22.irAPerfil) JY22.irAPerfil(perfil); else ruta('inicio');
+  }).catch(function(err){
+    ocupado(false);
+    toast(mensajeAuth(err), 'bad');
+  });
+};
+
+salir = function(){
+  try{ bitacora('acceso','Cerró sesión'); }catch(e){}
+  var fin = function(){ limpiarCache(); try{ location.hash = ''; }catch(e){} location.reload(); };
+  setTimeout(function(){ B.auth.salir().then(fin, fin); }, 250);
+};
+
+function ocupado(si){
+  var b = document.querySelector('#f-entrar button[type="submit"], #f-crear button[type="submit"]');
+  if(b){ b.disabled = !!si; b.style.opacity = si ? '.6' : ''; }
+}
+
+B.auth.onCambio(function(u){
+  autenticado = true;
+  if(!u){
+    soltarTodo();
+    var habia = !!S.sesion;
+    yoUid = null; yoCorreo = null; yoVerificado = false; sesionIniciada = null;
+    if(habia){ limpiarCache(); S.sesion = null; guardarLocal('sesion'); }
+    return pintar();
+  }
+  yoUid = u.uid; yoCorreo = u.email; yoVerificado = !!u.verificado;
+  if(sesionIniciada !== u.uid){
+    sesionIniciada = u.uid;
+    soltarTodo();
+    /* se parte de lo que dice la nube, nunca de una copia vieja de este
+       equipo (Firestore trae su propia caché para cuando no hay red) */
+    if(!creando) limpiarCache();
+  }
+  S.sesion = u.uid; guardarLocal('sesion');
+  /* sin red y sin copia guardada, no se queda esperando para siempre */
+  esperaVencida = false;
+  clearTimeout(esperaTmr);
+  esperaTmr = setTimeout(function(){
+    if(!inicialListo()){ esperaVencida = true; aviso('red', 'Sin conexión: trabajando con lo guardado. Se sincroniza al volver la red.'); pintar(); }
+  }, 8000);
+  iniciarEscuchas();
+  ajustarEscuchasDinamicas();
+  /* lo que se escribió antes de conectar (alta, consentimiento) sube ahora */
+  setTimeout(function(){
+    ['usuarios','consentimientos','bitacora'].forEach(programarSubida);
+  }, 300);
+  pintar();
+});
+
+/* ---------- 23.10 · pantalla de espera y ajustes de la interfaz ---------- */
+var pintarNube = pintar;
+pintar = function(){
+  if(!autenticado || (yoUid && !inicialListo() && !creando && !esperaVencida)){
+    var app = document.getElementById('app');
+    if(app) app.innerHTML = '<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;'
+      + 'flex-direction:column;gap:14px;color:var(--mute)">' + marca('Technologies')
+      + '<div class="mono" style="font-size:11px;letter-spacing:.22em;text-transform:uppercase">Conectando…</div></div>';
+    return;
+  }
+  pintarNube();
+  try{ ajustesInterfaz(); }catch(e){ console.error(e); }
+};
+
+function ajustesInterfaz(){
+  /* entrar: recuperar contraseña */
+  var fe = document.getElementById('f-entrar');
+  if(fe && !fe.querySelector('[data-olvido]')){
+    var a = document.createElement('button');
+    a.type = 'button'; a.className = 'btn sm'; a.setAttribute('data-olvido','1');
+    a.style.cssText = 'justify-content:center;background:transparent;border-color:transparent;color:var(--mute)';
+    a.textContent = '¿Olvidaste tu contraseña?';
+    var sub = fe.querySelector('button[type="submit"]');
+    if(sub && sub.nextSibling) fe.insertBefore(a, sub.nextSibling); else fe.appendChild(a);
+    a.onclick = function(){
+      preguntar('Recuperar contraseña',
+        '<form class="stack"><div class="field"><label>Tu correo</label><input class="inp" name="email" type="email" value="'
+        + esc(fe.email.value || '') + '"></div><p class="hint" style="margin:0">Te enviaremos un enlace para crear una contraseña nueva.</p></form>',
+        {ok:'Enviar enlace'}).then(function(r){
+          if(!r || !r.email) return;
+          B.auth.recuperar(String(r.email).trim().toLowerCase())
+            .then(function(){ toast('Listo. Revisa tu correo (y la carpeta de spam).','ok'); })
+            .catch(function(err){ toast(mensajeAuth(err),'bad'); });
+        });
+    };
+  }
+  /* crear: la contraseña pide 6 caracteres como mínimo */
+  var fc = document.getElementById('f-crear');
+  if(fc && fc.clave){ fc.clave.setAttribute('minlength','6'); fc.clave.placeholder = 'Mínimo 6 caracteres'; }
+
+  /* mi perfil: correo y contraseña se manejan desde la cuenta */
+  var fp = document.getElementById('f-perfil');
+  if(fp && !fp.__nube){
+    fp.__nube = true;
+    if(fp.email){ fp.email.readOnly = true; fp.email.style.opacity = '.7';
+      fp.email.title = 'El correo es el de tu cuenta.'; }
+    if(fp.clave){
+      fp.clave.value = ''; fp.clave.disabled = true;
+      var campo = fp.clave.closest('.field') || fp.clave.parentNode;
+      var btn = document.createElement('button');
+      btn.type = 'button'; btn.className = 'btn sm'; btn.textContent = 'Cambiar contraseña por correo';
+      btn.onclick = function(){
+        B.auth.recuperar(yoCorreo).then(function(){ toast('Te enviamos un enlace a ' + yoCorreo + '.','ok'); })
+          .catch(function(err){ toast(mensajeAuth(err),'bad'); });
+      };
+      fp.clave.style.display = 'none';
+      campo.appendChild(btn);
+    }
+    /* respaldo e reinicio locales no aplican con datos en la nube */
+    ['b-imp','b-reset'].forEach(function(id){
+      var el = document.getElementById(id);
+      var card = el && el.closest('.card');
+      if(card) card.style.display = 'none';
+    });
+  }
+
+  /* administrador sin correo verificado: sus permisos esperan */
+  var yo = yoUid && usuario(yoUid);
+  if(yo && yo.rol === 'administrador' && !yoVerificado && !document.getElementById('jy-verif')){
+    var d = document.createElement('div');
+    d.id = 'jy-verif'; d.className = 'readonly-note';
+    d.style.cssText = 'margin:12px 16px 0;border-color:var(--warn)';
+    d.innerHTML = '<span>✉</span><div><b>Verifica tu correo</b> para activar los permisos de administrador. '
+      + 'Te enviamos un enlace a ' + esc(yoCorreo || '') + '. '
+      + '<button class="btn sm" data-reenviar>Reenviar</button> <button class="btn sm gold" data-yaverifique>Ya lo verifiqué</button></div>';
+    var main = document.querySelector('.main') || document.getElementById('app');
+    main.insertBefore(d, main.firstChild);
+    d.querySelector('[data-reenviar]').onclick = function(){
+      B.auth.verificar().then(function(){ toast('Correo reenviado.','ok'); }).catch(function(err){ toast(mensajeAuth(err),'bad'); });
+    };
+    d.querySelector('[data-yaverifique]').onclick = function(){
+      B.auth.refrescar().then(function(u){
+        yoVerificado = !!(u && u.verificado);
+        if(yoVerificado){ toast('Correo verificado. Permisos activos.','ok'); ajustarEscuchasDinamicas(); pintar(); }
+        else toast('Todavía no aparece verificado. Abre el enlace del correo y vuelve a intentar.','warn');
+      });
+    };
+  }
+}
+
+pintar();
 })();
 
 })();

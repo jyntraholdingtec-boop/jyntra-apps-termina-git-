@@ -1,0 +1,8 @@
+{
+  "projects": {
+    "default": "jintra-db",
+    " ": "jintra-db"
+  },
+  "targets": {},
+  "etags": {}
+}

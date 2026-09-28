@@ -1,0 +1,20 @@
+{
+  "name": "JYNTRA Technologies",
+  "short_name": "JYNTRA",
+  "description": "Entrenamiento y nutrición de alto rendimiento: evaluación, planificación y seguimiento conectados.",
+  "id": "/",
+  "start_url": "/index.html?origen=app",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#171717",
+  "theme_color": "#171717",
+  "lang": "es-CL",
+  "categories": ["health", "fitness", "medical", "education"],
+  "icons": [
+    { "src": "iconos/icono-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "iconos/icono-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "iconos/icono-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "iconos/icono.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}
