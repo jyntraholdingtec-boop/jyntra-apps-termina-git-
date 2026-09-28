@@ -1,0 +1,164 @@
+rules_version = '2';
+
+// =====================================================================
+//  JYNTRA · reglas de seguridad de Firestore
+//  ---------------------------------------------------------------------
+//  Principios:
+//   · Nadie entra sin sesión.
+//   · Cada alumno tiene su espacio  /alumnos/{alumnoId}/...  (evaluaciones,
+//     métricas, rutinas, pautas, fichas). Lo ven y escriben sólo él y los
+//     profesionales con vínculo ACTIVO.
+//   · Los datos personales (correo, teléfono, nacimiento...) viven aparte
+//     en /privado/{uid}: los ve la persona, sus conexiones activas y el admin.
+//   · El administrador NO lee datos de salud.
+//   · El rol de una cuenta no lo puede cambiar su dueño.
+//   · Administrador: un solo correo, sólo con Google, correo verificado.
+//   · Un vínculo activo nace de una solicitud aceptada por el profesional
+//     o de una invitación aceptada por el alumno; nunca de un solo lado.
+// =====================================================================
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function dentro()  { return request.auth != null; }
+    function yo()      { return request.auth.uid; }
+    function correo()  { return request.auth.token.email; }
+
+    // ── Administrador: UNA sola persona, y sólo entrando con Google ──
+    //    (su cuenta de Google tiene verificación en 2 pasos). Aunque
+    //    alguien supiera una contraseña de ese correo, entrando con
+    //    correo/contraseña NO obtiene ningún permiso de administrador.
+    function conGoogle() {
+      return dentro() && request.auth.token.firebase.sign_in_provider == 'google.com';
+    }
+    function correoAdmin() {
+      return conGoogle()
+        && request.auth.token.email_verified == true
+        && correo() in ['jyntra.holding.tec@gmail.com'];
+    }
+    function esAdmin() {
+      return correoAdmin()
+        && exists(/databases/$(database)/documents/usuarios/$(yo()))
+        && get(/databases/$(database)/documents/usuarios/$(yo())).data.rol == 'administrador';
+    }
+    function vinculoActivo(alumnoId, proId) {
+      return exists(/databases/$(database)/documents/vinculos/$(alumnoId + '_' + proId))
+        && get(/databases/$(database)/documents/vinculos/$(alumnoId + '_' + proId)).data.estado == 'activo';
+    }
+    function atiendeA(alumnoId) { return dentro() && vinculoActivo(alumnoId, yo()); }
+    function conectadoCon(otro) { return dentro() && (vinculoActivo(otro, yo()) || vinculoActivo(yo(), otro)); }
+    function invitado(proId) {
+      return exists(/databases/$(database)/documents/invitaciones/$(proId + '_' + correo()));
+    }
+
+    // ── Perfil público (nombre, rol, plan, ficha del buscador) ─────────
+    match /usuarios/{uid} {
+      allow read: if dentro();
+      allow create: if dentro() && yo() == uid
+        && (request.resource.data.rol in ['alumno', 'profesor', 'nutricionista']
+            || (request.resource.data.rol == 'administrador' && correoAdmin()));
+      // el administrador puede editar perfiles, pero no nombrar a otro administrador
+      allow update: if (esAdmin() && (request.resource.data.rol != 'administrador' || yo() == uid))
+        || (dentro() && yo() == uid && request.resource.data.rol == resource.data.rol
+            && (resource.data.rol != 'administrador' || correoAdmin()))
+        // el dueño del correo de administrador (con Google) recupera su perfil
+        // aunque alguien lo hubiera registrado antes con otro rol
+        || (dentro() && yo() == uid && request.resource.data.rol == 'administrador' && correoAdmin());
+      allow delete: if esAdmin();
+    }
+
+    // ── Datos personales ──────────────────────────────────────────────
+    match /privado/{uid} {
+      allow read: if dentro() && (yo() == uid || esAdmin() || conectadoCon(uid));
+      allow create, update: if dentro() && (yo() == uid || esAdmin());
+      allow delete: if esAdmin();
+    }
+
+    // ── Vínculos alumno ↔ profesional  (id = alumnoId_profesionalId) ──
+    match /vinculos/{vid} {
+      allow read: if dentro()
+        && (resource.data.alumnoId == yo() || resource.data.profesionalId == yo() || esAdmin());
+
+      allow create: if dentro()
+        && vid == request.resource.data.alumnoId + '_' + request.resource.data.profesionalId
+        && request.resource.data.alumnoId == yo()
+        && (request.resource.data.estado == 'pendiente'
+            || (request.resource.data.estado == 'activo' && invitado(request.resource.data.profesionalId)));
+
+      allow update: if dentro()
+        && request.resource.data.alumnoId == resource.data.alumnoId
+        && request.resource.data.profesionalId == resource.data.profesionalId
+        && (esAdmin()
+            // el profesional acepta, rechaza, corta o edita; no reactiva lo que el alumno cortó
+            || (resource.data.profesionalId == yo()
+                && (request.resource.data.estado != 'activo' || resource.data.estado in ['pendiente', 'activo']))
+            // el alumno pide de nuevo, corta o edita; sólo activa si tiene invitación
+            || (resource.data.alumnoId == yo()
+                && (request.resource.data.estado != 'activo' || resource.data.estado == 'activo'
+                    || invitado(resource.data.profesionalId))));
+
+      allow delete: if dentro()
+        && (resource.data.alumnoId == yo() || resource.data.profesionalId == yo() || esAdmin());
+    }
+
+    // ── Invitaciones por correo  (id = profesionalId_correo) ─────────
+    match /invitaciones/{iid} {
+      allow read: if dentro()
+        && (resource.data.profesionalId == yo() || resource.data.email == correo() || esAdmin());
+      allow create, update: if dentro()
+        && request.resource.data.profesionalId == yo()
+        && iid == yo() + '_' + request.resource.data.email;
+      allow delete: if dentro()
+        && (resource.data.profesionalId == yo() || resource.data.email == correo());
+    }
+
+    // ── Agenda pública de cada profesional ───────────────────────────
+    match /agenda/{bid} {
+      allow read: if dentro();
+      allow create: if dentro() && request.resource.data.profesionalId == yo();
+      allow update: if dentro() && resource.data.profesionalId == yo()
+                               && request.resource.data.profesionalId == yo();
+      allow delete: if dentro() && resource.data.profesionalId == yo();
+    }
+
+    // ── Espacio del alumno (datos de salud) ──────────────────────────
+    match /alumnos/{aid}/{col}/{docId} {
+      allow read: if dentro() && (yo() == aid || atiendeA(aid));
+      allow create: if dentro() && (yo() == aid || atiendeA(aid))
+        && col in ['registros', 'metricas', 'quemas', 'horario', 'pautas', 'fichas']
+        && (col != 'registros' || request.resource.data.autorId == yo());
+      allow update: if dentro() && (yo() == aid || atiendeA(aid))
+        && (col != 'registros' || request.resource.data.autorId == resource.data.autorId);
+      allow delete: if dentro() && (yo() == aid || atiendeA(aid));
+    }
+
+    // ── Consentimientos (Ley 21.719) ─────────────────────────────────
+    match /consentimientos/{cid} {
+      allow read: if dentro() && (resource.data.usuarioId == yo() || esAdmin());
+      allow create: if dentro() && request.resource.data.usuarioId == yo();
+      allow update: if dentro() && resource.data.usuarioId == yo()
+                               && request.resource.data.usuarioId == yo();
+      allow delete: if false;
+    }
+
+    // ── Facturación de planes ────────────────────────────────────────
+    match /facturas/{fid} {
+      allow read: if dentro() && (resource.data.usuarioId == yo() || esAdmin());
+      allow create: if dentro() && (request.resource.data.usuarioId == yo() || esAdmin());
+      allow update, delete: if esAdmin();
+    }
+
+    // ── Bitácora de actividad: cada uno anota lo suyo, el admin lee ──
+    match /bitacora/{lid} {
+      allow read: if esAdmin();
+      allow create: if dentro() && request.resource.data.quien == yo();
+      allow update, delete: if false;
+    }
+
+    // ── Biblioteca de ejercicios ─────────────────────────────────────
+    match /ejercicios/{eid} {
+      allow read: if dentro();
+      allow write: if esAdmin();
+    }
+  }
+}

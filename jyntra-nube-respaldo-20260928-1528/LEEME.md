@@ -129,22 +129,3 @@ Si el paso 3 no se hace, el enlace abre la página genérica de Firebase, que ig
 
 Todos los campos de contraseña tienen un ojo para mostrarla u ocultarla. Al enviar el formulario
 vuelve a ocultarse sola.
-
-## Protección contra borrados (v6)
-
-La app sólo borra de la nube lo que alguien quitó a propósito y que la nube todavía muestra.
-Si una conexión se corta, los datos pueden desaparecer de la pantalla un momento, pero nunca
-se borran de la base de datos. El administrador no puede borrar a más de una persona de una vez.
-
-Respaldo recomendado (consola de Firebase → Firestore Database → Recuperación ante desastres):
-activar la recuperación de un momento determinado (PITR, 7 días) y copias de seguridad diarias.
-
-## Consentimiento y pestañas (v7)
-
-- El aviso de consentimiento sólo aparece cuando la nube ya respondió que esa cuenta no tiene
-  uno guardado. Aceptado en una sesión, no se vuelve a pedir en esa sesión aunque la nube tarde.
-- Si la nube rechaza guardarlo, se muestra «No se pudo guardar (consentimientos)…» en vez de
-  volver a preguntar en silencio.
-- El canal entre pestañas de la versión local (copiaba datos por localStorage cada 4 s) queda
-  apagado con la nube: mezclaba sesiones de personas distintas abiertas en el mismo navegador.
-- Diagnóstico: F12 → Consola → `JYNUBE.estado()` (incluye cuántos consentimientos tiene la cuenta).

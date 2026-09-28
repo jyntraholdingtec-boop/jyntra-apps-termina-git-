@@ -145,13 +145,11 @@ window.JYNUBE_BACKENDS.firebase = function (cfg) {
 window.JYNUBE_BACKENDS.mock = function (cfg) {
   var BASE = (cfg.url || '') + '/__mock';
   var tok  = null, usr = null;
-  try { tok = sessionStorage.getItem('jymock.tok') || localStorage.getItem('jymock.tok'); usr = JSON.parse(sessionStorage.getItem('jymock.usr') || localStorage.getItem('jymock.usr') || 'null'); } catch (e) {}
+  try { tok = localStorage.getItem('jymock.tok'); usr = JSON.parse(localStorage.getItem('jymock.usr') || 'null'); } catch (e) {}
   var oyentes = [];
   function guardarSesion() {
     try {
-      var st = (usr && usr.prov === 'google.com') ? sessionStorage : localStorage;
-      sessionStorage.removeItem('jymock.tok'); sessionStorage.removeItem('jymock.usr');
-      if (tok) { st.setItem('jymock.tok', tok); st.setItem('jymock.usr', JSON.stringify(usr)); if (st === sessionStorage) { localStorage.removeItem('jymock.tok'); localStorage.removeItem('jymock.usr'); } }
+      if (tok) { localStorage.setItem('jymock.tok', tok); localStorage.setItem('jymock.usr', JSON.stringify(usr)); }
       else { localStorage.removeItem('jymock.tok'); localStorage.removeItem('jymock.usr'); }
     } catch (e) {}
   }

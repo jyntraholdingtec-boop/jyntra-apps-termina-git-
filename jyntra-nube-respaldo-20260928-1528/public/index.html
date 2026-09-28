@@ -4937,28 +4937,16 @@ if(typeof ligarAcceso === 'function'){
 }
 
 /* ---------- 21.7 · portero: sin consentimiento vigente, no se entra ---------- */
-var puertaAbierta = false, creandoCuenta = false, aceptadoEnSesion = {}, esperaPortero = null;
+var puertaAbierta = false, creandoCuenta = false;
 function portero(u){
   if(!u || puertaAbierta || creandoCuenta) return;
   if(consentimientoDe(u.id)) return;
-  /* con la nube: no se pregunta hasta saber qué consentimientos tiene guardados */
-  if(window.JYNUBE && JYNUBE.consentimientosListos && !JYNUBE.consentimientosListos()){
-    clearTimeout(esperaPortero);
-    esperaPortero = setTimeout(function(){ try{ var x = sesion(); if(x) portero(x); }catch(e){} }, 700);
-    return;
-  }
-  /* ya aceptó en esta sesión pero la nube aún no lo confirma: no se vuelve a preguntar */
-  if(aceptadoEnSesion[u.id]){
-    var r = aceptadoEnSesion[u.id];
-    if(!(S.consentimientos||[]).some(function(c){ return c.id === r.id; })){ S.consentimientos.push(r); guardar('consentimientos'); }
-    return;
-  }
   puertaAbierta = true;
   abrirPolitica({ aceptar:true, textoAceptar:'Acepto y autorizo', textoRechazar:'No acepto · salir' })
    .then(function(ok){
       puertaAbierta = false;
       if(ok){
-        aceptadoEnSesion[u.id] = registrarConsentimiento(u.id, { politica:true, salud:true, conexion:false, comercial:false, edad:edadDe(u.nacimiento) });
+        registrarConsentimiento(u.id, { politica:true, salud:true, conexion:false, comercial:false, edad:edadDe(u.nacimiento) });
         toast('Consentimiento registrado. Gracias.','ok');
         try{ pintar(); }catch(e){}
       } else {
@@ -5524,17 +5512,7 @@ window.JYNUBE = { activa:true, backend:B,
   /* diagnóstico: JYNUBE.estado() en la consola del navegador */
   estado: function(){ return { yo:yoUid, correo:yoCorreo, verificado:yoVerificado, autenticado:autenticado,
     inicialListo:inicialListo(), escuchas:Object.keys(subs), entregado:Object.assign({}, entregado),
-    rutasConocidas:Object.keys(conocidos).length,
-    consentimientos:(S.consentimientos||[]).filter(function(c){ return c.usuarioId === yoUid; }).length }; },
-  /* ¿ya contestó la nube cuáles son mis consentimientos? */
-  consentimientosListos: function(){ return !!(yoUid && entregado['cons-yo']); } };
-
-/* ---------- 23.0 · el canal entre pestañas de la versión local se apaga ----------
-   Servía para que dos perfiles abiertos en el MISMO navegador se vieran sin
-   servidor, copiando datos por localStorage. Con la nube, cada pestaña recibe
-   lo suyo directo de Firestore; copiar entre pestañas mezclaba sesiones de
-   personas distintas (p. ej. el administrador en una pestaña y un alumno en otra). */
-try{ jyRecargar = function(){ return false; }; JY_CANAL.activo = true; }catch(e){}
+    rutasConocidas:Object.keys(conocidos).length }; } };
 
 /* ---------- 23.1 · qué va a dónde ---------- */
 var PRIV = ['email','telefono','nacimiento','sexo','altura','peso','objetivo','rut','direccion'];
@@ -5634,11 +5612,7 @@ function aviso(clave, texto, tipo){
 function errorNube(err, que){
   var code = (err && err.code) || '';
   console.warn('[nube] ' + que + ':', code, err && err.message);
-  if(/permission/.test(code)){
-    /* lo esperable al cortar un vínculo; pero si falla guardar algo PROPIO, se avisa */
-    if(/guardar (consentimientos|usuarios|privado)/.test(que)) aviso('perm-' + que, 'No se pudo guardar (' + que.replace('guardar ','') + '): permiso denegado. Cierra sesión y vuelve a entrar.', 'bad');
-    return;
-  }
+  if(/permission/.test(code)) return;          // lo esperable al cortar un vínculo
   if(/unavailable|network/.test(code)) return aviso('red', 'Sin conexión: los cambios se guardan y se enviarán al volver la red.');
   aviso('err-' + que, 'No se pudo sincronizar (' + (code || 'error') + ').', 'bad');
 }
@@ -5689,15 +5663,10 @@ function subir(clave){
     escribir(r, datos);
   });
   if(m.soloAgregar) return;
-  /* BORRADOS: sólo lo que la nube muestra AHORA y aquí se quitó a propósito.
-     Si una escucha se cortó (red, permisos, vínculo terminado), sus datos
-     desaparecen de la pantalla pero NUNCA se borran de la nube. */
-  var enNube = union(clave);
   (rutasDe[clave] || []).slice().forEach(function(r){
     if(actuales[r] || conocidos[r] === undefined) return;
     var previo = objetoDeRuta(clave, r);
     if(previo && m.tipo === 'lista' && !m.mio(previo)) return;
-    if(!enNube[r] && vistoServidor[r]){ delete conocidos[r]; quitarRuta(clave, r); return; }   // sólo se olvida aquí
     delete conocidos[r];
     quitarRuta(clave, r);
     borrar(r);
@@ -5745,24 +5714,10 @@ function subirUsuarios(){
       conocidos[rPriv] = dPriv.json; registrarRuta('usuarios', rPriv); escribir(rPriv, dPriv); }
   });
   if(!soyAdmin()) return;
-  /* borrar personas: sólo el administrador, sólo a quien la nube muestra AHORA
-     y se quitó a propósito, y nunca a más de una persona de una vez */
-  var enNube = Object.assign({}, union('usuarios'), union('privado'));
-  var aBorrar = {};
   (rutasDe.usuarios || []).slice().forEach(function(r){
     var id = r.split('/')[1];
     if(vistos[id] || conocidos[r] === undefined) return;
-    if(!enNube[r]){ delete conocidos[r]; quitarRuta('usuarios', r); return; }   // sólo se olvida aquí
-    (aBorrar[id] = aBorrar[id] || []).push(r);
-  });
-  var ids = Object.keys(aBorrar);
-  if(ids.length > 1){
-    console.warn('[nube] se evitó borrar a ' + ids.length + ' personas de una vez');
-    aviso('borrado-masivo', 'Por seguridad no se borró a varias personas de una vez. Recarga la página.', 'bad');
-    return;
-  }
-  ids.forEach(function(id){
-    aBorrar[id].forEach(function(r){ delete conocidos[r]; quitarRuta('usuarios', r); borrar(r); });
+    delete conocidos[r]; quitarRuta('usuarios', r); borrar(r);
   });
 }
 
@@ -6053,7 +6008,6 @@ entrar = function(email, clave){
       perfil = { id:yoUid, nombre:String(yoCorreo||'').split('@')[0], email:yoCorreo, rol:rol, creado:new Date().toISOString() };
       if(esProfesional(rol)){ perfil.plan='base'; perfil.publico=false; perfil.especialidades=[]; perfil.planesServicio=[]; }
       S.usuarios.push(perfil); guardar('usuarios');
-      setTimeout(function(){ toast('Recuperamos tu cuenta con datos básicos. Revisa y completa tu nombre y datos en «Mi perfil».', 'warn'); }, 1800);
     }
     if(perfil.rol === 'administrador'){
       toast('El perfil Administrador sólo se abre con «Entrar con Google».', 'bad');
