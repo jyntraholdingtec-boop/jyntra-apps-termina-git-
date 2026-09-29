@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>JYNTRA Technologies</title>
+<title>JYNTRA · Tu progreso conectado</title>
 <meta name="theme-color" content="#171717">
 <!-- app instalable (PWA) -->
 <link rel="manifest" href="manifest.webmanifest">
@@ -207,7 +207,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
 .contract .cr{display:grid;grid-template-columns:82px 1fr;gap:10px;padding:8px 12px;border-bottom:1px solid var(--line-soft);font-size:12.5px}
 .contract .cr:last-child{border-bottom:0}
 .contract .cr .k{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);padding-top:2px}
-.contract code{font-family:var(--f-mono);font-size:11.5px;color:var(--jy-texto-acc);background:#171717;border:1px solid #262626;border-radius:2px;padding:1px 5px}
+.contract code{overflow-wrap:anywhere;word-break:break-word;font-family:var(--f-mono);font-size:11.5px;color:var(--jy-texto-acc);background:#171717;border:1px solid #262626;border-radius:2px;padding:1px 5px}
 .slot iframe{width:100%;border:0;display:block;min-height:620px;background:#0D0D0D}
 .slot-corner{position:absolute;width:8px;height:8px;border-color:var(--jy-borde);opacity:.7}
 
@@ -316,8 +316,65 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
 .fold-b[hidden]{display:none}
 .jy-anam-caja iframe{width:100%;border:0;display:block;background:#0A0A0A;border-radius:8px;min-height:620px}
 .slot-body iframe{width:100%;border:0;display:block;background:#0A0A0A;border-radius:8px;min-height:620px}
-@media(max-width:860px){.jy-week{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:520px){.jy-week{grid-template-columns:1fr}}
+/* ---------- celular (Android / iOS): nada se sale de la pantalla ---------- */
+html{overflow-x:hidden}
+body{max-width:100%;overflow-x:clip}
+body{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+.tbl-scroll{width:100%;max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tbl-scroll>table.tbl{min-width:100%}
+.tbl select.inp{min-width:118px}
+.h1,.h2,.h3,.sub,.eyebrow,.rail-user .n,.fichamini,.kpi .foot{overflow-wrap:anywhere;word-break:break-word}
+.main,.content,.card,.grid>*{min-width:0}
+img,svg,video,canvas,iframe{max-width:100%}
+@media(max-width:900px){
+  .topbar{height:auto;min-height:calc(var(--top) + env(safe-area-inset-top));padding-top:env(safe-area-inset-top);padding-left:max(14px,env(safe-area-inset-left));padding-right:max(14px,env(safe-area-inset-right))}
+  .rail{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
+  .content{padding-left:max(14px,env(safe-area-inset-left));padding-right:max(14px,env(safe-area-inset-right));padding-bottom:calc(80px + env(safe-area-inset-bottom))}
+  .topbar .crumb{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .card-head{align-items:flex-start}
+  input,select,textarea{font-size:16px!important}   /* iOS: sin zoom al escribir */
+}
+/* ---------- vista de la semana del alumno ---------- */
+.horagrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px}
+.horagrid .col{min-width:0;background:var(--panel2);border:1px solid var(--line-soft);border-radius:var(--rad);padding:8px;display:flex;flex-direction:column;gap:6px}
+.horagrid h4{margin:0 0 2px;font-family:var(--f-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--bone);font-weight:600;
+  border-bottom:1px solid var(--line-soft);padding-bottom:5px}
+.horagrid .blk{min-width:0;background:var(--raise);border:1px solid var(--line-soft);border-left:3px solid var(--rol-acc,var(--jy-acc));border-radius:6px;padding:6px 7px;display:flex;flex-direction:column;gap:2px}
+.horagrid .blk b{font-family:var(--f-mono);font-size:11px;font-weight:600;color:var(--bone);white-space:nowrap}
+.horagrid .blk span{font-size:12px;color:var(--bone);overflow-wrap:anywhere}
+.horagrid .blk i{font-style:normal;font-size:11px;color:var(--mute);overflow-wrap:anywhere}
+@media(max-width:520px){.horagrid{grid-template-columns:1fr}.horagrid .col:not(:has(.blk)){flex-direction:row;justify-content:space-between;align-items:center}
+  .horagrid .col:not(:has(.blk)) h4{border:0;padding:0;margin:0}}
+/* botón de privacidad: en celular, dentro del menú (no tapa el contenido) */
+.rail-priv{display:none}
+@media(max-width:900px){
+  body:has(.shell) #jy21-flot{display:none}
+  .rail-priv{display:inline-flex}
+  #jy21-flot{bottom:calc(10px + env(safe-area-inset-bottom))}
+}
+/* ---------- horario semanal: todo dentro de su columna ---------- */
+.jy-week{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+.jy-day{min-width:0;display:flex;flex-direction:column;gap:6px}
+.jy-day-h{margin-bottom:2px}
+.jy-slot{min-width:0;background:var(--raise);border:1px solid var(--line-soft);border-left:3px solid var(--rol-acc,var(--jy-acc));
+  border-radius:6px;padding:7px 8px;font-size:12px;line-height:1.35;overflow:hidden}
+.jy-slot:not(.asignado){border-left-style:dashed;background:transparent}
+.jy-slot .hh{font-family:var(--f-mono);font-size:11px;font-weight:600;color:var(--bone)}
+.jy-slot .nn{font-weight:600;font-size:12.5px;color:var(--bone);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.jy-slot .ss{color:var(--mute);font-size:11.5px;margin-top:2px;overflow-wrap:anywhere;word-break:break-word}
+.jy-slot .pub{display:inline-block;margin-top:5px;font-family:var(--f-mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;
+  padding:1px 5px;border-radius:3px;border:1px solid var(--line);color:var(--mute)}
+.jy-slot .pub.si{border-color:rgba(45,179,106,.45);color:#2DB36A}
+.jy-vacio{font-family:var(--f-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute2);padding:4px 0}
+.card-head{flex-wrap:wrap}
+.card-head select.inp{width:auto;min-width:0;flex:0 1 230px}
+@media(max-width:520px){
+  .jy-week{grid-template-columns:1fr}
+  .jy-day{min-height:0}
+  .jy-day:has(.jy-vacio){flex-direction:row;align-items:center;justify-content:space-between;padding:7px 9px}
+  .jy-day:has(.jy-vacio) .jy-day-h{border:0;margin:0;padding:0}
+  .card-head select.inp{flex:1 1 100%;max-width:none!important}
+}
 
 /* ===============================================================
    IDENTIDAD POR ROL
@@ -431,9 +488,11 @@ if ('serviceWorker' in navigator && (location.protocol === 'https:' || /^(localh
 const $  = (s,r)=> (r||document).querySelector(s);
 const $$ = (s,r)=> Array.from((r||document).querySelectorAll(s));
 const uid = (p)=> (p||'id')+'_'+Date.now().toString(36)+Math.random().toString(36).slice(2,7);
-const hoy = ()=> new Date().toISOString().slice(0,10);
+/* fecha de HOY en la hora local (Chile), no en UTC: después de las 21:00 ya no salta al día siguiente */
+const hoy = ()=>{ const d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); };
 const esc = (s)=> String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const fecha = (iso)=>{ if(!iso) return '—'; const d=new Date(iso); if(isNaN(d)) return String(iso).slice(0,10);
+const fecha = (iso)=>{ if(!iso) return '—'; const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(String(iso));
+  const d = m ? new Date(+m[1], +m[2]-1, +m[3]) : new Date(iso); if(isNaN(d)) return String(iso).slice(0,10);
   return d.toLocaleDateString('es-CL',{day:'2-digit',month:'short',year:'numeric'}); };
 const fechaHora = (iso)=>{ const d=new Date(iso); return isNaN(d)?'—':d.toLocaleString('es-CL',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}); };
 const money = (n)=> '$'+Number(n||0).toLocaleString('es-CL');
@@ -817,6 +876,21 @@ function alumnosDe(proId){
 function profesionalesDe(alumnoId){
   return S.vinculos.filter(v=> v.alumnoId===alumnoId && v.estado==='activo')
                    .map(v=> usuario(v.profesionalId)).filter(Boolean);
+}
+/* cómo llama el alumno a su gente: «Mi coach», «Mi nutricionista»
+   o «Mi equipo multidisciplinario» si tiene a más de una especialidad */
+function nombreEquipo(u, tu){
+  const pros = u ? profesionalesDe(u.id) : [];
+  const nP = pros.filter(p=>p.rol==='profesor').length, nN = pros.filter(p=>p.rol==='nutricionista').length;
+  let t;
+  if(nP && nN)       t = 'equipo multidisciplinario';
+  else if(nP === 1)  t = 'coach';
+  else if(nP > 1)    t = 'coaches';
+  else if(nN === 1)  t = 'nutricionista';
+  else if(nN > 1)    t = 'nutricionistas';
+  else               t = 'equipo multidisciplinario';
+  const plural = /es$|as$/.test(t) && t !== 'equipo multidisciplinario';
+  return (tu ? (plural?'Tus ':'Tu ') : (plural?'Mis ':'Mi ')) + t;
 }
 function usuario(id){ return S.usuarios.find(u=>u.id===id); }
 function sesion(){ return S.sesion ? usuario(S.sesion) : null; }
@@ -1309,7 +1383,7 @@ function logo(alto){ return svgLogo(LOGO_SIMBOLO, alto||30); }
 function logoCompleto(alto){ return svgLogo(LOGO_TODO, alto||120, '#FFFFFF', ' role="img" aria-label="JYNTRA"'); }
 function marca(tag){
   return '<div class="brandmark">'+logo(30)+'<div><div class="wm" aria-label="JYNTRA">'+svgLogo(LOGO_PALABRA, 15)+'</div>'
-    + (tag===false?'':'<span class="tag">'+(tag||'Technologies')+'</span>')+'</div></div>';
+    + (!tag?'':'<span class="tag">'+tag+'</span>')+'</div></div>';
 }
 
 /* ---------------------------------------------------------------
@@ -1324,9 +1398,9 @@ function vistaAcceso(){
   +    '<svg class="rings" viewBox="0 0 400 400" aria-hidden="true">'
   +      [0,1,2,3,4].map(i=>'<circle cx="200" cy="200" r="'+(60+i*38)+'" fill="none" stroke="#FFFFFF" stroke-opacity="'+(0.30-i*0.05)+'" stroke-width="1"/>').join('')
   +      '<circle cx="200" cy="200" r="6" fill="#FFFFFF"/></svg>'
-  +    '<div>'+marca('Technologies')+'</div>'
+  +    '<div>'+marca(false)+'</div>'
   +    '<div>'
-  +      '<div class="eyebrow" style="margin-bottom:14px">Plataforma de entrenamiento y nutrición</div>'
+  +      '<div class="eyebrow" style="margin-bottom:14px">Tu progreso conectado</div>'
   +      '<h1 class="gate-claim">El número<em>manda</em><span style="color:var(--mute);display:block;font-size:.42em;letter-spacing:.02em;margin-top:14px;font-family:var(--f-body);font-weight:400;text-transform:none;line-height:1.45;max-width:44ch">Evaluación, planificación y seguimiento en un solo lugar. El profesional trabaja con datos; el alumno ve exactamente lo que necesita ver.</span></h1>'
   +    '</div>'
   +    '<div class="gate-pillars">'
@@ -1421,7 +1495,7 @@ const MENU = {
     {k:'mi-plan',       n:'Mi entrenamiento',    i:'≡', pilar:6},
     {k:'mi-nutricion',  n:'Mi pauta',            i:'◕', pilar:6},
     {k:'mi-seguimiento',n:'Registro diario',     i:'▲', pilar:7},
-    {g:'Conexiones'},
+    {g:'Mi equipo'},
     {k:'buscar',        n:'Buscar profesional',  i:'⌕', pilar:3},
     {k:'conexiones',    n:'Mis conexiones',      i:'⇄', pilar:4},
     {k:'mis-clases',    n:'Mis clases',          i:'▦', pilar:3},
@@ -1490,6 +1564,24 @@ window.addEventListener('hashchange', ()=>{ pintar(); window.scrollTo(0,0); });
 /* ---------------------------------------------------------------
    §13 · ARMAZÓN
    --------------------------------------------------------------- */
+/* toda tabla ancha se desplaza dentro de su caja (en celular no empuja la pantalla) */
+(function(){
+  function envolver(raiz){
+    (raiz.querySelectorAll ? raiz.querySelectorAll('table.tbl') : []).forEach(function(t){
+      var pa = t.parentElement;
+      if(!pa || pa.classList.contains('tbl-scroll')) return;
+      var w = document.createElement('div'); w.className = 'tbl-scroll';
+      pa.insertBefore(w, t); w.appendChild(t);
+    });
+  }
+  function iniciar(){
+    envolver(document);
+    new MutationObserver(function(ms){
+      ms.forEach(function(m){ m.addedNodes.forEach(function(n){ if(n.nodeType === 1){ if(n.matches && n.matches('table.tbl')) envolver(n.parentElement||document); else envolver(n); } }); });
+    }).observe(document.body, {childList:true, subtree:true});
+  }
+  if(document.body) iniciar(); else document.addEventListener('DOMContentLoaded', iniciar);
+})();
 function pintar(){
   const u = sesion();
   const app = $('#app');
@@ -1498,7 +1590,7 @@ function pintar(){
   else  document.body.removeAttribute('data-rol');
   if(!u){ app.innerHTML = vistaAcceso(); ligarAcceso(); return; }
   const {k, arg} = rutaActual();
-  const menu = MENU[u.rol] || MENU.alumno;
+  const menu = (MENU[u.rol] || MENU.alumno).map(m=> (u.rol==='alumno' && m.k==='conexiones') ? Object.assign({}, m, {n:nombreEquipo(u)}) : m);
   const item = menu.find(m=> m.k===k);
   const titulo = item ? item.n : 'Inicio';
 
@@ -1514,9 +1606,10 @@ function pintar(){
   +    '<nav class="nav">'+ menu.map(m=> m.g
         ? '<div class="nav-group">'+esc(m.g)+'</div>'
         : '<a href="#/'+m.k+'" class="'+(m.k===k?'on':'')+'"><span class="ic">'+m.i+'</span>'+esc(m.n)
-          + (m.pilar?'<span class="pill">'+m.pilar+'</span>':'')+'</a>').join('') +'</nav>'
+          + (m.pilar && u.rol==='administrador'?'<span class="pill">'+m.pilar+'</span>':'')+'</a>').join('') +'</nav>'
   +    '<div class="rail-foot">'
   +      '<span class="mono" style="font-size:9.5px;color:var(--mute2)">v'+JYNTRA.version+(disco?'':' · sin disco')+'</span>'
+  +      '<button class="btn sm ghost rail-priv" type="button" onclick="try{JY21.panelPrivacidad()}catch(e){}">Privacidad</button>'
   +      '<button class="btn sm ghost" id="b-salir">Salir</button>'
   +    '</div>'
   +  '</aside>'
@@ -1558,6 +1651,9 @@ function ranura(ranuraId, opciones){
   const u    = sesion();
   const bloqueado = info.permiso && !puede(info.permiso, u);
   const id = 'slot_'+ranuraId.replace(/\./g,'_');
+  /* identificadores, pilares y contratos de montaje son cosas de desarrollo:
+     sólo los ve el administrador (perfil desarrollador) */
+  const esDev = !!(u && u.rol === 'administrador');
 
   let cuerpo;
   if(bloqueado){
@@ -1567,6 +1663,8 @@ function ranura(ranuraId, opciones){
       + '<div style="margin-top:10px"><a class="btn sm gold" href="#/plan">Ver planes</a></div></div></div></div>';
   } else if(mod){
     cuerpo = '<div class="slot-body" id="'+id+'" data-montaje="'+esc(ranuraId)+'"></div>';
+  } else if(!esDev){
+    return '';   /* hueco sin herramienta: sólo lo ve el perfil desarrollador */
   } else {
     cuerpo = '<div class="slot-empty">'
       + '<div class="tt">'+esc(info.nombre)+'</div>'
@@ -1577,6 +1675,11 @@ function ranura(ranuraId, opciones){
       +   '<div class="cr"><span class="k">Entrega</span><span><code>'+esc(info.entrega||'—')+'</code></span></div>'
       +   '<div class="cr"><span class="k">Montar</span><span><code>JYNTRA.registrar({ranura:\''+esc(ranuraId)+'\', montar(caja,ctx){…}})</code></span></div>'
       + '</div></div>';
+  }
+  if(!esDev){
+    return '<section class="slot limpio '+(mod&&!bloqueado?'mounted':'')+'">'
+     + (opciones.extra ? '<div class="slot-bar"><div class="grow"></div>'+opciones.extra+'</div>' : '')
+     + cuerpo+'</section>';
   }
   return '<section class="slot '+(mod&&!bloqueado?'mounted':'')+'">'
    + '<div class="slot-bar">'
@@ -1680,12 +1783,12 @@ VISTAS['alumno:inicio'] = (v,u)=>{
   const hoyMet = S.metricas.filter(m=>m.alumnoId===u.id && m.fecha===hoy());
   const ev = Datos.paraAlumno(u.id,'evaluacion')[0];
   const pl = Datos.paraAlumno(u.id,'planificacion')[0];
-  v.innerHTML = cab('Hola, '+u.nombre.split(' ')[0], 'Todo lo que tu equipo publicó para ti, en un solo lugar.')
+  v.innerHTML = cab('Hola, '+String(u.nombre||'').split('@')[0].split(' ')[0], 'Todo lo que tu equipo publicó para ti, en un solo lugar.')
   + '<div class="grid g4" style="margin-bottom:20px">'
-  +  kpi('Profesionales', pros.length, pros.map(p=>p.nombre.split(' ')[0]).join(' · ')||'Aún ninguno')
+  +  kpi(nombreEquipo(u,true), pros.length, pros.map(p=>p.nombre.split(' ')[0]).join(' · ')||'Aún ninguno')
   +  kpi('Registros de hoy', hoyMet.length, hoyMet.length? 'Ya anotaste':'Te falta anotar el día')
   +  kpi('Última evaluación', ev? fecha(ev.creado):'—', ev? 'Publicada por tu profesional':'Sin evaluaciones')
-  +  kpi('Plan vigente', pl? 'Sí':'—', pl? fecha(pl.creado):'Tu profesor aún no publica')
+  +  kpi('Plan vigente', pl? 'Sí':'—', pl? fecha(pl.creado):'Tu coach aún no publica')
   + '</div>'
   + (pend.length? '<div class="card" style="margin-bottom:16px;border-color:var(--jy-borde)"><div class="row">'
       + '<span class="chip gold">Solicitud enviada</span><div class="grow" style="flex:1">Esperas respuesta de '
@@ -1695,7 +1798,7 @@ VISTAS['alumno:inicio'] = (v,u)=>{
   +  '<div class="card"><div class="card-head"><div class="h2">Tu peso</div><div class="grow"></div>'
   +    '<a class="btn sm" href="#/mi-seguimiento">Anotar hoy</a></div>'
   +    grafico(peso.map(p=>({valor:p.valor,fecha:p.fecha})), {id:'p1',titulo:'Peso · 30 días',unidad:'kg'})+'</div>'
-  +  '<div class="card"><div class="card-head"><div class="h2">Tu equipo</div></div>'
+  +  '<div class="card"><div class="card-head"><div class="h2">'+esc(nombreEquipo(u,true))+'</div></div>'
   +   (pros.length? pros.map(p=>fichaMini(p)).join('')
        : '<div class="empty"><div class="h3">Todavía no tienes a nadie</div><div>Busca un profesional y envíale una solicitud.</div>'
          +'<div style="margin-top:12px"><a class="btn gold" href="#/buscar">Buscar profesional</a></div></div>')+'</div>'
@@ -1731,7 +1834,7 @@ VISTAS['alumno:mi-evaluacion'] = (v,u)=>{
 };
 VISTAS['alumno:mi-plan'] = (v,u)=>{
   const regs = Datos.paraAlumno(u.id,'planificacion');
-  v.innerHTML = cab('Mi entrenamiento','La rutina que te desplegó tu profesor.')
+  v.innerHTML = cab('Mi entrenamiento','La rutina que te preparó tu coach.')
   + historialCorto(regs) + ranura('alumno.planificacion');
   montarRanuras(u);
 };
@@ -1859,14 +1962,14 @@ async function solicitarVinculo(u, proId){
 
 VISTAS['alumno:conexiones'] = (v,u)=>{
   const mios = S.vinculos.filter(x=>x.alumnoId===u.id);
-  v.innerHTML = cab('Mis conexiones','El vínculo es el puente: sin él, nadie ve tus datos.')
+  v.innerHTML = cab(nombreEquipo(u),'Las personas que te acompañan. El vínculo es el puente: sin él, nadie ve tus datos.')
   + '<div class="card pad0">'+(mios.length? '<table class="tbl"><thead><tr><th>Profesional</th><th>Servicio</th><th>Plan</th><th>Desde</th><th>Estado</th><th class="right">Acción</th></tr></thead><tbody>'
   + mios.map(x=>{ const p=usuario(x.profesionalId)||{nombre:'—',rol:'profesor'};
       return '<tr><td><div class="row" style="gap:8px"><div class="avatar" style="width:26px;height:26px;font-size:11px;background:'+ROLES[p.rol].color+'">'+esc(iniciales(p.nombre))+'</div>'+esc(p.nombre)+'</div></td>'
       + '<td>'+esc(x.servicio)+'</td><td>'+esc(x.plan||'—')+'</td><td class="mono" style="font-size:12px">'+fecha(x.desde)+'</td>'
       + '<td><span class="chip '+(x.estado==='activo'?'ok':x.estado==='pendiente'?'warn':'bad')+'"><span class="dot"></span>'+esc(x.estado)+'</span></td>'
       + '<td class="right"><button class="btn sm danger" data-cortar="'+x.id+'">Cortar</button></td></tr>'; }).join('')
-  + '</tbody></table>' : '<div class="empty" style="border:0"><div class="h3">Sin conexiones</div><div>Busca un profesional para empezar.</div></div>')+'</div>';
+  + '</tbody></table>' : '<div class="empty" style="border:0"><div class="h3">Aún no tienes a nadie en tu equipo</div><div>Busca un coach o nutricionista para empezar.</div></div>')+'</div>';
   $$('[data-cortar]').forEach(b=> b.onclick = async ()=>{
     if(!await preguntar('Cortar el vínculo','<p class="sub" style="margin:0">Deja de compartir tus datos con esta persona. Lo ya publicado queda en tu historial, pero no verá nada nuevo.</p>',{ok:'Cortar',peligro:true})) return;
     const x = S.vinculos.find(y=>y.id===b.dataset.cortar); x.estado='cortado'; guardar('vinculos');
@@ -1980,7 +2083,10 @@ function listaAlumnos(v,u,arg){
   $('#b-invitar').onclick = async ()=>{
     const r = await preguntar('Invitar',
       '<form class="stack"><div class="field"><label>Correo de la persona</label><input class="inp" name="email" type="email" required placeholder="alumno@correo.com"></div>'
-      +'<div class="field"><label>Plan que le asignas</label><input class="inp" name="plan" value="8 sesiones / mes"></div>'
+      +'<div class="field"><label>Plan que le asignas</label><input class="inp" name="plan" value="'+Math.min(8,(window.JY20?JY20.topeSesiones(u):4))+' sesiones / mes"></div>'
+      +'<div class="field"><label>Cantidad de sesiones</label><select class="inp jy-sesiones" name="sesiones">'
+      +  (window.JY20 ? JY20.opcionesSesiones(u) : [1,2,3,4]).map(n=>'<option value="'+n+'"'+(n===Math.min(8,(window.JY20?JY20.topeSesiones(u):4))?' selected':'')+'>'+n+'</option>').join('')
+      +'</select><span class="hint">'+esc(window.JY20 ? JY20.avisoTopeSesiones(u) : '')+'</span></div>'
       +'<p class="hint" style="margin:0">La persona verá tu invitación al entrar a JYNTRA con ese correo y decide si la acepta. Hasta entonces no ves ninguno de sus datos.</p></form>',{ok:'Enviar invitación'});
     if(!r) return;
     const email = String(r.email||'').trim().toLowerCase();
@@ -1992,7 +2098,9 @@ function listaAlumnos(v,u,arg){
     const id = u.id + '_' + email;
     S.invitaciones = S.invitaciones.filter(x=> x.id !== id);
     S.invitaciones.push({ id, profesionalId:u.id, profesionalNombre:u.nombre, rolProfesional:u.rol, email,
-      servicio: u.rol==='profesor'?'Entrenamiento':'Nutrición', plan:r.plan, creado:new Date().toISOString() });
+      servicio: u.rol==='profesor'?'Entrenamiento':'Nutrición', plan:r.plan,
+      sesiones: window.JY20 ? JY20.sesionesValidas(u, r.sesiones, 4) : Math.min(4, +r.sesiones||4),
+      creado:new Date().toISOString() });
     guardar('invitaciones');
     toast('Invitación enviada. Cuando '+email+' entre a JYNTRA con ese correo, la verá y podrá aceptarla.','ok'); pintar();
   };
@@ -2114,7 +2222,7 @@ function grillaSemanal(proId){
      + '<div class="jy-day-h"><b>'+diasES[d]+'</b><span>'+(del.length||'')+'</span></div>'
      + (del.length ? del.map(x=>{
           const a = x.alumnoId ? usuario(x.alumnoId) : null;
-          return '<div class="jy-slot'+(a?' asignado':'')+'">'
+          return '<div class="jy-slot'+(a?' asignado':'')+'"'+(a?' title="'+esc(a.nombre)+'"':'')+'>'
            + '<div class="hh">'+esc(x.hora||'--:--')+(x.horaFin? ' – '+esc(x.horaFin):'')+'</div>'
            + '<div class="nn">'+esc(a ? a.nombre : ((x.cupos>1? x.cupos+' cupos' : 'Cupo')+' libre'))+'</div>'
            + '<div class="ss">'+esc(x.servicio||'—')+(x.lugar? ' · '+esc(x.lugar):'')
@@ -3003,7 +3111,7 @@ function montarArchivo(caja, ctx, opciones){
             tocadoPor  : yo3.id
           }));
           caja.__jyRutinaId = reg && reg.id;
-          toast('Guardado. Tu profesor verá tus notas.','ok');
+          toast('Guardado. Tu coach verá tus notas.','ok');
         } else {
           reg = guardarDesdeArchivo({
             modulo:'planificacion', tipo:'Mi planificación',
@@ -3277,7 +3385,7 @@ function rutinaPublicada(alumnoId){
   });
   d = Object.assign({}, d, {sesiones: sesiones});
   return {
-    nombre         : d.nombre || pubs[0].tipo || 'Rutina de tu profesor',
+    nombre         : d.nombre || pubs[0].tipo || 'Rutina de tu coach',
     sesiones       : d.sesiones,
     totalSesiones  : d.totalSesiones  || d.sesiones.length,
     totalEjercicios: d.totalEjercicios
@@ -3505,6 +3613,26 @@ jyAbrirCanal();   /* §3b · escucha al otro perfil */
 
 /* ---------- 20.0 · utilidades propias ---------- */
 var SESIONES_OPC = [1,2,4,8,12,16];
+/* sesiones por alumno según el plan del profesional:
+   Base y Pro, hasta 4; Elite, las que quiera (y puede agregar más después) */
+var TOPE_SESIONES_PLAN = 4;
+var SESIONES_ELITE = [1,2,4,8,12,16,20,24,30];
+function planPro(pro){ return (pro && pro.plan) || 'base'; }
+function sinTopeSesiones(pro){ return planPro(pro) === 'elite'; }
+function topeSesiones(pro){ return sinTopeSesiones(pro) ? Infinity : TOPE_SESIONES_PLAN; }
+function opcionesSesiones(pro){ return sinTopeSesiones(pro) ? SESIONES_ELITE : [1,2,3,4]; }
+function sesionesValidas(pro, n, porDefecto){
+  n = Math.round(+n || 0);
+  var t = topeSesiones(pro);
+  if(n < 1) n = porDefecto || 1;
+  return Math.min(n, t);
+}
+function avisoTopeSesiones(pro){
+  return sinTopeSesiones(pro)
+    ? 'Con el plan Elite no hay límite: además puedes agregar sesiones después, desde su horario.'
+    : 'Tu plan ' + ((PLANES[planPro(pro)]||{}).nombre || 'Base') + ' permite hasta ' + TOPE_SESIONES_PLAN
+      + ' sesiones por alumno. Con el plan Elite puedes asignar y agregar más.';
+}
 var DIAS_ORD     = [1,2,3,4,5,6,0];
 var LIBRES_MAX   = 4;                 /* bloques propios del alumno sin conexión */
 var COLOR_ROL    = { profesor:'#D9A21E', nutricionista:'#2DB36A' };
@@ -3757,9 +3885,11 @@ var jyEditorPlan = async function(u, planId){
   var planes = u.planesServicio || (u.planesServicio = []);
   var ex = planId ? planes.filter(function(p){ return p.id === planId; })[0] : null;
   var salto = String.fromCharCode(10);
-  var opciones = SESIONES_OPC.map(function(n){
-    var sel = ex && +ex.sesiones === n ? ' selected' : (!ex && n === 8 ? ' selected' : '');
-    return '<option value="' + n + '"' + sel + '>' + n + '</option>';
+  var opcS = opcionesSesiones(u);
+  var actual = ex ? sesionesValidas(u, ex.sesiones, 4) : Math.min(8, topeSesiones(u));
+  if(opcS.indexOf(actual) < 0) actual = opcS.filter(function(n){ return n <= actual; }).pop() || opcS[0];
+  var opciones = opcS.map(function(n){
+    return '<option value="' + n + '"' + (n === actual ? ' selected' : '') + '>' + n + '</option>';
   }).join('');
 
   var r = await preguntar(ex ? 'Editar plan de servicio' : 'Nuevo plan de servicio',
@@ -3773,7 +3903,7 @@ var jyEditorPlan = async function(u, planId){
     + '<div class="grid g2">'
     +   '<div class="field"><label>Cantidad de sesiones *</label>'
     +     '<select class="inp jy-sesiones" name="sesiones">' + opciones + '</select>'
-    +     '<span class="hint">Define cuántos bloques de clase se cargan en el horario del alumno al conectar.</span></div>'
+    +     '<span class="hint">Define cuántos bloques de clase se cargan en el horario del alumno al conectar. ' + esc(avisoTopeSesiones(u)) + '</span></div>'
     +   '<div class="field"><label>Fecha del plan</label>'
     +     '<input class="inp" name="fechaPlan" type="date" value="' + esc(ex?(ex.fechaPlan||hoy()):hoy()) + '">'
     +     '<span class="hint">Queda registrada al crear el plan; puedes corregirla.</span></div>'
@@ -3793,7 +3923,7 @@ var jyEditorPlan = async function(u, planId){
     subtitulo: (r.subtitulo||'').trim(),
     precio: +r.precio || 0,
     periodo: (r.periodo||'').trim() || 'mes',
-    sesiones: SESIONES_OPC.indexOf(+r.sesiones) >= 0 ? +r.sesiones : 8,
+    sesiones: sesionesValidas(u, r.sesiones, Math.min(8, topeSesiones(u))),
     fechaPlan: r.fechaPlan || hoy(),
     caracteristicas: String(r.caracteristicas||'').split('\n').map(function(s){ return s.trim(); }).filter(Boolean),
     badge: (r.badge||'').trim(),
@@ -3849,8 +3979,10 @@ var jyResponderVinculo = async function(id, si, u){
   var plan = x.planServicioId
     ? (u.planesServicio||[]).filter(function(p){ return p.id === x.planServicioId; })[0]
     : null;
-  var ses = plan ? (+plan.sesiones||8) : 8;
-  var opciones = SESIONES_OPC.map(function(n){
+  var ses = sesionesValidas(u, plan ? (+plan.sesiones||8) : 8, 4);
+  var opcS = opcionesSesiones(u);
+  if(opcS.indexOf(ses) < 0) ses = opcS.filter(function(n){ return n <= ses; }).pop() || opcS[0];
+  var opciones = opcS.map(function(n){
     return '<option value="' + n + '"' + (n === ses ? ' selected' : '') + '>' + n + '</option>';
   }).join('');
 
@@ -3862,14 +3994,14 @@ var jyResponderVinculo = async function(id, si, u){
     +   '<div class="field"><label>Fecha de la conexión</label><input class="inp" name="fechaPlan" type="date" value="' + esc((plan && plan.fechaPlan) || hoy()) + '"></div>'
     + '</div>'
     + '<div class="field"><label>Servicio</label><input class="inp" name="servicio" value="' + esc(x.servicio||'') + '"></div>'
-    + '<p class="hint" style="margin:0">Se cargarán tantos bloques de clase en el horario de esta persona como sesiones tenga el plan.</p>'
+    + '<p class="hint" style="margin:0">Se cargarán tantos bloques de clase en el horario de esta persona como sesiones tenga el plan. ' + esc(avisoTopeSesiones(u)) + '</p>'
     + '</form>', {ok:'Aceptar y vincular'});
   if(!r) return;
 
   x.estado = 'activo';
   x.plan = r.plan;
   x.servicio = r.servicio;
-  x.sesionesPlan = SESIONES_OPC.indexOf(+r.sesiones) >= 0 ? +r.sesiones : ses;
+  x.sesionesPlan = sesionesValidas(u, r.sesiones, ses);
   x.fechaPlan = r.fechaPlan || hoy();
   x.desde = new Date().toISOString();
   guardar('vinculos');
@@ -4161,14 +4293,15 @@ var jy_grillaCombinada = function(proId, filtroAlumno, semana){
      + (del.length
         ? del.map(function(x){
             var col = COLOR_ROL[x.b.rolPro] || '';
-            return '<div class="jy-slot asignado"' + (col ? ' style="border-left:3px solid ' + col + '"' : '') + '>'
+            return '<div class="jy-slot asignado" title="' + esc(x.alumno.nombre) + '"' + (col ? ' style="border-left-color:' + col + '"' : '') + '>'
              + '<div class="hh">' + esc(x.b.ini||'--:--') + (x.b.fin ? ' – ' + esc(x.b.fin) : '')
              + (x.b.fecha ? ' · ' + esc(fechaCorta(x.b.fecha)) : '') + '</div>'
              + '<div class="nn">' + esc(x.alumno.nombre) + '</div>'
              + '<div class="ss">' + esc(x.b.actividad||'Sesión') + (x.b.lugar ? ' · ' + esc(x.b.lugar) : '')
              + (x.b.nota ? '<br>' + esc(x.b.nota) : '')
-             + (x.b.publicado ? '' : '<br><span style="opacity:.7">sin publicar</span>')
-             + '</div></div>';
+             + '</div>'
+             + (x.b.publicado ? '<span class="pub si">publicado</span>' : '<span class="pub">sin publicar</span>')
+             + '</div>';
           }).join('')
         : '<div class="jy-vacio">libre</div>')
      + '</div>';
@@ -4185,6 +4318,7 @@ var jy_clasesDeLaSemana = function(proId){
 
 var jy_tablaHorarioAlumno = function(u, sel){
   var persona = usr(sel) || {nombre:'—'};
+  var vPlan = (S.vinculos||[]).filter(function(v){ return v.alumnoId === sel && v.profesionalId === u.id && v.estado === 'activo'; })[0] || null;
   var lista = hDe(sel).filter(function(b){ return !b.profesionalId || b.profesionalId === u.id; })
     .sort(function(a,b){
       if(a.fecha && b.fecha && a.fecha !== b.fecha) return a.fecha.localeCompare(b.fecha);
@@ -4199,9 +4333,11 @@ var jy_tablaHorarioAlumno = function(u, sel){
    + '<div class="row" style="margin-bottom:10px">'
    +   '<span class="eyebrow">Bloques de ' + esc(persona.nombre) + '</span>'
    +   '<div style="flex:1"></div>'
+   +   (vPlan && sinTopeSesiones(u) ? '<button class="btn sm" id="h-mas">+ Agregar sesión</button>' : '')
    +   '<button class="btn sm gold" id="h-guardar">Guardar horario</button>'
    +   '<span class="hint" id="h-estado" style="margin:0"></span>'
    + '</div>'
+   + (vPlan ? '<p class="hint" style="margin:0 0 8px"><b>' + (+vPlan.sesionesPlan||0) + ' sesiones</b> en su plan. ' + esc(avisoTopeSesiones(u)) + '</p>' : '')
    + '<p class="hint" style="margin:0 0 12px">Elige la <b>fecha</b> de cada bloque: el día se calcula solo. '
    + 'Al guardar, las fechas se cargan en <b>Mi calendario</b> y esta persona las ve en «Mis clases».</p>'
    + '<div class="tbl-scroll"><table class="tbl" id="t-horario"><thead><tr>'
@@ -4285,6 +4421,17 @@ var jy_ligarHorarioAlumno = function(u, raiz){
 
   var sel = JY_SEL_ALUMNO;
   if(!sel || sel === '__todos__') return;
+  var mas = q('#h-mas', r);
+  if(mas) mas.onclick = function(){
+    if(!sinTopeSesiones(u)) return toast(avisoTopeSesiones(u), 'warn');
+    var vx = (S.vinculos||[]).filter(function(v){ return v.alumnoId === sel && v.profesionalId === u.id && v.estado === 'activo'; })[0];
+    if(!vx) return toast('Necesitas un vínculo activo con esta persona.', 'warn');
+    vx.sesionesPlan = (+vx.sesionesPlan || 0) + 1;
+    guardar('vinculos');
+    sembrarBloques(vx);
+    toast('Sesión agregada: ahora son ' + vx.sesionesPlan + ' en su plan.', 'ok');
+    pintar();
+  };
 
   var lista = hDe(sel);
   var tabla = q('#t-horario', r);
@@ -4581,6 +4728,8 @@ try{
     S: S, VISTAS: VISTAS,
     horarioDe: hDe, horarioPorDefecto: horarioPorDefectoJY,
     sembrarBloques: sembrarBloques, contadorPlan: contadorPlan,
+    topeSesiones: topeSesiones, opcionesSesiones: opcionesSesiones, sesionesValidas: sesionesValidas,
+    avisoTopeSesiones: avisoTopeSesiones,
     informacionDelPlan: informacionDelPlan, pedirQuema: pedirQuema,
     calendarioHTML: calendarioHTML, botonQuemar: botonQuemar,
     guardar: guardar, hoy: hoy, usuario: usr, esc: esc, uid: uid,
@@ -4612,7 +4761,7 @@ try{ if(typeof pintar === 'function') pintar(); }catch(e){}
 if(window.JY21) return;
 
 /* ---------- 21.0 · el documento ---------- */
-var POL = {"version": "1.0", "fecha": "8 de septiembre de 2026", "html": "<div class=\"jy21-doc\"><h2>Política de Privacidad y Tratamiento de Datos Personales</h2><p class=\"jy21-sub\">JYNTRA · Plataforma de entrenamiento y nutrición · Ley N° 21.719 (Chile)</p><p class=\"jy21-sub\">Versión 1.0 · 8 de septiembre de 2026 · Vigencia plena de la ley: 1 de diciembre de 2026</p><h3>1. Quién es responsable de tus datos</h3><p>El responsable del tratamiento de los datos personales que se registran en JYNTRA es <b>[RAZÓN SOCIAL], RUT [RUT]</b>, con domicilio en <b>[DOMICILIO]</b>, comuna de <b>[COMUNA]</b>, Región Metropolitana, Chile (en adelante, «JYNTRA», «la plataforma» o «nosotros»).</p><ul><li>Correo de contacto para materias de privacidad: <b>[privacidad@tu-dominio.cl]</b></li><li>Delegado de Protección de Datos (DPO): <b>[NOMBRE DEL DPO]</b> — <b>[dpo@tu-dominio.cl]</b></li><li>Plazo de respuesta comprometido: 30 días corridos desde la recepción de la solicitud.</li></ul><div class=\"jy21-nota\">Los campos entre corchetes deben completarse con los datos reales del titular del servicio antes de publicar esta política. Sin esa identificación, la política no cumple el deber de información del artículo 14.</div><h3>2. Qué ley se aplica</h3><p>Esta política se rige por la <b>Ley N° 21.719</b>, que regula la protección y el tratamiento de los datos personales y crea la Agencia de Protección de Datos Personales (APDP), publicada en el Diario Oficial el 13 de diciembre de 2024 y con vigencia plena a partir del 1 de diciembre de 2026. Dicha ley moderniza y reemplaza el marco de la Ley N° 19.628 y eleva el estándar chileno al nivel del Reglamento General de Protección de Datos europeo.</p><p>Cuando el tratamiento involucre datos de salud, se consideran además las normas sanitarias aplicables y las obligaciones de secreto profesional que pesan sobre profesores de educación física, preparadores físicos y nutricionistas que utilizan la plataforma.</p><h3>3. A quién aplica esta política</h3><p>Aplica a toda persona que cree una cuenta o cuyos datos se registren en cualquiera de los cuatro perfiles de la plataforma: <b>Alumno</b>, <b>Profesor</b>, <b>Nutricionista</b> y <b>Administrador</b>.</p><p>El alumno es titular de sus propios datos. El profesor y el nutricionista actúan como profesionales tratantes respecto de los alumnos con quienes tienen una conexión activa y aceptada, y quedan sujetos a las mismas obligaciones de confidencialidad, finalidad y seguridad que se describen aquí.</p><h3>4. Qué datos tratamos</h3><p>El inventario siguiente corresponde exactamente a los campos que la aplicación puede registrar. No pedimos datos «por si acaso»: cada categoría existe porque un módulo concreto la necesita (principio de proporcionalidad o minimización).</p><div class=\"jy21-tw\"><table><thead><tr><th>Categoría</th><th>Datos concretos que la plataforma registra</th><th>¿Sensible?</th></tr></thead><tbody><tr><td>A. Identificación y contacto</td><td>Nombre y apellido; correo electrónico; contraseña de acceso; teléfono; fecha de nacimiento; sexo; ciudad y comuna.</td><td>No</td></tr><tr><td>B. Perfil profesional (profesor / nutricionista)</td><td>Título profesional; especialidades; biografía; modalidad de atención; tarifa; planes de servicio y sus precios; visibilidad de la ficha pública en el buscador.</td><td>No</td></tr><tr><td>C. Composición corporal y antropometría</td><td>Talla; peso; perímetros (cintura, cadera, brazo, muslo); pliegues cutáneos; diámetros óseos (biacromial, biiliocrestal, húmero, fémur); talla sentada y envergadura; somatotipo ISAK; porcentaje graso; masa muscular esquelética; grasa visceral; edad metabólica; metabolismo basal y gasto energético estimado (bioimpedancia).</td><td>SÍ — dato de salud</td></tr><tr><td>D. Antecedentes de salud (anamnesis)</td><td>Patologías declaradas; medicamentos; cirugías previas; alergias e intolerancias alimentarias; síntomas y tolerancia digestiva; historial de lesiones y molestias musculoesqueléticas; lesión activa y zona afectada; ciclo menstrual y método anticonceptivo; horas y calidad de sueño; nivel de estrés; estado de ánimo; consumo de alcohol y tabaco; suplementos; patrón alimentario; número de comidas; hidratación; objetivo de salud.</td><td>SÍ — dato de salud</td></tr><tr><td>E. Entrenamiento y rendimiento</td><td>Cargas y repeticiones máximas (1RM); percepción de esfuerzo (RPE); asistencia y clases realizadas; calendario y horario semanal; sesiones del plan; mesociclos y planificación; adherencia.</td><td>Parcialmente — vinculado a salud</td></tr><tr><td>F. Relación comercial y situación socioeconómica</td><td>Plan contratado (Base, Pro, Elite); estado y fecha de renovación de la suscripción; boletas o facturas; montos y tarifas acordadas entre alumno y profesional.</td><td>SÍ — situación socioeconómica</td></tr><tr><td>G. Vínculos entre perfiles</td><td>Solicitudes de conexión y su estado; mensaje de presentación; profesional asignado por especialidad; notas y observaciones que el profesional escribe sobre el alumno.</td><td>Según contenido</td></tr><tr><td>H. Registros técnicos y de uso</td><td>Identificadores internos de usuario; fecha de creación de la cuenta; bitácora de accesos, altas y cambios; marca temporal de sincronización entre perfiles.</td><td>No</td></tr></tbody></table></div><p><b>Qué NO pedimos.</b> La plataforma no solicita ni almacena RUT, cédula de identidad, datos biométricos (huella dactilar, reconocimiento facial, iris o voz), geolocalización, origen étnico, afiliación política, sindical o religiosa, orientación sexual, ni datos de tarjetas de crédito o cuentas bancarias. Si en el futuro algún módulo requiere alguno de estos datos, esta política se actualizará y se solicitará un consentimiento nuevo y específico antes de recogerlos.</p><h3>5. Para qué usamos los datos y con qué base legal</h3><p>Ningún dato se usa para una finalidad distinta de aquella para la que fue recogido. La tabla siguiente es el registro resumido de actividades de tratamiento.</p><div class=\"jy21-tw\"><table><thead><tr><th>Finalidad</th><th>Datos usados</th><th>Base de licitud</th></tr></thead><tbody><tr><td>Crear y mantener la cuenta, autenticar el acceso y dirigir a la persona a su perfil.</td><td>A, H</td><td>Ejecución del servicio solicitado por el titular.</td></tr><tr><td>Permitir que el alumno registre su entrenamiento, su pauta y su seguimiento diario.</td><td>C, D, E</td><td>Consentimiento explícito para datos de salud.</td></tr><tr><td>Permitir que el profesor evalúe, planifique y haga seguimiento del alumno conectado.</td><td>C, D, E, G</td><td>Consentimiento explícito del alumno + ejecución del servicio profesional.</td></tr><tr><td>Permitir que el nutricionista realice anamnesis, antropometría, plan alimentario y control.</td><td>C, D, G</td><td>Consentimiento explícito del alumno + ejecución del servicio profesional.</td></tr><tr><td>Mostrar la ficha pública del profesional en el buscador interno.</td><td>B</td><td>Consentimiento del profesional, revocable en cualquier momento.</td></tr><tr><td>Gestionar agenda, horario semanal, reserva y registro de clases.</td><td>E, G</td><td>Ejecución del servicio.</td></tr><tr><td>Cobrar la suscripción a la plataforma y emitir documentos tributarios.</td><td>A, F</td><td>Ejecución del contrato y obligación legal tributaria.</td></tr><tr><td>Mantener la trazabilidad de accesos y cambios (evidencia de cumplimiento).</td><td>H</td><td>Interés legítimo en la seguridad de la información y deber de responsabilidad proactiva.</td></tr><tr><td>Enviar avisos operativos de la cuenta (cambios de plan, conexiones, recordatorios).</td><td>A</td><td>Ejecución del servicio.</td></tr><tr><td>Enviar comunicaciones comerciales o novedades del producto.</td><td>A</td><td>Consentimiento separado y opcional. Rechazarlo no limita el uso de la plataforma.</td></tr></tbody></table></div><h3>6. Cómo pedimos y cómo revocas tu consentimiento</h3><p>El consentimiento en JYNTRA es <b>libre, específico, informado, previo e inequívoco</b>. Se otorga marcando casillas que siempre aparecen <b>desmarcadas</b>. No usamos casillas premarcadas, no lo escondemos dentro de términos y condiciones y no lo inferimos del uso de la aplicación.</p><ul><li>El consentimiento se pide al crear la cuenta, en un cuadro visible que incluye el enlace a esta política.</li><li>Es <b>granular</b>: aceptar la política no implica aceptar el tratamiento de datos de salud, ni el envío de publicidad, ni compartir tu ficha con un profesional. Cada uno se marca por separado.</li><li>Queda registrado con fecha, hora y número de versión de la política aceptada, como evidencia del cumplimiento.</li><li>Puedes <b>revocarlo en cualquier momento</b> desde «Mi perfil» o escribiendo al correo de privacidad, con la misma facilidad con que lo otorgaste. La revocación no afecta la licitud del tratamiento anterior.</li><li>Si revocas el consentimiento para datos de salud, los módulos de evaluación, anamnesis, antropometría y seguimiento dejan de operar y los registros asociados se bloquean o se suprimen según lo que solicites.</li></ul><h3>7. Datos sensibles: regla reforzada</h3><p>La Ley N° 21.719 califica como sensibles, entre otros, los datos de salud y perfil biológico, los datos biométricos y —particularidad chilena— la <b>situación socioeconómica</b>. Buena parte de lo que JYNTRA registra cae en esa categoría.</p><ul><li>Su tratamiento exige <b>consentimiento explícito y separado</b>, que se solicita en una casilla propia al crear la cuenta y se vuelve a solicitar antes de activar cualquier módulo clínico.</li><li>El acceso está restringido: un profesional sólo puede ver los datos de salud de los alumnos con quienes tiene una <b>conexión activa y aceptada por el alumno</b>. Al terminar la conexión, cesa el acceso.</li><li>El alumno mantiene, en todo momento, una conexión por especialidad como máximo, de modo que sus datos clínicos no circulan entre varios profesionales simultáneamente.</li><li>Los datos sensibles no se usan para publicidad, no se ceden a terceros y no se comercializan en ninguna circunstancia.</li><li>Por su nivel de riesgo, este tratamiento está sujeto a una Evaluación de Impacto en Protección de Datos, que se mantiene documentada y actualizada.</li></ul><h3>8. Niños, niñas y adolescentes</h3><p>El tratamiento de datos de personas menores de edad se rige por el interés superior del niño.</p><ul><li><b>Menores de 14 años:</b> no pueden crear una cuenta por sí mismos. Se requiere el consentimiento de su padre, madre o representante legal, quien debe identificarse en el formulario de registro.</li><li><b>Entre 14 y 15 años:</b> el tratamiento de datos sensibles —es decir, de todo el módulo de salud, composición corporal y anamnesis— requiere igualmente el consentimiento del representante legal.</li><li><b>Entre 16 y 17 años:</b> puede consentir por sí mismo, con información redactada en lenguaje claro y adecuado a su edad; se recomienda de todos modos el acompañamiento de un adulto responsable.</li><li>El formulario de registro calcula la edad a partir de la fecha de nacimiento y activa automáticamente los campos de representante legal cuando corresponde.</li></ul><h3>9. Con quién se comparten los datos</h3><p>Los datos <b>no se venden, no se arriendan y no se ceden</b> con fines comerciales. Se comunican únicamente en estos casos:</p><ul><li><b>Al profesional que tú elijes conectar.</b> Al aceptarse una conexión, el profesor o nutricionista accede a la ficha del alumno en lo estrictamente necesario para su especialidad. Esta comunicación se basa en tu consentimiento y termina cuando terminas la conexión.</li><li><b>Al alumno.</b> El plan, la pauta y los resultados que el profesional publica quedan visibles para el alumno.</li><li><b>A encargados de tratamiento</b> (proveedores de hosting, respaldo o soporte), sólo bajo contrato escrito que les prohíbe usar los datos para fines propios y les impone las mismas medidas de seguridad.</li><li><b>A autoridades competentes</b>, cuando exista una obligación legal o una orden judicial.</li></ul><p><b>Transferencias internacionales.</b> En su configuración por defecto, JYNTRA funciona en el dispositivo del usuario y no transfiere datos fuera de Chile. Si en el futuro se habilita un servidor en el extranjero, se informará previamente y sólo se usarán países o proveedores con nivel adecuado de protección o cláusulas contractuales que garanticen un estándar equivalente.</p><h3>10. Dónde se guardan y por cuánto tiempo</h3><p>La aplicación está construida como archivos HTML autónomos. En su modo estándar, los datos se guardan en el <b>almacenamiento local del navegador del propio usuario</b> (localStorage), bajo el prefijo «jyntra.», y se sincronizan entre los perfiles abiertos en el mismo dispositivo o dominio. Si el operador habilita un servidor central, los datos se replican en él bajo las mismas reglas de esta política.</p><div class=\"jy21-tw\"><table><thead><tr><th>Dato</th><th>Plazo de conservación</th></tr></thead><tbody><tr><td>Cuenta e identificación</td><td>Mientras la cuenta esté activa y hasta 12 meses después de su cierre.</td></tr><tr><td>Datos de salud, antropometría y anamnesis</td><td>Mientras dure la conexión con el profesional y hasta el plazo que exija la normativa sanitaria sobre ficha clínica; luego se suprimen o anonimizan.</td></tr><tr><td>Registros de entrenamiento y seguimiento</td><td>Mientras la cuenta esté activa; se suprimen al cerrar la cuenta si el titular lo solicita.</td></tr><tr><td>Documentos tributarios y de pago</td><td>6 años, por obligación legal.</td></tr><tr><td>Bitácora de accesos y cambios</td><td>24 meses, como evidencia de cumplimiento.</td></tr><tr><td>Registro de consentimientos</td><td>Mientras dure el tratamiento y 5 años después, como prueba del consentimiento.</td></tr></tbody></table></div><h3>11. Seguridad de la información</h3><ul><li>Acceso segmentado por rol: cada perfil sólo ve lo que su función requiere.</li><li>Acceso a datos clínicos condicionado a una conexión aceptada por el titular.</li><li>Bitácora de altas, accesos y modificaciones, con identificación de quién hizo cada cambio.</li><li>Los datos permanecen en el dispositivo del usuario en la configuración estándar, lo que reduce la superficie de exposición.</li><li>Si el operador habilita servidor central: cifrado en tránsito (HTTPS/TLS), cifrado en reposo, autenticación por token y respaldos periódicos.</li><li>Recomendación al usuario: no compartir la contraseña, usar el bloqueo de pantalla del dispositivo y cerrar sesión en equipos compartidos.</li></ul><div class=\"jy21-nota\">Ninguna medida de seguridad es infalible. Si detectas un acceso indebido a tu cuenta, avísanos de inmediato al correo de privacidad.</div><h3>12. Qué hacemos si hay una brecha de seguridad</h3><p>Si se produce una vulneración de seguridad que afecte datos personales —acceso no autorizado, pérdida, alteración o divulgación—, activamos el protocolo de incidentes:</p><ul><li>Notificamos a la Agencia de Protección de Datos Personales <b>sin dilación indebida</b>, en un plazo objetivo de 72 horas desde que tomamos conocimiento del hecho.</li><li>Cuando la brecha afecte datos sensibles, datos de menores de 14 años o datos económicos, notificamos también <b>directamente a las personas afectadas</b>, describiendo qué ocurrió, qué datos se vieron comprometidos, qué medidas tomamos y qué puede hacer la persona.</li><li>Registramos el incidente y las medidas correctivas adoptadas.</li></ul><h3>13. Tus derechos (ARCOP y bloqueo)</h3><p>Como titular de datos puedes ejercer, gratuitamente y sin expresar motivo, los siguientes derechos:</p><div class=\"jy21-tw\"><table><thead><tr><th>Derecho</th><th>Qué te permite hacer</th></tr></thead><tbody><tr><td>Acceso</td><td>Saber qué datos tenemos sobre ti, de dónde provienen, para qué se usan, a quién se han comunicado y por cuánto tiempo se conservarán.</td></tr><tr><td>Rectificación</td><td>Corregir datos inexactos, incompletos o desactualizados.</td></tr><tr><td>Cancelación o supresión</td><td>Pedir que se eliminen tus datos cuando ya no sean necesarios, cuando retires el consentimiento o cuando el tratamiento sea ilícito («derecho al olvido»).</td></tr><tr><td>Oposición</td><td>Oponerte a un tratamiento determinado, por ejemplo al perfilamiento comercial o al envío de comunicaciones.</td></tr><tr><td>Bloqueo</td><td>Pedir la suspensión temporal del tratamiento mientras se resuelve una controversia sobre tus datos.</td></tr><tr><td>Portabilidad</td><td>Recibir tus datos en un formato estructurado, de uso común y lectura mecánica, y pedir que se transfieran a otro responsable.</td></tr></tbody></table></div><p><b>Cómo ejercerlos:</b> escribe a <b>[privacidad@tu-dominio.cl]</b> indicando tu nombre, el correo con que te registraste y el derecho que quieres ejercer. Responderemos en un plazo máximo de <b>30 días corridos</b>, prorrogable por otros 30 en casos complejos, avisándote antes del vencimiento del primer plazo.</p><p>Adicionalmente, la aplicación ofrece dos atajos: desde «Mi perfil» puedes <b>descargar un respaldo completo de tus datos</b> (derecho de portabilidad) y <b>borrar tus datos del dispositivo</b> (derecho de supresión).</p><h3>14. Decisiones automatizadas y perfilamiento</h3><p>JYNTRA calcula automáticamente indicadores como el porcentaje graso, el somatotipo, el metabolismo basal, el gasto energético o los rangos de macronutrientes. Son <b>apoyos al criterio profesional</b>, no decisiones automatizadas con efectos jurídicos ni sustitutos de una evaluación clínica.</p><p>No se realiza elaboración de perfiles con fines publicitarios ni se toman decisiones que afecten derechos de una persona basadas únicamente en un tratamiento automatizado. Toda indicación de entrenamiento o alimentación es revisada y firmada por el profesional a cargo.</p><h3>15. Almacenamiento local y cookies</h3><p>La aplicación no usa cookies de publicidad ni de analítica de terceros. Utiliza exclusivamente almacenamiento local del navegador (localStorage) y un canal de mensajería entre pestañas (BroadcastChannel), ambos <b>estrictamente necesarios</b> para que la plataforma funcione sin servidor y para que los perfiles se sincronicen entre sí. Por ser técnicamente necesarios no requieren consentimiento adicional, pero se informan aquí por transparencia.</p><p>Al borrar los datos de navegación del navegador se elimina también la información almacenada por JYNTRA en ese dispositivo.</p><h3>16. Reclamos ante la autoridad</h3><p>Si consideras que no hemos respetado tus derechos, puedes reclamar ante la <b>Agencia de Protección de Datos Personales (APDP)</b>, organismo fiscalizador creado por la Ley N° 21.719, que puede investigar de oficio, ordenar la suspensión de un tratamiento y aplicar multas de hasta 20.000 UTM en el caso de infracciones gravísimas. El reclamo ante la Agencia es independiente de las acciones judiciales que puedas ejercer.</p><h3>17. Cambios a esta política</h3><p>Podemos actualizar esta política cuando cambien los módulos de la plataforma o la normativa aplicable. Toda versión lleva un número y una fecha. Si el cambio amplía las finalidades o incorpora datos nuevos, se te solicitará un consentimiento nuevo antes de aplicarlo, y la aplicación te mostrará el texto actualizado la próxima vez que inicies sesión.</p><p>Versión vigente: <b>1.0</b> — 8 de septiembre de 2026.</p><h3>Anexo A · Textos de consentimiento que usa la aplicación</h3><p>Estos son los textos exactos que aparecen, en casillas desmarcadas, al crear una cuenta. Se reproducen aquí para que quede constancia de qué se está aceptando.</p><ul><li><b>(Obligatorio)</b> He leído y acepto la Política de Privacidad de JYNTRA, versión 1.0. Autorizo el tratamiento de mis datos de identificación y contacto con la finalidad de crear y operar mi cuenta.</li><li><b>(Obligatorio para usar los módulos de salud)</b> Doy mi consentimiento explícito para que JYNTRA trate mis datos personales sensibles de salud —composición corporal, antropometría, antecedentes clínicos, hábitos, sueño, lesiones y rendimiento— con la única finalidad de la evaluación, planificación y seguimiento de mi entrenamiento y de mi alimentación. Entiendo que puedo revocar esta autorización en cualquier momento.</li><li><b>(Se solicita al conectar)</b> Autorizo que el profesor o nutricionista con quien establezca una conexión acceda a mi ficha en lo necesario para su especialidad, mientras esa conexión esté activa.</li><li><b>(Opcional)</b> Quiero recibir novedades y comunicaciones comerciales de JYNTRA por correo electrónico. Sé que puedo desactivarlo cuando quiera y que no afecta mi uso de la plataforma.</li><li><b>(Sólo si el titular es menor de edad)</b> Declaro ser el padre, madre o representante legal de la persona que se registra y autorizo el tratamiento de sus datos en los términos de esta política.</li></ul><h3>Anexo B · Correspondencia con la Ley N° 21.719</h3><div class=\"jy21-tw\"><table><thead><tr><th>Exigencia de la ley</th><th>Cómo la cumple JYNTRA</th></tr></thead><tbody><tr><td>Licitud y consentimiento válido</td><td>Casillas desmarcadas, granulares y registradas con fecha, hora y versión.</td></tr><tr><td>Finalidad</td><td>Cada categoría de dato está asociada a una finalidad declarada en la sección 5.</td></tr><tr><td>Proporcionalidad / minimización</td><td>No se piden RUT, biometría ni geolocalización; se declara expresamente qué no se recoge.</td></tr><tr><td>Calidad y exactitud</td><td>Derecho de rectificación disponible y edición directa de la ficha por el titular.</td></tr><tr><td>Transparencia e información</td><td>Esta política es accesible desde un botón permanente en la aplicación y se presenta antes de crear la cuenta.</td></tr><tr><td>Seguridad</td><td>Segmentación por rol, acceso condicionado a conexión aceptada, bitácora y cifrado en despliegue con servidor.</td></tr><tr><td>Confidencialidad</td><td>Deber de secreto de los profesionales y prohibición de uso de datos para fines propios por parte de encargados.</td></tr><tr><td>Responsabilidad proactiva</td><td>Registro de actividades de tratamiento (sección 5), registro de consentimientos, bitácora y evaluación de impacto para datos sensibles.</td></tr><tr><td>Derechos ARCOP y bloqueo</td><td>Canal de contacto, plazo de 30 días y funciones de respaldo y borrado en la propia aplicación.</td></tr><tr><td>Datos sensibles</td><td>Consentimiento explícito separado y acceso restringido por conexión.</td></tr><tr><td>Menores de edad</td><td>Umbrales de 14 y 16 años implementados en el formulario de registro.</td></tr><tr><td>Notificación de brechas</td><td>Protocolo con plazo objetivo de 72 horas a la APDP y aviso directo a los afectados.</td></tr></tbody></table></div></div>"};
+var POL = {"version": "1.0", "fecha": "8 de septiembre de 2026", "html": "<div class=\"jy21-doc\"><h2>Política de Privacidad y Tratamiento de Datos Personales</h2><p class=\"jy21-sub\">JYNTRA · Plataforma de entrenamiento y nutrición · Ley N° 21.719 (Chile)</p><p class=\"jy21-sub\">Versión 1.0 · 8 de septiembre de 2026 · Vigencia plena de la ley: 1 de diciembre de 2026</p><h3>1. Quién es responsable de tus datos</h3><p>El responsable del tratamiento de los datos personales que se registran en JYNTRA es <b>[RAZÓN SOCIAL], RUT [RUT]</b>, con domicilio en <b>[DOMICILIO]</b>, comuna de <b>[COMUNA]</b>, Región Metropolitana, Chile (en adelante, «JYNTRA», «la plataforma» o «nosotros»).</p><ul><li>Correo de contacto para materias de privacidad: <b>[privacidad@tu-dominio.cl]</b></li><li>Delegado de Protección de Datos (DPO): <b>[NOMBRE DEL DPO]</b> — <b>[dpo@tu-dominio.cl]</b></li><li>Plazo de respuesta comprometido: 30 días corridos desde la recepción de la solicitud.</li></ul><div class=\"jy21-nota\">Los campos entre corchetes deben completarse con los datos reales del titular del servicio antes de publicar esta política. Sin esa identificación, la política no cumple el deber de información del artículo 14.</div><h3>2. Qué ley se aplica</h3><p>Esta política se rige por la <b>Ley N° 21.719</b>, que regula la protección y el tratamiento de los datos personales y crea la Agencia de Protección de Datos Personales (APDP), publicada en el Diario Oficial el 13 de diciembre de 2024 y con vigencia plena a partir del 1 de diciembre de 2026. Dicha ley moderniza y reemplaza el marco de la Ley N° 19.628 y eleva el estándar chileno al nivel del Reglamento General de Protección de Datos europeo.</p><p>Cuando el tratamiento involucre datos de salud, se consideran además las normas sanitarias aplicables y las obligaciones de secreto profesional que pesan sobre profesores de educación física, preparadores físicos y nutricionistas que utilizan la plataforma.</p><h3>3. A quién aplica esta política</h3><p>Aplica a toda persona que cree una cuenta o cuyos datos se registren en cualquiera de los cuatro perfiles de la plataforma: <b>Alumno</b>, <b>Profesor</b>, <b>Nutricionista</b> y <b>Administrador</b>.</p><p>El alumno es titular de sus propios datos. El profesor y el nutricionista actúan como profesionales tratantes respecto de los alumnos con quienes tienen una conexión activa y aceptada, y quedan sujetos a las mismas obligaciones de confidencialidad, finalidad y seguridad que se describen aquí.</p><h3>4. Qué datos tratamos</h3><p>El inventario siguiente corresponde exactamente a los campos que la aplicación puede registrar. No pedimos datos «por si acaso»: cada categoría existe porque un módulo concreto la necesita (principio de proporcionalidad o minimización).</p><div class=\"jy21-tw\"><table><thead><tr><th>Categoría</th><th>Datos concretos que la plataforma registra</th><th>¿Sensible?</th></tr></thead><tbody><tr><td>A. Identificación y contacto</td><td>Nombre y apellido; correo electrónico; contraseña de acceso; teléfono; fecha de nacimiento; sexo; ciudad y comuna.</td><td>No</td></tr><tr><td>B. Perfil profesional (profesor / nutricionista)</td><td>Título profesional; especialidades; biografía; modalidad de atención; tarifa; planes de servicio y sus precios; visibilidad de la ficha pública en el buscador.</td><td>No</td></tr><tr><td>C. Composición corporal y antropometría</td><td>Talla; peso; perímetros (cintura, cadera, brazo, muslo); pliegues cutáneos; diámetros óseos (biacromial, biiliocrestal, húmero, fémur); talla sentada y envergadura; somatotipo ISAK; porcentaje graso; masa muscular esquelética; grasa visceral; edad metabólica; metabolismo basal y gasto energético estimado (bioimpedancia).</td><td>SÍ — dato de salud</td></tr><tr><td>D. Antecedentes de salud (anamnesis)</td><td>Patologías declaradas; medicamentos; cirugías previas; alergias e intolerancias alimentarias; síntomas y tolerancia digestiva; historial de lesiones y molestias musculoesqueléticas; lesión activa y zona afectada; ciclo menstrual y método anticonceptivo; horas y calidad de sueño; nivel de estrés; estado de ánimo; consumo de alcohol y tabaco; suplementos; patrón alimentario; número de comidas; hidratación; objetivo de salud.</td><td>SÍ — dato de salud</td></tr><tr><td>E. Entrenamiento y rendimiento</td><td>Cargas y repeticiones máximas (1RM); percepción de esfuerzo (RPE); asistencia y clases realizadas; calendario y horario semanal; sesiones del plan; mesociclos y planificación; adherencia.</td><td>Parcialmente — vinculado a salud</td></tr><tr><td>F. Relación comercial y situación socioeconómica</td><td>Plan contratado (Base, Pro, Elite); estado y fecha de renovación de la suscripción; boletas o facturas; montos y tarifas acordadas entre alumno y profesional.</td><td>SÍ — situación socioeconómica</td></tr><tr><td>G. Vínculos entre perfiles</td><td>Solicitudes de conexión y su estado; mensaje de presentación; profesional asignado por especialidad; notas y observaciones que el profesional escribe sobre el alumno.</td><td>Según contenido</td></tr><tr><td>H. Registros técnicos y de uso</td><td>Identificadores internos de usuario; fecha de creación de la cuenta; bitácora de accesos, altas y cambios; marca temporal de sincronización entre perfiles.</td><td>No</td></tr></tbody></table></div><p><b>Qué NO pedimos.</b> La plataforma no solicita ni almacena RUT, cédula de identidad, datos biométricos (huella dactilar, reconocimiento facial, iris o voz), geolocalización, origen étnico, afiliación política, sindical o religiosa, orientación sexual, ni datos de tarjetas de crédito o cuentas bancarias. Si en el futuro algún módulo requiere alguno de estos datos, esta política se actualizará y se solicitará un consentimiento nuevo y específico antes de recogerlos.</p><h3>5. Para qué usamos los datos y con qué base legal</h3><p>Ningún dato se usa para una finalidad distinta de aquella para la que fue recogido. La tabla siguiente es el registro resumido de actividades de tratamiento.</p><div class=\"jy21-tw\"><table><thead><tr><th>Finalidad</th><th>Datos usados</th><th>Base de licitud</th></tr></thead><tbody><tr><td>Crear y mantener la cuenta, autenticar el acceso y dirigir a la persona a su perfil.</td><td>A, H</td><td>Ejecución del servicio solicitado por el titular.</td></tr><tr><td>Permitir que el alumno registre su entrenamiento, su pauta y su seguimiento diario.</td><td>C, D, E</td><td>Consentimiento explícito para datos de salud.</td></tr><tr><td>Permitir que el profesor evalúe, planifique y haga seguimiento del alumno conectado.</td><td>C, D, E, G</td><td>Consentimiento explícito del alumno + ejecución del servicio profesional.</td></tr><tr><td>Permitir que el nutricionista realice anamnesis, antropometría, plan alimentario y control.</td><td>C, D, G</td><td>Consentimiento explícito del alumno + ejecución del servicio profesional.</td></tr><tr><td>Mostrar la ficha pública del profesional en el buscador interno.</td><td>B</td><td>Consentimiento del profesional, revocable en cualquier momento.</td></tr><tr><td>Gestionar agenda, horario semanal, reserva y registro de clases.</td><td>E, G</td><td>Ejecución del servicio.</td></tr><tr><td>Cobrar la suscripción a la plataforma y emitir documentos tributarios.</td><td>A, F</td><td>Ejecución del contrato y obligación legal tributaria.</td></tr><tr><td>Mantener la trazabilidad de accesos y cambios (evidencia de cumplimiento).</td><td>H</td><td>Interés legítimo en la seguridad de la información y deber de responsabilidad proactiva.</td></tr><tr><td>Enviar avisos operativos de la cuenta (cambios de plan, conexiones, recordatorios).</td><td>A</td><td>Ejecución del servicio.</td></tr><tr><td>Enviar comunicaciones comerciales o novedades del producto.</td><td>A</td><td>Consentimiento separado y opcional. Rechazarlo no limita el uso de la plataforma.</td></tr></tbody></table></div><h3>6. Cómo pedimos y cómo revocas tu consentimiento</h3><p>El consentimiento en JYNTRA es <b>libre, específico, informado, previo e inequívoco</b>. Se otorga marcando casillas que siempre aparecen <b>desmarcadas</b>. No usamos casillas premarcadas, no lo escondemos dentro de términos y condiciones y no lo inferimos del uso de la aplicación.</p><ul><li>El consentimiento se pide al crear la cuenta, en un cuadro visible que incluye el enlace a esta política.</li><li>Es <b>granular</b>: aceptar la política no implica aceptar el tratamiento de datos de salud, ni el envío de publicidad, ni compartir tu ficha con un profesional. Cada uno se marca por separado.</li><li>Queda registrado con fecha, hora y número de versión de la política aceptada, como evidencia del cumplimiento.</li><li>Puedes <b>revocarlo en cualquier momento</b> desde «Mi perfil» o escribiendo al correo de privacidad, con la misma facilidad con que lo otorgaste. La revocación no afecta la licitud del tratamiento anterior.</li><li>Si revocas el consentimiento para datos de salud, los módulos de evaluación, anamnesis, antropometría y seguimiento dejan de operar y los registros asociados se bloquean o se suprimen según lo que solicites.</li></ul><h3>7. Datos sensibles: regla reforzada</h3><p>La Ley N° 21.719 califica como sensibles, entre otros, los datos de salud y perfil biológico, los datos biométricos y —particularidad chilena— la <b>situación socioeconómica</b>. Buena parte de lo que JYNTRA registra cae en esa categoría.</p><ul><li>Su tratamiento exige <b>consentimiento explícito y separado</b>, que se solicita en una casilla propia al crear la cuenta y se vuelve a solicitar antes de activar cualquier módulo clínico.</li><li>El acceso está restringido: un profesional sólo puede ver los datos de salud de los alumnos con quienes tiene una <b>conexión activa y aceptada por el alumno</b>. Al terminar la conexión, cesa el acceso.</li><li>El alumno mantiene, en todo momento, una conexión por especialidad como máximo, de modo que sus datos clínicos no circulan entre varios profesionales simultáneamente.</li><li>Los datos sensibles no se usan para publicidad, no se ceden a terceros y no se comercializan en ninguna circunstancia.</li><li>Por su nivel de riesgo, este tratamiento está sujeto a una Evaluación de Impacto en Protección de Datos, que se mantiene documentada y actualizada.</li></ul><h3>8. Niños, niñas y adolescentes</h3><p>El tratamiento de datos de personas menores de edad se rige por el interés superior del niño.</p><ul><li><b>Menores de 14 años:</b> no pueden crear una cuenta por sí mismos. Se requiere el consentimiento de su padre, madre o representante legal, quien debe identificarse en el formulario de registro.</li><li><b>Entre 14 y 15 años:</b> el tratamiento de datos sensibles —es decir, de todo el módulo de salud, composición corporal y anamnesis— requiere igualmente el consentimiento del representante legal.</li><li><b>Entre 16 y 17 años:</b> puede consentir por sí mismo, con información redactada en lenguaje claro y adecuado a su edad; se recomienda de todos modos el acompañamiento de un adulto responsable.</li><li>El formulario de registro calcula la edad a partir de la fecha de nacimiento y activa automáticamente los campos de representante legal cuando corresponde.</li></ul><h3>9. Con quién se comparten los datos</h3><p>Los datos <b>no se venden, no se arriendan y no se ceden</b> con fines comerciales. Se comunican únicamente en estos casos:</p><ul><li><b>Al profesional que tú eliges conectar.</b> Al aceptarse una conexión, el profesor o nutricionista accede a la ficha del alumno en lo estrictamente necesario para su especialidad. Esta comunicación se basa en tu consentimiento y termina cuando terminas la conexión.</li><li><b>Al alumno.</b> El plan, la pauta y los resultados que el profesional publica quedan visibles para el alumno.</li><li><b>A encargados de tratamiento</b> (proveedores de hosting, respaldo o soporte), sólo bajo contrato escrito que les prohíbe usar los datos para fines propios y les impone las mismas medidas de seguridad.</li><li><b>A autoridades competentes</b>, cuando exista una obligación legal o una orden judicial.</li></ul><p><b>Transferencias internacionales.</b> En su configuración por defecto, JYNTRA funciona en el dispositivo del usuario y no transfiere datos fuera de Chile. Si en el futuro se habilita un servidor en el extranjero, se informará previamente y sólo se usarán países o proveedores con nivel adecuado de protección o cláusulas contractuales que garanticen un estándar equivalente.</p><h3>10. Dónde se guardan y por cuánto tiempo</h3><p>La aplicación está construida como archivos HTML autónomos. En su modo estándar, los datos se guardan en el <b>almacenamiento local del navegador del propio usuario</b> (localStorage), bajo el prefijo «jyntra.», y se sincronizan entre los perfiles abiertos en el mismo dispositivo o dominio. Si el operador habilita un servidor central, los datos se replican en él bajo las mismas reglas de esta política.</p><div class=\"jy21-tw\"><table><thead><tr><th>Dato</th><th>Plazo de conservación</th></tr></thead><tbody><tr><td>Cuenta e identificación</td><td>Mientras la cuenta esté activa y hasta 12 meses después de su cierre.</td></tr><tr><td>Datos de salud, antropometría y anamnesis</td><td>Mientras dure la conexión con el profesional y hasta el plazo que exija la normativa sanitaria sobre ficha clínica; luego se suprimen o anonimizan.</td></tr><tr><td>Registros de entrenamiento y seguimiento</td><td>Mientras la cuenta esté activa; se suprimen al cerrar la cuenta si el titular lo solicita.</td></tr><tr><td>Documentos tributarios y de pago</td><td>6 años, por obligación legal.</td></tr><tr><td>Bitácora de accesos y cambios</td><td>24 meses, como evidencia de cumplimiento.</td></tr><tr><td>Registro de consentimientos</td><td>Mientras dure el tratamiento y 5 años después, como prueba del consentimiento.</td></tr></tbody></table></div><h3>11. Seguridad de la información</h3><ul><li>Acceso segmentado por rol: cada perfil sólo ve lo que su función requiere.</li><li>Acceso a datos clínicos condicionado a una conexión aceptada por el titular.</li><li>Bitácora de altas, accesos y modificaciones, con identificación de quién hizo cada cambio.</li><li>Los datos permanecen en el dispositivo del usuario en la configuración estándar, lo que reduce la superficie de exposición.</li><li>Si el operador habilita servidor central: cifrado en tránsito (HTTPS/TLS), cifrado en reposo, autenticación por token y respaldos periódicos.</li><li>Recomendación al usuario: no compartir la contraseña, usar el bloqueo de pantalla del dispositivo y cerrar sesión en equipos compartidos.</li></ul><div class=\"jy21-nota\">Ninguna medida de seguridad es infalible. Si detectas un acceso indebido a tu cuenta, avísanos de inmediato al correo de privacidad.</div><h3>12. Qué hacemos si hay una brecha de seguridad</h3><p>Si se produce una vulneración de seguridad que afecte datos personales —acceso no autorizado, pérdida, alteración o divulgación—, activamos el protocolo de incidentes:</p><ul><li>Notificamos a la Agencia de Protección de Datos Personales <b>sin dilación indebida</b>, en un plazo objetivo de 72 horas desde que tomamos conocimiento del hecho.</li><li>Cuando la brecha afecte datos sensibles, datos de menores de 14 años o datos económicos, notificamos también <b>directamente a las personas afectadas</b>, describiendo qué ocurrió, qué datos se vieron comprometidos, qué medidas tomamos y qué puede hacer la persona.</li><li>Registramos el incidente y las medidas correctivas adoptadas.</li></ul><h3>13. Tus derechos (ARCOP y bloqueo)</h3><p>Como titular de datos puedes ejercer, gratuitamente y sin expresar motivo, los siguientes derechos:</p><div class=\"jy21-tw\"><table><thead><tr><th>Derecho</th><th>Qué te permite hacer</th></tr></thead><tbody><tr><td>Acceso</td><td>Saber qué datos tenemos sobre ti, de dónde provienen, para qué se usan, a quién se han comunicado y por cuánto tiempo se conservarán.</td></tr><tr><td>Rectificación</td><td>Corregir datos inexactos, incompletos o desactualizados.</td></tr><tr><td>Cancelación o supresión</td><td>Pedir que se eliminen tus datos cuando ya no sean necesarios, cuando retires el consentimiento o cuando el tratamiento sea ilícito («derecho al olvido»).</td></tr><tr><td>Oposición</td><td>Oponerte a un tratamiento determinado, por ejemplo al perfilamiento comercial o al envío de comunicaciones.</td></tr><tr><td>Bloqueo</td><td>Pedir la suspensión temporal del tratamiento mientras se resuelve una controversia sobre tus datos.</td></tr><tr><td>Portabilidad</td><td>Recibir tus datos en un formato estructurado, de uso común y lectura mecánica, y pedir que se transfieran a otro responsable.</td></tr></tbody></table></div><p><b>Cómo ejercerlos:</b> escribe a <b>[privacidad@tu-dominio.cl]</b> indicando tu nombre, el correo con que te registraste y el derecho que quieres ejercer. Responderemos en un plazo máximo de <b>30 días corridos</b>, prorrogable por otros 30 en casos complejos, avisándote antes del vencimiento del primer plazo.</p><p>Adicionalmente, la aplicación ofrece dos atajos: desde «Mi perfil» puedes <b>descargar un respaldo completo de tus datos</b> (derecho de portabilidad) y <b>borrar tus datos del dispositivo</b> (derecho de supresión).</p><h3>14. Decisiones automatizadas y perfilamiento</h3><p>JYNTRA calcula automáticamente indicadores como el porcentaje graso, el somatotipo, el metabolismo basal, el gasto energético o los rangos de macronutrientes. Son <b>apoyos al criterio profesional</b>, no decisiones automatizadas con efectos jurídicos ni sustitutos de una evaluación clínica.</p><p>No se realiza elaboración de perfiles con fines publicitarios ni se toman decisiones que afecten derechos de una persona basadas únicamente en un tratamiento automatizado. Toda indicación de entrenamiento o alimentación es revisada y firmada por el profesional a cargo.</p><h3>15. Almacenamiento local y cookies</h3><p>La aplicación no usa cookies de publicidad ni de analítica de terceros. Utiliza exclusivamente almacenamiento local del navegador (localStorage) y un canal de mensajería entre pestañas (BroadcastChannel), ambos <b>estrictamente necesarios</b> para que la plataforma funcione sin servidor y para que los perfiles se sincronicen entre sí. Por ser técnicamente necesarios no requieren consentimiento adicional, pero se informan aquí por transparencia.</p><p>Al borrar los datos de navegación del navegador se elimina también la información almacenada por JYNTRA en ese dispositivo.</p><h3>16. Reclamos ante la autoridad</h3><p>Si consideras que no hemos respetado tus derechos, puedes reclamar ante la <b>Agencia de Protección de Datos Personales (APDP)</b>, organismo fiscalizador creado por la Ley N° 21.719, que puede investigar de oficio, ordenar la suspensión de un tratamiento y aplicar multas de hasta 20.000 UTM en el caso de infracciones gravísimas. El reclamo ante la Agencia es independiente de las acciones judiciales que puedas ejercer.</p><h3>17. Cambios a esta política</h3><p>Podemos actualizar esta política cuando cambien los módulos de la plataforma o la normativa aplicable. Toda versión lleva un número y una fecha. Si el cambio amplía las finalidades o incorpora datos nuevos, se te solicitará un consentimiento nuevo antes de aplicarlo, y la aplicación te mostrará el texto actualizado la próxima vez que inicies sesión.</p><p>Versión vigente: <b>1.0</b> — 8 de septiembre de 2026.</p><h3>Anexo A · Textos de consentimiento que usa la aplicación</h3><p>Estos son los textos exactos que aparecen, en casillas desmarcadas, al crear una cuenta. Se reproducen aquí para que quede constancia de qué se está aceptando.</p><ul><li><b>(Obligatorio)</b> He leído y acepto la Política de Privacidad de JYNTRA, versión 1.0. Autorizo el tratamiento de mis datos de identificación y contacto con la finalidad de crear y operar mi cuenta.</li><li><b>(Obligatorio para usar los módulos de salud)</b> Doy mi consentimiento explícito para que JYNTRA trate mis datos personales sensibles de salud —composición corporal, antropometría, antecedentes clínicos, hábitos, sueño, lesiones y rendimiento— con la única finalidad de la evaluación, planificación y seguimiento de mi entrenamiento y de mi alimentación. Entiendo que puedo revocar esta autorización en cualquier momento.</li><li><b>(Se solicita al conectar)</b> Autorizo que el profesor o nutricionista con quien establezca una conexión acceda a mi ficha en lo necesario para su especialidad, mientras esa conexión esté activa.</li><li><b>(Opcional)</b> Quiero recibir novedades y comunicaciones comerciales de JYNTRA por correo electrónico. Sé que puedo desactivarlo cuando quiera y que no afecta mi uso de la plataforma.</li><li><b>(Sólo si el titular es menor de edad)</b> Declaro ser el padre, madre o representante legal de la persona que se registra y autorizo el tratamiento de sus datos en los términos de esta política.</li></ul><h3>Anexo B · Correspondencia con la Ley N° 21.719</h3><div class=\"jy21-tw\"><table><thead><tr><th>Exigencia de la ley</th><th>Cómo la cumple JYNTRA</th></tr></thead><tbody><tr><td>Licitud y consentimiento válido</td><td>Casillas desmarcadas, granulares y registradas con fecha, hora y versión.</td></tr><tr><td>Finalidad</td><td>Cada categoría de dato está asociada a una finalidad declarada en la sección 5.</td></tr><tr><td>Proporcionalidad / minimización</td><td>No se piden RUT, biometría ni geolocalización; se declara expresamente qué no se recoge.</td></tr><tr><td>Calidad y exactitud</td><td>Derecho de rectificación disponible y edición directa de la ficha por el titular.</td></tr><tr><td>Transparencia e información</td><td>Esta política es accesible desde un botón permanente en la aplicación y se presenta antes de crear la cuenta.</td></tr><tr><td>Seguridad</td><td>Segmentación por rol, acceso condicionado a conexión aceptada, bitácora y cifrado en despliegue con servidor.</td></tr><tr><td>Confidencialidad</td><td>Deber de secreto de los profesionales y prohibición de uso de datos para fines propios por parte de encargados.</td></tr><tr><td>Responsabilidad proactiva</td><td>Registro de actividades de tratamiento (sección 5), registro de consentimientos, bitácora y evaluación de impacto para datos sensibles.</td></tr><tr><td>Derechos ARCOP y bloqueo</td><td>Canal de contacto, plazo de 30 días y funciones de respaldo y borrado en la propia aplicación.</td></tr><tr><td>Datos sensibles</td><td>Consentimiento explícito separado y acceso restringido por conexión.</td></tr><tr><td>Menores de edad</td><td>Umbrales de 14 y 16 años implementados en el formulario de registro.</td></tr><tr><td>Notificación de brechas</td><td>Protocolo con plazo objetivo de 72 horas a la APDP y aviso directo a los afectados.</td></tr></tbody></table></div></div>"};
 
 /* ---------- 21.1 · almacén de consentimientos ---------- */
 if(!S.consentimientos){ S.consentimientos = DB.get('consentimientos', null) || []; guardar('consentimientos'); }
@@ -5261,7 +5410,7 @@ function portalHTML(){
   return '<div class="jy22-portal"><div class="jy22-in">'
    + '<div class="jy22-marca" style="display:flex;justify-content:center;margin-bottom:6px">'+logoCompleto(118)+'</div>'
    + '<div class="jy22-cabe">'
-   +   '<div class="jy22-eb">Plataforma de entrenamiento y nutrición</div>'
+   +   '<div class="jy22-eb">Tu progreso conectado</div>'
    +   '<h1>Elige tu perfil<em>y entra a tu espacio</em></h1>'
    +   '<p>Cada perfil abre su propia aplicación. Entra con tu cuenta o créala aquí: '
    +     'al crearla te pediremos tu consentimiento informado conforme a la Ley N° 21.719.</p>'
@@ -5448,9 +5597,16 @@ function responder(id, si, u){
       var veto = porQueNoConectar(u.id, x.profesionalId);
       if(veto) return toast(veto, 'warn');
     }
+    var pro = usuario(x.profesionalId);
+    var nSes = window.JY20 ? JY20.sesionesValidas(pro, x.sesiones || 4, 4) : Math.min(4, +x.sesiones||4);
     ponerVinculo({ alumnoId:u.id, profesionalId:x.profesionalId, estado:'activo',
-      desde:new Date().toISOString(), servicio:x.servicio||'', plan:x.plan||'', via:'invitacion' });
+      desde:new Date().toISOString(), servicio:x.servicio||'', plan:x.plan||'', via:'invitacion',
+      sesionesPlan:nSes, fechaPlan:hoy() });
     guardar('vinculos');
+    try{
+      var vx = (S.vinculos||[]).filter(function(v){ return v.alumnoId===u.id && v.profesionalId===x.profesionalId; })[0];
+      if(vx && window.JY20) JY20.sembrarBloques(vx);
+    }catch(e){}
     try{ bitacora('vinculo','Aceptó la invitación de '+(x.profesionalNombre||''), u.id); }catch(e){}
     toast('Listo: quedaste conectado con '+String(x.profesionalNombre||'').split(' ')[0]+'.','ok');
   } else {
@@ -5734,7 +5890,7 @@ function subirUsuarios(){
     var ajeno = u.id !== yoUid;
     /* datos de OTRA persona: sólo el administrador, y sólo después de haber
        recibido de la nube lo que ya hay (si no, se pisarían con datos a medias) */
-    if(ajeno && (!soyAdmin() || !entregado['adm-priv'])) return;
+    if(ajeno && (!soyAdmin() || !entregado['adm-priv'] || !entregado['adm-usr'])) return;
     var p = partirUsuario(u);
     var dPub = codificar(p.pub, []); dPub.rol = u.rol || 'alumno'; dPub.estado = u.estado || 'activo';
     var rPub = 'usuarios/' + u.id, rPriv = 'privado/' + u.id;
@@ -5931,7 +6087,12 @@ function espacioAlumno(aid, pre){
 }
 function iniciarEscuchas(){
   var uid = yoUid;
-  escuchar('usuarios', 'usuarios', {col:'usuarios'});
+  /* perfiles: el mío, y el directorio público (sólo profesionales).
+     Las reglas no dejan enumerar alumnos: a cada alumno se le escucha
+     por separado y sólo si tiene un vínculo conmigo (ver abajo). */
+  escuchar('usuarios', 'usuarios', {doc:'usuarios/'+uid});
+  escuchar('pros-p', 'usuarios', {col:'usuarios', donde:['rol', 'profesor']});
+  escuchar('pros-n', 'usuarios', {col:'usuarios', donde:['rol', 'nutricionista']});
   escuchar('priv-yo', 'privado', {doc:'privado/'+uid});
   escuchar('v-al', 'vinculos', {col:'vinculos', donde:['alumnoId', uid]});
   escuchar('v-pro', 'vinculos', {col:'vinculos', donde:['profesionalId', uid]});
@@ -5949,7 +6110,10 @@ function ajustarEscuchasDinamicas(){
   if(!yoUid) return;
   var quiero = {};
   (S.vinculos || []).forEach(function(v){
-    if(!v || v.estado !== 'activo') return;
+    if(!v) return;
+    /* el perfil del alumno se lee con cualquier vínculo (también pendiente) */
+    if(v.profesionalId === yoUid && v.alumnoId) quiero['usr:'+v.alumnoId] = v.alumnoId;
+    if(v.estado !== 'activo') return;
     if(v.profesionalId === yoUid && v.alumnoId){
       ['reg','met','que','fic','hor','pau'].forEach(function(p){ quiero['al-'+p+':'+v.alumnoId] = v.alumnoId; });
       quiero['priv:'+v.alumnoId] = v.alumnoId;
@@ -5957,16 +6121,18 @@ function ajustarEscuchasDinamicas(){
     if(v.alumnoId === yoUid && v.profesionalId) quiero['priv:'+v.profesionalId] = v.profesionalId;
   });
   Object.keys(subs).forEach(function(id){
-    if(/^(al-|priv:)/.test(id) && !quiero[id]) soltar(id);
+    if(/^(al-|priv:|usr:)/.test(id) && !quiero[id]) soltar(id);
   });
   Object.keys(quiero).forEach(function(id){
     if(subs[id]) return;
     var aid = quiero[id];
     if(id.indexOf('priv:') === 0) escuchar(id, 'privado', {doc:'privado/'+aid});
+    else if(id.indexOf('usr:') === 0) escuchar(id, 'usuarios', {doc:'usuarios/'+aid});
     else espacioAlumno(aid, 'al-');
   });
   /* administrador verificado: personas, consentimientos, facturas y bitácora de todos */
   if(soyAdmin()){
+    escuchar('adm-usr', 'usuarios', {col:'usuarios'});
     escuchar('adm-priv', 'privado', {col:'privado'});
     escuchar('adm-cons', 'consentimientos', {col:'consentimientos'});
     escuchar('adm-fac', 'facturas', {col:'facturas'});
@@ -6233,7 +6399,7 @@ pintar = function(){
   if(!autenticado || (yoUid && !inicialListo() && !creando && !esperaVencida)){
     var app = document.getElementById('app');
     if(app) app.innerHTML = '<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;'
-      + 'flex-direction:column;gap:14px;color:var(--mute)">' + marca('Technologies')
+      + 'flex-direction:column;gap:14px;color:var(--mute)">' + marca(false)
       + '<div class="mono" style="font-size:11px;letter-spacing:.22em;text-transform:uppercase">Conectando…</div></div>';
     return;
   }

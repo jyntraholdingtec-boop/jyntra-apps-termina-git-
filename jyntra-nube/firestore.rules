@@ -52,8 +52,20 @@ service cloud.firestore {
     }
 
     // ── Perfil público (nombre, rol, plan, ficha del buscador) ─────────
+    //  Lectura: cada persona lee su propio perfil; el administrador (Google)
+    //  lee todos; el directorio público lista SÓLO a profesionales (la
+    //  consulta debe filtrar por rol); un alumno sólo lo lee su profesional
+    //  cuando existe un vínculo entre ambos. Un alumno NO puede leer a otro
+    //  alumno, ni enumerar la colección.
+    function vinculadoConmigo(uid) {
+      return exists(/databases/$(database)/documents/vinculos/$(uid + '_' + yo()))
+          || exists(/databases/$(database)/documents/vinculos/$(yo() + '_' + uid));
+    }
     match /usuarios/{uid} {
-      allow read: if dentro();
+      allow get: if dentro() && (yo() == uid || esAdmin()
+        || resource.data.rol in ['profesor', 'nutricionista'] || vinculadoConmigo(uid));
+      allow list: if dentro() && (esAdmin()
+        || resource.data.rol in ['profesor', 'nutricionista']);
       allow create: if dentro() && yo() == uid
         && (request.resource.data.rol in ['alumno', 'profesor', 'nutricionista']
             || (request.resource.data.rol == 'administrador' && correoAdmin()));

@@ -2897,7 +2897,7 @@ validate0();
 /* Sincroniza el titulo del header y el riel de progreso con la etapa activa.
    Observa las clases de los paneles, asi no toca la logica de go(). */
 (function(){
-  var TITLES=['Datos del atleta','Habitos y objetivo','Analisis nutricional',
+  var TITLES=['Datos del atleta','Hábitos y objetivo','Análisis nutricional',
               'Plan alimentario','Productos personalizados','Mis recetarios'];
   TITLES=['Datos del atleta','H\u00e1bitos y objetivo','An\u00e1lisis nutricional',
           'Plan alimentario','Productos personalizados','Mis recetarios'];
@@ -3224,6 +3224,8 @@ function engancharCrearPlan(){
 /* ── 2c · Botón de guardado explícito (vista del alumno) ────────── */
 function engancharGuardado(){
   if(CFG.modo !== 'completo') return;
+  /* sólo con un nutricionista o profesor conectado tiene sentido guardar la pauta */
+  if(CFG.conectado === false) return;
   var barra = document.querySelector('.tabbar') || document.querySelector('.hd-actions');
   var ancla = document.getElementById('pdfBtn');
   if(!ancla) return;
@@ -3231,9 +3233,17 @@ function engancharGuardado(){
   var b = document.createElement('button');
   b.id = 'jy-guardar-pauta';
   b.type = 'button';
-  b.className = ancla.className || 'btn';
-  b.style.cssText = 'display:inline-flex;align-items:center;gap:6px';
-  b.textContent = CFG.rotuloGuardar || 'Guardar mi pauta';
+  b.className = 'jy-btn-pauta';
+  b.style.cssText = 'display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;'
+    + 'height:38px;padding:0 14px;border-radius:10px;border:0;cursor:pointer;flex:none;'
+    + 'background:#DD2C37;color:#fff;font:700 12.5px/1 inherit;letter-spacing:.02em';
+  if(CFG.rotuloGuardar) b.textContent = CFG.rotuloGuardar;
+  else b.innerHTML = 'Guardar<span class="jy-gp-x"> mi pauta</span>';
+  if(!document.getElementById('jy-gp-css')){
+    var st = document.createElement('style'); st.id = 'jy-gp-css';
+    st.textContent = '@media(max-width:520px){.jy-gp-x{display:none}#jy-guardar-pauta{height:34px !important;padding:0 12px !important}}';
+    document.head.appendChild(st);
+  }
   ancla.parentNode.insertBefore(b, ancla);
 
   var eco = document.createElement('span');

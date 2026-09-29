@@ -148,3 +148,28 @@ activar la recuperación de un momento determinado (PITR, 7 días) y copias de s
 - El canal entre pestañas de la versión local (copiaba datos por localStorage cada 4 s) queda
   apagado con la nube: mezclaba sesiones de personas distintas abiertas en el mismo navegador.
 - Diagnóstico: F12 → Consola → `JYNUBE.estado()` (incluye cuántos consentimientos tiene la cuenta).
+
+## v8 · Perfiles: ya no se pueden enumerar
+
+Hallazgo de seguridad: cualquier persona registrada podía leer/listar todos los perfiles de `usuarios`.
+Ahora (`firestore.rules`):
+- Cada persona lee **su** perfil. El administrador (Google) lee todos.
+- El directorio público **lista sólo profesionales** (la consulta debe filtrar por `rol`).
+- Un **alumno** sólo lo lee su profesional cuando existe un vínculo (incluso pendiente). Un alumno no ve a otro ni puede listar la colección.
+- Correo, teléfono y nacimiento siguen en `privado/{uid}` (ya estaba acotado).
+Publica **las reglas** (`firebase deploy --only firestore:rules`) junto con el sitio: reglas y app van en pareja.
+
+### v8 (mejorada) · pantallas
+- Marca: sin «Technologies»; eslogan **«Tu progreso conectado»** en el portal y en la pantalla de acceso.
+- Agenda: cada bloque queda dentro de su día (nombre largo se corta con «…», el detalle se ajusta), etiqueta «sin publicar / publicado», días que se acomodan en filas según el ancho.
+- Celular (Android / iOS): ninguna tabla empuja la pantalla (se desplazan dentro de su caja), márgenes de muesca (safe-area), sin zoom al escribir en iPhone, botón «Privacidad» dentro del menú.
+- Huecos de desarrollo (ranuras, pilares, contratos de montaje) sólo los ve el administrador.
+- Alumno: «Mi coach», «Mi nutricionista» o «Mi equipo multidisciplinario» según con quién esté conectado.
+- Fechas en hora de Chile (antes, «Hoy» podía mostrar el día anterior o el siguiente).
+
+### v9
+- Ortografía: tildes y voseo corregidos en toda la app y en las herramientas (Elige, Haz clic, Aquí, Hábitos, Análisis, Tríceps, Bíceps…). Eslogan «Tu progreso conectado».
+- Sesiones por plan: Base y Pro hasta 4 sesiones por alumno; Elite sin límite. Alumno sin coach: hasta 4 sesiones propias (con aviso claro al llegar al tope).
+- «Guardar mi pauta» sólo aparece si el alumno está conectado con un profesional.
+- Los marcos de las herramientas miden lo que mide su contenido (sin franjas vacías).
+- Planilla de entrenamiento (PDF / imprimir): logo negro sobre la hoja blanca; en celular la hoja se ajusta.

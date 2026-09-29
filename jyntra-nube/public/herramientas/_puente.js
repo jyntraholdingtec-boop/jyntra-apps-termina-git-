@@ -71,6 +71,15 @@
   var u = porId(foco.usuarioId) || null;
   var a = porId(foco.alumnoId)  || null;
 
+  /* con quién está conectado el alumno (vínculos activos) */
+  var vinculos = leer('vinculos', []) || [];
+  var conectado = { profesor:false, nutricionista:false, alguno:false };
+  if (a) vinculos.forEach(function(v){
+    if (!v || v.estado !== 'activo' || v.alumnoId !== a.id) return;
+    var p = porId(v.profesionalId);
+    if (p && (p.rol === 'profesor' || p.rol === 'nutricionista')){ conectado[p.rol] = true; conectado.alguno = true; }
+  });
+
   window.__JY_CTX = {
     marca  : { nombre:'JYNTRA', dorado:'#C6A15A', negro:'#0D0D0D', hueso:'#EDE7DA' },
     usuario: u ? { id:u.id, nombre:u.nombre, rol:u.rol, plan:u.plan || 'base' } : null,
@@ -83,6 +92,7 @@
                      || ultimoRegistro(a.id, 'evaluacion')) : null,
     gifs      : leer('gifs', null),
     llaves    : foco.llaves || {},
+    conectado : conectado,
     modo      : foco.modo || 'edicion'      /* 'edicion' | 'lectura' */
   };
 
@@ -138,7 +148,8 @@
     nombre    : a2.nombre || '',
     identidad : identidad,
     origen    : 'Se toma de «Mi evaluación» (anamnesis deportiva).',
-    estado    : leer('__nutri_' + (a2.id || ''), null)
+    estado    : leer('__nutri_' + (a2.id || ''), null),
+    conectado : conectado.alguno
   };
 
   var cine = a2.id ? (ultimoCon(a2.id, 'seguimiento', function(d){ return d.__cine; })
@@ -189,8 +200,31 @@
   /* Alto: el marco no tiene scroll propio, le avisa al padre cuánto mide.
      Se emiten las dos marcas porque conviven dos protocolos de herramienta. */
   var ultimo = 0;
+  /* Alto REAL del contenido. scrollHeight nunca baja del alto del marco,
+     así que el marco sólo crecía y quedaban franjas vacías abajo. Se mide
+     hasta dónde llega de verdad el último elemento visible. */
+  function altoReal(){
+    var b = document.body; if(!b) return 0;
+    var y = window.scrollY || 0, max = 0;
+    var hijos = b.children;
+    for (var i = 0; i < hijos.length; i++){
+      var el = hijos[i], cs = getComputedStyle(el);
+      if (cs.display === 'none' || cs.position === 'fixed' || el.tagName === 'SCRIPT' || el.tagName === 'STYLE') continue;
+      var r = el.getBoundingClientRect();
+      if (!r.height) continue;
+      max = Math.max(max, r.bottom + y + (parseFloat(cs.marginBottom) || 0));
+    }
+    var bs = getComputedStyle(b);
+    return Math.ceil(max + (parseFloat(bs.paddingBottom) || 0) + (parseFloat(bs.marginBottom) || 0));
+  }
+  if (parent && parent !== window){
+    var cssAlto = document.createElement('style');
+    cssAlto.textContent = 'html,body{min-height:0 !important;height:auto !important}#root{min-height:0 !important}'
+      + (/anamnesis/.test(location.pathname) ? '.wrap{padding-bottom:14px !important}' : '');
+    (document.head || document.documentElement).appendChild(cssAlto);
+  }
   function avisar(){
-    var h = Math.max(document.documentElement.scrollHeight,
+    var h = altoReal() || Math.max(document.documentElement.scrollHeight,
                      document.body ? document.body.scrollHeight : 0);
     if (Math.abs(h - ultimo) > 20){
       ultimo = h;
