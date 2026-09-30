@@ -46,6 +46,12 @@ service cloud.firestore {
         && get(/databases/$(database)/documents/vinculos/$(alumnoId + '_' + proId)).data.estado == 'activo';
     }
     function atiendeA(alumnoId) { return dentro() && vinculoActivo(alumnoId, yo()); }
+    // la persona puede borrar su propio perfil y sus datos (derecho de supresión);
+    // la cuenta de administración no se borra por esta vía
+    function esCuentaAdmin(uid) {
+      return exists(/databases/$(database)/documents/usuarios/$(uid))
+        && get(/databases/$(database)/documents/usuarios/$(uid)).data.rol == 'administrador';
+    }
     function conectadoCon(otro) { return dentro() && (vinculoActivo(otro, yo()) || vinculoActivo(yo(), otro)); }
     function invitado(proId) {
       return exists(/databases/$(database)/documents/invitaciones/$(proId + '_' + correo()));
@@ -76,14 +82,15 @@ service cloud.firestore {
         // el dueño del correo de administrador (con Google) recupera su perfil
         // aunque alguien lo hubiera registrado antes con otro rol
         || (dentro() && yo() == uid && request.resource.data.rol == 'administrador' && correoAdmin());
-      allow delete: if esAdmin();
+      allow delete: if esAdmin()
+        || (dentro() && yo() == uid && resource.data.rol != 'administrador');
     }
 
     // ── Datos personales ──────────────────────────────────────────────
     match /privado/{uid} {
       allow read: if dentro() && (yo() == uid || esAdmin() || conectadoCon(uid));
       allow create, update: if dentro() && (yo() == uid || esAdmin());
-      allow delete: if esAdmin();
+      allow delete: if esAdmin() || (dentro() && yo() == uid && !esCuentaAdmin(uid));
     }
 
     // ── Vínculos alumno ↔ profesional  (id = alumnoId_profesionalId) ──
@@ -145,12 +152,23 @@ service cloud.firestore {
     }
 
     // ── Consentimientos (Ley 21.719) ─────────────────────────────────
+    // ── Motivos de baja (anónimos: sin nombre, correo ni uid) ─────────
+    match /bajas/{bid} {
+      allow read, delete: if esAdmin();
+      allow create: if dentro()
+        && request.resource.data.keys().hasOnly(['rol', 'motivo', 'detalle', 'fecha'])
+        && request.resource.data.rol in ['alumno', 'profesor', 'nutricionista']
+        && request.resource.data.motivo is string && request.resource.data.motivo.size() <= 60
+        && request.resource.data.detalle is string && request.resource.data.detalle.size() <= 300;
+      allow update: if false;
+    }
+
     match /consentimientos/{cid} {
       allow read: if dentro() && (resource.data.usuarioId == yo() || esAdmin());
       allow create: if dentro() && request.resource.data.usuarioId == yo();
       allow update: if dentro() && resource.data.usuarioId == yo()
                                && request.resource.data.usuarioId == yo();
-      allow delete: if false;
+      allow delete: if dentro() && resource.data.usuarioId == yo();
     }
 
     // ── Facturación de planes ────────────────────────────────────────

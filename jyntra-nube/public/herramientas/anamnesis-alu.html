@@ -3,20 +3,21 @@
 <html lang="es">
 <head>
 <script src="./_puente.js"></script>
+<script src="./_tema.js"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="theme-color" content="#080808">
 <title>JYNTRA · Anamnesis Nutricional y Deportiva</title>
 <style>
-/* paleta JYNTRA: blanco, negro #171717, rojo #DD2C37, blanco 2 #EEF1F3 */
+/* paleta JYNTRA: blanco, negro #171717, rojo var(--jy-acc), blanco 2 #EEF1F3 */
 :root{--jy-acc:#DD2C37;--jy-acc-hi:#E8434D;--jy-acc-lo:#8E1C23;--jy-acc-glow:rgba(221,44,55,.16);--jy-borde:#3A3A3A;--jy-texto-acc:#FFFFFF;--jy-texto-tenue:#9AA0A6;}
 
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
   --ink:#040404; --bg:#080808; --surface:#101010; --surface-2:#171717; --surface-3:#1E1E1E;
-  --line:#2A2A2A; --line-hi:#474747; --gold-lo:#8E1C23; --gold:#DD2C37; --gold-hi:#DD2C37;
-  --gold-glow:rgba(221,44,55,.14); --text:#EEF1F3; --muted:#8E8E8E; --muted-2:#676767;
-  --prot:#E2574C; --carb:#4FA8B8; --fat:#E8A33D; --kcal:#DD2C37; --ok:#5CB88A; --warn:#E2A33D;
+  --line:#2A2A2A; --line-hi:#474747; --gold-lo:#8E1C23; --gold:var(--jy-acc); --gold-hi:var(--jy-acc);
+  --gold-glow:color-mix(in srgb,var(--jy-acc) 14%,transparent); --text:#EEF1F3; --muted:#8E8E8E; --muted-2:#676767;
+  --prot:#E2574C; --carb:#4FA8B8; --fat:#E8A33D; --kcal:var(--jy-acc); --ok:#5CB88A; --warn:#E2A33D;
   --radius:14px;
 }
 html{scroll-behavior:smooth}
@@ -24,7 +25,7 @@ body{
   background:var(--bg);color:var(--text);min-height:100vh;
   font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',sans-serif;
   font-size:14px;line-height:1.45;-webkit-font-smoothing:antialiased;
-  background-image:radial-gradient(900px 420px at 50% -140px,rgba(221,44,55,.09),transparent 70%);
+  background-image:radial-gradient(900px 420px at 50% -140px,color-mix(in srgb,var(--jy-acc) 9%,transparent),transparent 70%);
   background-attachment:fixed;
 }
 ::-webkit-scrollbar{width:8px;height:8px}
@@ -50,7 +51,7 @@ body{
 .brand-mark{width:40px;height:40px;border-radius:11px;flex-shrink:0;
   background:linear-gradient(140deg,var(--jy-acc-hi),var(--jy-acc-lo));
   display:flex;align-items:center;justify-content:center;font-weight:800;color:#FFFFFF;font-size:16px;
-  box-shadow:0 4px 14px -4px rgba(221,44,55,.6)}
+  box-shadow:0 4px 14px -4px color-mix(in srgb,var(--jy-acc) 60%,transparent)}
 .brand-txt{display:flex;flex-direction:column;min-width:0}
 .brand-name{font-size:15px;font-weight:800;letter-spacing:3.4px;line-height:1;
   background:linear-gradient(92deg,var(--jy-acc-lo),var(--jy-acc-hi) 45%,var(--jy-acc));
@@ -69,7 +70,7 @@ body{
 .stbtn .stnum{width:19px;height:19px;border-radius:50%;border:1.5px solid currentColor;
   display:inline-flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0}
 .stbtn.active{background:linear-gradient(180deg,#1D1D1D,#151515);color:var(--jy-texto-acc);
-  border-color:var(--line-hi);box-shadow:inset 0 1px 0 rgba(221,44,55,.14)}
+  border-color:var(--line-hi);box-shadow:inset 0 1px 0 color-mix(in srgb,var(--jy-acc) 14%,transparent)}
 .stbtn.done{color:var(--ok)}
 .stbtn.done .stnum{background:var(--ok);border-color:var(--ok);color:#101010;font-weight:800}
 .panel{display:none;animation:fade .28s ease}
@@ -78,7 +79,7 @@ body{
 
 .card{background:linear-gradient(180deg,var(--surface),#0D0D0D);
   border:1px solid var(--line);border-radius:var(--radius);padding:20px 22px;margin-bottom:15px;
-  box-shadow:0 1px 0 rgba(221,44,55,.05) inset}
+  box-shadow:0 1px 0 color-mix(in srgb,var(--jy-acc) 5%,transparent) inset}
 .card-title{font-size:12px;font-weight:700;color:var(--jy-texto-acc);margin-bottom:15px;
   letter-spacing:1.5px;text-transform:uppercase;display:flex;align-items:center;gap:8px}
 .card-title small{font-size:10px;color:var(--muted-2);text-transform:none;font-weight:500;letter-spacing:0}
@@ -143,7 +144,7 @@ option{background:#171717;color:var(--text)}
   transition:.16s;display:inline-flex;align-items:center;gap:7px;justify-content:center}
 .btn:hover{background:var(--surface-3);border-color:var(--line-hi)}
 .btn.pri{background:linear-gradient(180deg,var(--jy-acc),#8E1C23);border-color:var(--jy-borde);
-  color:#FFFFFF;font-weight:700;box-shadow:0 5px 18px -8px rgba(221,44,55,.85)}
+  color:#FFFFFF;font-weight:700;box-shadow:0 5px 18px -8px color-mix(in srgb,var(--jy-acc) 85%,transparent)}
 .btn.pri:hover{background:linear-gradient(180deg,var(--jy-acc-hi),var(--jy-acc));border-color:var(--jy-acc)}
 .btn.ghost{background:transparent;color:var(--jy-texto-acc);border-color:var(--line-hi)}
 .btn:disabled{opacity:.32;cursor:not-allowed;box-shadow:none}
@@ -154,7 +155,7 @@ option{background:#171717;color:var(--text)}
   border:1px solid rgba(226,87,76,.3);background:rgba(226,87,76,.07);color:#F3B8B2;display:none}
 .alert.on{display:block}
 .note{border-radius:11px;padding:12px 15px;font-size:12px;margin-top:4px;margin-bottom:4px;
-  border:1px solid rgba(221,44,55,.28);background:rgba(221,44,55,.07);color:var(--muted)}
+  border:1px solid color-mix(in srgb,var(--jy-acc) 28%,transparent);background:color-mix(in srgb,var(--jy-acc) 7%,transparent);color:var(--muted)}
 .toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(90px);
   background:var(--surface-3);border:1px solid var(--jy-acc);color:var(--jy-texto-acc);padding:12px 22px;
   border-radius:11px;font-size:13px;font-weight:600;z-index:400;transition:transform .3s;
@@ -180,7 +181,7 @@ option{background:#171717;color:var(--text)}
   .card-title{color:#9F9F9F}
   input,select,textarea{background:#fff;border:1px solid #ccc;color:#111}
   .chip{background:#fff;border:1px solid #ccc;color:#333}
-  .chip.on{background:#EEF1F3;border-color:#DD2C37;color:#9F9F9F}
+  .chip.on{background:#EEF1F3;border-color:var(--jy-acc);color:#9F9F9F}
 }
 </style>
 

@@ -173,3 +173,19 @@ Publica **las reglas** (`firebase deploy --only firestore:rules`) junto con el s
 - «Guardar mi pauta» sólo aparece si el alumno está conectado con un profesional.
 - Los marcos de las herramientas miden lo que mide su contenido (sin franjas vacías).
 - Planilla de entrenamiento (PDF / imprimir): logo negro sobre la hoja blanca; en celular la hoja se ajusta.
+
+### v9.1
+- Nuevo grupo muscular **Deltoides** en el planificador (profesional y alumno): 65 GIFs de la carpeta de Drive, repartidos en Barra, Mancuernas, Polea, Máquina y Manguito rotador. Sale en el selector de grupo, en la leyenda (DEL) y se detecta solo al subir GIFs propios.
+- No borra ni cambia nada de lo ya guardado (no se tocó la versión del catálogo).
+
+### v9.2
+- **Google Calendar eliminado** por completo (función `calendario`, reglas y pantallas). Hay que borrar la función ya desplegada: `firebase functions:delete calendario --region us-central1 --force`.
+- **Carga rápida de clases** (profesor, en Agenda): eliges alumno, días y horas y se crean todas las clases de una vez.
+- **Modo día / noche**: botón arriba a la derecha (y en la pantalla de acceso). Se recuerda por dispositivo y lo siguen las herramientas. Contraste revisado pantalla por pantalla; logo negro sobre fondo claro; cada perfil mantiene su color (alumno rojo, profesor mostaza, nutricionista verde), también al pasar el cursor.
+- **Eliminar mi perfil y mis datos** (Ley 21.719) en Perfil → «Privacidad y eliminación», para alumno, profesor y nutricionista; pide la contraseña. El administrador no puede autoeliminarse.
+- Reglas de Firestore: cada persona puede borrar su propio perfil, consentimientos y datos privados. Desplegar con `firebase deploy --only firestore:rules`.
+
+### v9.2.2
+- Portal de perfiles con botón **Modo día / Modo noche** (por defecto siempre noche).
+- Eliminar perfil: se confirma **sólo con la contraseña** (ya no hay que escribir ELIMINAR) y la persona puede elegir un **motivo** y escribir una breve descripción (opcional, máx. 300 caracteres).
+- Los motivos se guardan **anónimos** en la colección `bajas` (rol, motivo, detalle, fecha; sin nombre, correo ni id). Sólo el administrador puede leerlos. Requiere `firebase deploy --only firestore:rules`.

@@ -2,6 +2,7 @@
 <html lang="es" class="dark">
 <head>
 <script src="./_puente.js"></script>
+<script src="./_tema.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="theme-color" content="#090909">
@@ -16,7 +17,7 @@
     <script src="../vendor/html2canvas.min.js"></script>
     <script src="../vendor/jspdf.umd.min.js"></script>
     <style>
-/* paleta JYNTRA: blanco, negro #171717, rojo #DD2C37, blanco 2 #EEF1F3 */
+/* paleta JYNTRA: blanco, negro #171717, rojo var(--jy-acc), blanco 2 #EEF1F3 */
 :root{--jy-acc:#DD2C37;--jy-acc-hi:#E8434D;--jy-acc-lo:#8E1C23;--jy-acc-glow:rgba(221,44,55,.16);--jy-borde:#3A3A3A;--jy-texto-acc:#FFFFFF;--jy-texto-tenue:#9F9F9F;}
 
         @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Inter:wght@300;400;500;600;700&display=swap');
@@ -33,33 +34,33 @@
 
         /* Gold Gradient Text & Elements */
         .gold-gradient-text {
-            background: linear-gradient(135deg, #EEF1F3 0%, #DD2C37 50%, #8E1C23 100%);
+            background: linear-gradient(135deg, #EEF1F3 0%, var(--jy-acc) 50%, #8E1C23 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
         .gold-border-gradient {
-            border-image: linear-gradient(135deg, #EEF1F3, #DD2C37, #DD2C37) 1;
+            border-image: linear-gradient(135deg, #EEF1F3, var(--jy-acc), var(--jy-acc)) 1;
         }
 
         .gold-btn {
-            background: linear-gradient(135deg, #DD2C37 0%, #DD2C37 50%, #DD2C37 100%);
+            background: linear-gradient(135deg, var(--jy-acc) 0%, var(--jy-acc) 50%, var(--jy-acc) 100%);
             color: #FFFFFF;
             font-weight: 700;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(221,44,55, 0.25);
+            box-shadow: 0 4px 15px color-mix(in srgb,var(--jy-acc) 25%,transparent);
         }
 
         .gold-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(221,44,55, 0.4);
+            box-shadow: 0 6px 20px color-mix(in srgb,var(--jy-acc) 40%,transparent);
             filter: brightness(1.1);
         }
 
         .glass-card {
             background: rgba(18,18,18, 0.85);
             backdrop-filter: blur(12px);
-            border: 1px solid rgba(221,44,55, 0.2);
+            border: 1px solid color-mix(in srgb,var(--jy-acc) 20%,transparent);
         }
 
         /* Custom Scrollbar */
@@ -75,7 +76,7 @@
             border-radius: 4px;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: #DD2C37;
+            background: var(--jy-acc);
         }
 
         /* Printable PDF Template container */
@@ -102,7 +103,7 @@
         .jintra-accent-line {
             height: 3px;
             width: 100%;
-            background: linear-gradient(90deg, transparent 0%, #8E1C23 15%, #DD2C37 50%, #EEF1F3 65%, #DD2C37 85%, transparent 100%);
+            background: linear-gradient(90deg, transparent 0%, #8E1C23 15%, var(--jy-acc) 50%, #EEF1F3 65%, var(--jy-acc) 85%, transparent 100%);
         }
         .jintra-header {
             background: #171717;
@@ -122,7 +123,7 @@
             font-weight: 800;
             font-size: 16px;
             letter-spacing: 3px;
-            background: linear-gradient(135deg, #EEF1F3 0%, #DD2C37 50%, #8E1C23 100%);
+            background: linear-gradient(135deg, #EEF1F3 0%, var(--jy-acc) 50%, #8E1C23 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
@@ -155,7 +156,7 @@
             border-radius: 8px;
             padding: 14px 16px;
         }
-        .jintra-card-bordertop { border-top: 4px solid #DD2C37; }
+        .jintra-card-bordertop { border-top: 4px solid var(--jy-acc); }
         .jintra-section-title {
             font-family: 'Cinzel', serif;
             font-weight: 700;
@@ -166,7 +167,7 @@
         .jintra-section-rule {
             height: 3px;
             width: 60px;
-            background: linear-gradient(90deg, #8E1C23, #DD2C37);
+            background: linear-gradient(90deg, #8E1C23, var(--jy-acc));
             border-radius: 3px;
             margin-bottom: 16px;
         }
@@ -202,7 +203,7 @@
         }
         .jintra-info-box {
             background: #EEF1F3;
-            border-left: 4px solid #DD2C37;
+            border-left: 4px solid var(--jy-acc);
             border-radius: 6px;
             padding: 12px 16px;
             font-size: 10.5px;
@@ -218,7 +219,7 @@
    panales por pestaña y barra de pestañas inferior.
    ═══════════════════════════════════════════════════════════════ */
 :root{
-  --gold:#DD2C37;
+  --gold:var(--jy-acc);
   --gold-hi:#EEF1F3;
   --gold-lo:#8E1C23;
   --ink:#090909;
@@ -239,7 +240,7 @@ body{margin:0;overflow-x:hidden}
 .app-header{
   position:sticky;top:0;z-index:60;width:100%;
   background:rgba(18,18,18,.94);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
-  border-bottom:1px solid rgba(221,44,55,.22);
+  border-bottom:1px solid color-mix(in srgb,var(--jy-acc) 22%,transparent);
   padding-top:env(safe-area-inset-top,0px);
 }
 .hd-accent{height:3px;width:100%;
@@ -247,8 +248,8 @@ body{margin:0;overflow-x:hidden}
     var(--gold-hi) 65%,var(--gold) 85%,transparent 100%)}
 .hd-row{display:flex;align-items:center;gap:11px;padding:10px 14px 0;max-width:1180px;margin:0 auto}
 .hd-logo{width:38px;height:38px;flex-shrink:0;border-radius:12px;padding:5px;
-  background:linear-gradient(140deg,#0E0E0E,#000);border:1px solid rgba(221,44,55,.5);
-  box-shadow:0 0 18px rgba(221,44,55,.2)}
+  background:linear-gradient(140deg,#0E0E0E,#000);border:1px solid color-mix(in srgb,var(--jy-acc) 50%,transparent);
+  box-shadow:0 0 18px color-mix(in srgb,var(--jy-acc) 20%,transparent)}
 .hd-logo>div{width:100%;height:100%}
 .hd-txt{min-width:0;flex:1}
 .hd-brand{font-size:15px;font-weight:800;letter-spacing:2.6px;line-height:1}
@@ -257,11 +258,11 @@ body{margin:0;overflow-x:hidden}
 .hd-actions{display:flex;gap:7px;flex-shrink:0}
 .icon-btn{width:40px;height:40px;border-radius:12px;flex-shrink:0;
   display:inline-flex;align-items:center;justify-content:center;font-size:15px;
-  background:var(--ink-3);border:1px solid rgba(221,44,55,.3);color:#FFFFFF;
+  background:var(--ink-3);border:1px solid color-mix(in srgb,var(--jy-acc) 30%,transparent);color:#FFFFFF;
   cursor:pointer;transition:.16s;-webkit-tap-highlight-color:transparent}
 .icon-btn:active{transform:scale(.94)}
-.icon-btn.gold{background:linear-gradient(135deg,#DD2C37,#DD2C37 50%,#DD2C37);
-  color:#FFFFFF;border-color:var(--jy-borde);box-shadow:0 5px 16px -6px rgba(221,44,55,.75)}
+.icon-btn.gold{background:linear-gradient(135deg,var(--jy-acc),var(--jy-acc) 50%,var(--jy-acc));
+  color:#FFFFFF;border-color:var(--jy-borde);box-shadow:0 5px 16px -6px color-mix(in srgb,var(--jy-acc) 75%,transparent)}
 
 /* Selector ISAK: los botones conservan sus clases (el JS las reescribe),
    asi que se les da forma desde el contenedor. */
@@ -271,7 +272,7 @@ body{margin:0;overflow-x:hidden}
   -webkit-tap-highlight-color:transparent}
 .isak-switch{position:relative}
 .isak-switch::before{content:'';position:absolute;inset:-3px 11px 7px;border-radius:13px;
-  background:var(--ink);border:1px solid rgba(221,44,55,.28);z-index:0}
+  background:var(--ink);border:1px solid color-mix(in srgb,var(--jy-acc) 28%,transparent);z-index:0}
 .isak-switch>button{position:relative;z-index:1}
 
 /* ── Panales ────────────────────────────────────────────────── */
@@ -287,17 +288,17 @@ main{padding:16px 14px calc(var(--tabbar-h) + var(--safe-b) + 26px)!important;
   scrollbar-width:none}
 .subnav::-webkit-scrollbar{display:none}
 .subnav button{flex:0 0 auto;padding:9px 14px;border-radius:20px;font-size:12.5px;font-weight:600;
-  background:var(--ink-2);border:1px solid rgba(221,44,55,.22);color:#A2A2A2;cursor:pointer;
+  background:var(--ink-2);border:1px solid color-mix(in srgb,var(--jy-acc) 22%,transparent);color:#A2A2A2;cursor:pointer;
   transition:.16s;-webkit-tap-highlight-color:transparent}
 .subnav button:active{transform:scale(.96)}
-.subnav button.on{background:rgba(221,44,55,.14);border-color:var(--jy-acc);color:var(--jy-texto-acc)}
+.subnav button.on{background:color-mix(in srgb,var(--jy-acc) 14%,transparent);border-color:var(--jy-acc);color:var(--jy-texto-acc)}
 .measure-block{scroll-margin-top:118px}
 
 /* ── Barra de pestañas inferior ─────────────────────────────── */
 .tabbar{position:fixed;left:0;right:0;bottom:0;z-index:70;
   display:grid;grid-template-columns:repeat(5,1fr);
   background:rgba(14,14,14,.96);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
-  border-top:1px solid rgba(221,44,55,.22);
+  border-top:1px solid color-mix(in srgb,var(--jy-acc) 22%,transparent);
   padding:7px 4px calc(7px + var(--safe-b))}
 .tabbtn{position:relative;background:none;border:0;padding:5px 2px;cursor:pointer;
   display:flex;flex-direction:column;align-items:center;gap:5px;justify-content:center;
@@ -309,7 +310,7 @@ main{padding:16px 14px calc(var(--tabbar-h) + var(--safe-b) + 26px)!important;
 .tabbtn.on::before{content:'';position:absolute;top:-7px;left:50%;transform:translateX(-50%);
   width:26px;height:3px;border-radius:0 0 3px 3px;
   background:linear-gradient(90deg,var(--jy-acc),var(--jy-acc-hi));
-  box-shadow:0 0 14px rgba(221,44,55,.75)}
+  box-shadow:0 0 14px color-mix(in srgb,var(--jy-acc) 75%,transparent)}
 .tabbtn:active{transform:scale(.95)}
 
 /* ── Ajustes de formulario para pantalla tactil ─────────────── */
@@ -325,7 +326,7 @@ main canvas{max-width:100%}
   main{padding:22px 20px calc(var(--tabbar-h) + 46px)!important}
   .glass-card{padding:22px!important}
   .tabbar{left:50%;right:auto;transform:translateX(-50%);bottom:18px;
-    width:min(620px,94vw);border-radius:20px;border:1px solid rgba(221,44,55,.3);
+    width:min(620px,94vw);border-radius:20px;border:1px solid color-mix(in srgb,var(--jy-acc) 30%,transparent);
     box-shadow:0 20px 50px -18px rgba(0,0,0,.9);padding:8px}
   .tabbtn.on::before{top:auto;bottom:-8px;border-radius:3px 3px 0 0}
   .tabbtn span{font-size:11px}
@@ -337,14 +338,14 @@ main canvas{max-width:100%}
 
 .tab-save-bar{display:flex;justify-content:flex-end;margin-bottom:12px}
 .tab-save-btn{display:inline-flex;align-items:center;gap:8px;padding:8px 16px;
-  border-radius:10px;border:1px solid rgba(221,44,55,.4);
-  background:linear-gradient(135deg,#DD2C37,#DD2C37);color:#FFFFFF;
-  font-weight:700;font-size:12.5px;cursor:pointer;box-shadow:0 2px 10px rgba(221,44,55,.25);
+  border-radius:10px;border:1px solid color-mix(in srgb,var(--jy-acc) 40%,transparent);
+  background:linear-gradient(135deg,var(--jy-acc),var(--jy-acc));color:#FFFFFF;
+  font-weight:700;font-size:12.5px;cursor:pointer;box-shadow:0 2px 10px color-mix(in srgb,var(--jy-acc) 25%,transparent);
   transition:transform .15s ease,box-shadow .15s ease}
-.tab-save-btn:hover{box-shadow:0 4px 14px rgba(221,44,55,.4)}
+.tab-save-btn:hover{box-shadow:0 4px 14px color-mix(in srgb,var(--jy-acc) 40%,transparent)}
 .tab-save-btn:active{transform:scale(.96)}
 .save-toast{position:fixed;left:50%;bottom:calc(var(--tabbar-h) + var(--safe-b) + 14px);
-  transform:translate(-50%,10px);background:#242424;color:#fff;border:1px solid rgba(221,44,55,.5);
+  transform:translate(-50%,10px);background:#242424;color:#fff;border:1px solid color-mix(in srgb,var(--jy-acc) 50%,transparent);
   padding:9px 18px;border-radius:999px;font-size:12.5px;font-weight:600;z-index:200;
   opacity:0;pointer-events:none;transition:opacity .2s ease,transform .2s ease}
 .save-toast.show{opacity:1;transform:translate(-50%,0)}

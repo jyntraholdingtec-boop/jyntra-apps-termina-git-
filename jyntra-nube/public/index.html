@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
+<script>(function(){var t="oscuro";try{t=JSON.parse(localStorage.getItem("jyntra.__tema"))||t}catch(e){}document.documentElement.setAttribute("data-tema",t==="claro"?"claro":"oscuro");})();</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>JYNTRA · Tu progreso conectado</title>
 <meta name="theme-color" content="#171717">
@@ -352,6 +353,13 @@ img,svg,video,canvas,iframe{max-width:100%}
   .rail-priv{display:inline-flex}
   #jy21-flot{bottom:calc(10px + env(safe-area-inset-bottom))}
 }
+
+/* ---------- carga rápida de clases ---------- */
+.jy-cr label.f{display:block;font-family:var(--f-mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);margin:0 0 5px}
+.jy-cr .tg{display:inline-flex;align-items:center;min-height:38px;padding:7px 14px;border:1px solid var(--line);background:var(--panel2);color:var(--bone);border-radius:999px;font-size:13.5px;cursor:pointer;transition:background .12s,border-color .12s}
+.jy-cr .tg:hover{border-color:var(--jy-acc)}
+.jy-cr .tg.on{background:var(--jy-acc);border-color:var(--jy-acc);color:#fff}
+.jy-cr .cr-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
 /* ---------- horario semanal: todo dentro de su columna ---------- */
 .jy-week{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
 .jy-day{min-width:0;display:flex;flex-direction:column;gap:6px}
@@ -457,6 +465,170 @@ body[data-rol] ::-webkit-scrollbar-thumb:hover{ background:var(--rol-acc); }
   --r-profesor:#D9A21E;      --r-profesor-hi:#EDBB45;
   --r-nutricionista:#2DB36A; --r-nutricionista-hi:#4FCB86;
   --r-admin:#2F7FE8;         --r-admin-hi:#5C9DF2;}
+</style>
+<style id="jy-tema-claro">
+/* ============================================================
+   MODO DÍA — mismas variables, valores claros. Sólo se activa con
+   <html data-tema="claro">; la noche sigue siendo la de siempre.
+   ============================================================ */
+html{color-scheme:dark}
+html[data-tema="claro"]{color-scheme:light}
+html[data-tema="claro"],
+html[data-tema="claro"] body{
+  --ink:#F1F3F6; --panel:#FFFFFF; --panel2:#F5F7FA; --raise:#E8ECF1;
+  --line:#C9D0D9; --line-soft:#E1E6EC;
+  --bone:#14171C; --mute:#4D5562; --mute2:#586273;
+  --gold:#14171C; --gold-hi:#000000; --gold-dim:#5A6473;
+  --ok:#17703F; --warn:#8A5600; --bad:#BC1C2B; --info:#1D5F8E;
+  --jy-acc:#DD2C37; --jy-acc-hi:#C4212C; --jy-acc-lo:#8E1C23; --jy-acc-glow:rgba(221,44,55,.12);
+  --jy-borde:#C3CAD4; --jy-texto-acc:#B5192A; --jy-texto-tenue:#566070;
+  --r-alumno:#C8232F; --r-alumno-hi:#A81C27;
+  --r-profesor:#D9A21E; --r-profesor-hi:#C28F12;
+  --r-nutricionista:#1A7F4B; --r-nutricionista-hi:#146A3E;
+  --r-admin:#2468C9; --r-admin-hi:#1B55AA;
+}
+html[data-tema="claro"] body{
+  background-color:var(--ink); color:var(--bone);
+  background-image:radial-gradient(1100px 600px at 82% -14%, rgba(221,44,55,.07), transparent 62%);
+}
+html[data-tema="claro"] ::-webkit-scrollbar-thumb{background:#BAC2CD}
+html[data-tema="claro"] .rail{background:linear-gradient(180deg,#FFFFFF,#F3F5F8)}
+html[data-tema="claro"] .nav a:hover,html[data-tema="claro"] .nav a.on{background:#E9EDF2}
+html[data-tema="claro"] body[data-rol] .nav a.on{background:color-mix(in srgb,var(--rol-acc) 10%,#FFFFFF)}
+html[data-tema="claro"] .nav a .pill{background:#E6EAF0;border-color:#C3CAD4;color:#3F4754}
+html[data-tema="claro"] .topbar{background:rgba(255,255,255,.90)}
+html[data-tema="claro"] .btn:hover{border-color:#9AA4B2}
+html[data-tema="claro"] .btn.danger{border-color:#E3A9A3;color:#A3151F}
+html[data-tema="claro"] .btn.danger:hover{background:#FDECEA}
+html[data-tema="claro"] .chip.gold{background:#FFFFFF}
+html[data-tema="claro"] .chip.ok{border-color:#9FCDB3;background:#EAF6EF}
+html[data-tema="claro"] .chip.warn{border-color:#E1C58E;background:#FBF3E2}
+html[data-tema="claro"] .chip.bad{border-color:#E6A8A2;background:#FCEBE9}
+html[data-tema="claro"] .chip.info{border-color:#A8C6DE;background:#EAF3FA}
+html[data-tema="claro"] .inp,html[data-tema="claro"] select.inp,html[data-tema="claro"] textarea.inp{background:#FFFFFF;color:var(--bone);border-color:#BFC7D1}
+html[data-tema="claro"] .tbl tbody tr:hover{background:#F0F3F7}
+html[data-tema="claro"] .slot-bar{background:#F5F7FA;border-bottom-color:#C9D0D9}
+html[data-tema="claro"] .slot,html[data-tema="claro"] .slot-head{border-color:#C9D0D9}
+html[data-tema="claro"] .contract{background:#F5F7FA}
+html[data-tema="claro"] .contract code{background:#FFFFFF;border-color:#D5DBE3;color:#14171C}
+html[data-tema="claro"] .slot iframe,html[data-tema="claro"] .jy-anam-caja iframe,html[data-tema="claro"] .slot-body iframe{background:#F1F3F6}
+html[data-tema="claro"] .reado{background:#FFFFFF;color:#2B313A}
+html[data-tema="claro"] .tabs{background:#F5F7FA}
+html[data-tema="claro"] .rolepick label{background:#FFFFFF}
+html[data-tema="claro"] .rolepick label:hover{border-color:#8D97A6}
+html[data-tema="claro"] .rolepick label:has(input:checked){background:#F5F7FA}
+html[data-tema="claro"] .toast{background:#FFFFFF;box-shadow:0 12px 30px rgba(20,30,50,.18);color:var(--bone)}
+html[data-tema="claro"] .modal-bg{background:rgba(20,26,36,.45)}
+html[data-tema="claro"] .locked{background:#F5F7FA;border-color:#C9D0D9}
+html[data-tema="claro"] body.rail-open .rail{box-shadow:0 0 50px rgba(20,30,50,.25)}
+html[data-tema="claro"] body.rail-open::after{background:rgba(20,26,36,.40)}
+html[data-tema="claro"] .jy-slot .pub.si{color:#17703F;border-color:rgba(23,112,63,.45)}
+html[data-tema="claro"] body{ --rol-tinta:#FFFFFF; --rol-txt:#B5192A; }
+html[data-tema="claro"] body[data-rol="alumno"]{ --rol-acc:#C8232F; --rol-hi:#A81C27; --rol-txt:#B5192A; --rol-tinta:#FFFFFF; }
+html[data-tema="claro"] body[data-rol="profesor"]{ --rol-acc:#D9A21E; --rol-hi:#C28F12; --rol-txt:#7A5000; --rol-tinta:#171717; }
+html[data-tema="claro"] body[data-rol="nutricionista"]{ --rol-acc:#1A7F4B; --rol-hi:#146A3E; --rol-txt:#11633A; --rol-tinta:#FFFFFF; }
+html[data-tema="claro"] body[data-rol="administrador"]{ --rol-acc:#2468C9; --rol-hi:#1B55AA; --rol-txt:#1B55AA; --rol-tinta:#FFFFFF; }
+/* cada perfil mantiene su color en toda la cáscara (botones, enlaces, pestañas, foco) */
+html[data-tema="claro"] body[data-rol]{
+  --jy-acc:var(--rol-acc); --jy-acc-hi:var(--rol-hi); --jy-acc-lo:var(--rol-hi);
+  --jy-texto-acc:var(--rol-txt); --jy-acc-glow:color-mix(in srgb,var(--rol-acc) 14%,transparent);
+  --jy-borde:color-mix(in srgb,var(--rol-acc) 35%,#C3CAD4);
+}
+html[data-tema="claro"] body[data-rol] .btn.gold,
+html[data-tema="claro"] body[data-rol] .tabs button.on,
+html[data-tema="claro"] body[data-rol] .plan-badge,
+html[data-tema="claro"] body[data-rol] .jy-cr .tg.on{color:var(--rol-tinta)}
+html[data-tema="claro"] .avatar[style*="--r-profesor"]{color:#171717}
+html[data-tema="claro"] body[data-rol] .btn.gold:hover{background:var(--rol-hi);border-color:var(--rol-hi)}
+html[data-tema="claro"] body[data-rol] .page-head .eyebrow,
+html[data-tema="claro"] body[data-rol] .rail-user .r,
+html[data-tema="claro"] body[data-rol] .brandmark .tag,
+html[data-tema="claro"] body[data-rol] .topbar .crumb b,
+html[data-tema="claro"] body[data-rol] .nav a.on .ic,
+html[data-tema="claro"] body[data-rol] .fold-ic,
+html[data-tema="claro"] body[data-rol] .jy-day-h span{color:var(--rol-txt)}
+/* pasar el cursor: siempre con el color del perfil */
+html[data-tema="claro"] body[data-rol] .nav a:hover{background:color-mix(in srgb,var(--rol-acc) 12%,#FFFFFF);box-shadow:inset 3px 0 0 var(--rol-acc)}
+html[data-tema="claro"] body[data-rol] .nav a:hover .ic{color:var(--rol-txt);opacity:1}
+html[data-tema="claro"] body[data-rol] .btn:not(.gold):not(.danger):hover{border-color:var(--rol-acc);background:color-mix(in srgb,var(--rol-acc) 9%,#FFFFFF);color:var(--rol-txt)}
+html[data-tema="claro"] body[data-rol] .tbl tbody tr:hover{background:color-mix(in srgb,var(--rol-acc) 7%,#FFFFFF)}
+html[data-tema="claro"] body[data-rol] .chip:hover,html[data-tema="claro"] body[data-rol] .tg:hover{border-color:var(--rol-acc)}
+html[data-tema="claro"] body[data-rol] .tabs button:not(.on):hover{color:var(--rol-txt);background:color-mix(in srgb,var(--rol-acc) 9%,#FFFFFF)}
+html[data-tema="claro"] body[data-rol] .kpi:hover,html[data-tema="claro"] body[data-rol] .card:hover{border-color:color-mix(in srgb,var(--rol-acc) 55%,#C9D0D9)}
+html[data-tema="claro"] body[data-rol] .inp:focus{box-shadow:0 0 0 3px color-mix(in srgb,var(--rol-acc) 22%,transparent)}
+html[data-tema="claro"] body[data-rol] :focus-visible{outline-color:var(--rol-acc)}
+html[data-tema="claro"] body[data-rol] a:not(.btn):not([class]){color:var(--rol-txt)}
+/* el logo es blanco para la noche; de día, negro */
+html[data-tema="claro"] .brandmark svg path,
+html[data-tema="claro"] .wm svg path,
+html[data-tema="claro"] svg path[fill-rule="evenodd"][fill="#FFFFFF"],
+html[data-tema="claro"] .jy22-marca svg path{fill:#14171C}
+
+/* acceso: panel izquierdo */
+html[data-tema="claro"] .gate-art{background:linear-gradient(160deg,#FFFFFF,#EEF1F5 62%)}
+html[data-tema="claro"] .gate-art .rings circle{stroke:#14171C}
+html[data-tema="claro"] .gate-art .rings circle:last-child{fill:#14171C}
+html[data-tema="claro"] .jy22-acceso .gate-art .rings circle{stroke:var(--c)}
+html[data-tema="claro"] .jy22-acceso .gate-art .rings circle:last-child{fill:var(--c)}
+html[data-tema="claro"] .gate-claim{color:#14171C}
+html[data-tema="claro"] .gate-pillars div{background:#FFFFFF}
+html[data-tema="claro"] .gate-pillars .t{color:#14171C}
+html[data-tema="claro"] .readonly-note{background:#F5F7FA;color:#2B313A}
+/* portal */
+html[data-tema="claro"] .jy22-cabe h1 em,
+html[data-tema="claro"] .jy22-card .go{color:#14171C}
+html[data-tema="claro"] .jy22-card{--ci:var(--r-alumno)}
+html[data-tema="claro"] .jy22-card[data-perfil="profesor"],html[data-tema="claro"] .jy22-acceso[data-p="profesor"]{--ci:#7A5000}
+html[data-tema="claro"] .jy22-card[data-perfil="nutricionista"],html[data-tema="claro"] .jy22-acceso[data-p="nutricionista"]{--ci:#11633A}
+html[data-tema="claro"] .jy22-card[data-perfil="administrador"],html[data-tema="claro"] .jy22-acceso[data-p="administrador"]{--ci:#1B55AA}
+html[data-tema="claro"] .jy22-acceso[data-p="alumno"]{--ci:#B5192A}
+html[data-tema="claro"] .jy22-card .ic{color:var(--ci)}
+html[data-tema="claro"] .jy22-card::before{transform:scaleX(1)}
+html[data-tema="claro"] .jy22-card:hover .go,html[data-tema="claro"] .jy22-card:focus-visible .go{color:var(--ci)}
+html[data-tema="claro"] .jy22-card:hover{background:color-mix(in srgb,var(--c) 7%,#FFFFFF);box-shadow:0 10px 26px -14px var(--c)}
+html[data-tema="claro"] .jy22-acceso .jy22-vuelta .et,
+html[data-tema="claro"] .jy22-acceso .gate-claim em,
+html[data-tema="claro"] .jy22-acceso .gate-pillars .i{color:var(--ci)}
+html[data-tema="claro"] .jy22-card{background:#FFFFFF;border-color:#C9D0D9;color:#14171C;box-shadow:0 1px 2px rgba(20,30,50,.06)}
+html[data-tema="claro"] .jy22-pie button,html[data-tema="claro"] .jy22-vuelta button{background:#FFFFFF;color:#14171C;border-color:#C3CAD4}
+html[data-tema="claro"] .jy22-pie button:hover{background:#FDECEA}
+html[data-tema="claro"] .jy22-lock{color:#3F4754}
+html[data-tema="claro"] .jy-ojo:hover{background:rgba(20,30,50,.06)}
+/* privacidad / consentimiento */
+html[data-tema="claro"] .jy21-flot{background:#FFFFFF;color:#14171C;border-color:#C9A0A4;box-shadow:0 6px 18px rgba(20,30,50,.18)}
+html[data-tema="claro"] .jy21-flot:hover{background:#FDECEA}
+html[data-tema="claro"] .jy21-bg{background:rgba(20,26,36,.50)}
+html[data-tema="claro"] .jy21-caja{background:#FFFFFF;color:#14171C;border-color:#C9D0D9;box-shadow:0 24px 60px rgba(20,30,50,.30)}
+html[data-tema="claro"] .jy21-h,html[data-tema="claro"] .jy21-f{border-color:#E1E6EC}
+html[data-tema="claro"] .jy21-h small,html[data-tema="claro"] .jy21-sub{color:#4D5562}
+html[data-tema="claro"] .jy21-doc{color:#2B313A}
+html[data-tema="claro"] .jy21-doc h2,html[data-tema="claro"] .jy21-doc h3,html[data-tema="claro"] .jy21-doc b,html[data-tema="claro"] .jy21-doc th{color:#14171C}
+html[data-tema="claro"] .jy21-nota{background:#FDF0F0;border-color:#E7B4B8;color:#3A2024}
+html[data-tema="claro"] .jy21-doc th{background:#F6DDDF;border-color:#D5DBE3}
+html[data-tema="claro"] .jy21-doc td{border-color:#D5DBE3}
+html[data-tema="claro"] .jy21-btn{background:#F5F7FA;color:#14171C;border-color:#BFC7D1}
+html[data-tema="claro"] .jy21-btn:hover{background:#E8ECF1}
+html[data-tema="claro"] .jy21-btn.oro{background:#C4212C;border-color:#C4212C;color:#FFFFFF}
+html[data-tema="claro"] .jy21-cons{background:#FDF0F0;border-color:#E7B4B8}
+html[data-tema="claro"] .jy21-cons .jy21-tit,html[data-tema="claro"] .jy21-ck .req,html[data-tema="claro"] .jy21-ck a{color:#14171C}
+html[data-tema="claro"] .jy21-menor{border-top-color:#C9D0D9}
+html[data-tema="claro"] .jy21-menor input[type=text],html[data-tema="claro"] .jy21-menor input[type=email]{background:#FFFFFF;border-color:#BFC7D1;color:#14171C}
+html[data-tema="claro"] .jy21-aviso{color:#4D5562}
+html[data-tema="claro"] .chip[style*="color"],html[data-tema="claro"] .jy-pro-chip{color:#14171C!important}
+html[data-tema="claro"] .btn[disabled]{color:#5A6473;background:#EEF1F5}
+/* motivos de baja */
+.jy-mot{appearance:none;cursor:pointer;font:inherit;font-size:12.5px;padding:7px 12px;border-radius:999px;
+  border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.06);color:#EEF1F3;transition:border-color .15s,background .15s}
+.jy-mot:hover{border-color:var(--rol-acc,var(--jy-acc))}
+.jy-mot[aria-pressed="true"]{border-color:var(--rol-acc,var(--jy-acc));background:color-mix(in srgb,var(--rol-acc,var(--jy-acc)) 22%,transparent);color:#FFFFFF;font-weight:600}
+html[data-tema="claro"] .jy-mot{border-color:#BFC7D1;background:#FFFFFF;color:#14171C}
+html[data-tema="claro"] .jy-mot[aria-pressed="true"]{background:color-mix(in srgb,var(--rol-acc,var(--jy-acc)) 12%,#FFFFFF);color:#14171C}
+#jy-del-go:disabled{opacity:.45;cursor:not-allowed}
+/* botón día / noche */
+.tema-btn{display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
+.tema-btn .ti{font-size:15px;line-height:1}
+.tema-flot{position:fixed;top:max(12px,env(safe-area-inset-top));right:max(12px,env(safe-area-inset-right));z-index:60}
+@media(max-width:520px){ .tema-btn .tt{display:none} .tema-btn{padding-left:10px;padding-right:10px} }
 </style>
 </head>
 <body>
@@ -1381,6 +1553,36 @@ function svgLogo(L, alto, color, extra){
 }
 function logo(alto){ return svgLogo(LOGO_SIMBOLO, alto||30); }
 function logoCompleto(alto){ return svgLogo(LOGO_TODO, alto||120, '#FFFFFF', ' role="img" aria-label="JYNTRA"'); }
+/* ---------- tema día / noche ---------- */
+function temaActual(){ return document.documentElement.getAttribute('data-tema') === 'claro' ? 'claro' : 'oscuro'; }
+function etiquetaTema(b){
+  var claro = temaActual() === 'claro';
+  b.innerHTML = '<span class="ti" aria-hidden="true">' + (claro ? '☾' : '☀') + '</span><span class="tt">' + (claro ? 'Modo noche' : 'Modo día') + '</span>';
+  b.setAttribute('aria-label', claro ? 'Cambiar a modo noche' : 'Cambiar a modo día');
+  b.title = claro ? 'Cambiar a modo noche' : 'Cambiar a modo día';
+}
+function ponerTema(t){
+  t = (t === 'claro') ? 'claro' : 'oscuro';
+  document.documentElement.setAttribute('data-tema', t);
+  try{ localStorage.setItem('jyntra.__tema', JSON.stringify(t)); }catch(e){}
+  var m = document.querySelector('meta[name="theme-color"]'); if(m) m.setAttribute('content', t === 'claro' ? '#F1F3F6' : '#171717');
+  Array.prototype.forEach.call(document.querySelectorAll('[data-tema-btn]'), etiquetaTema);
+  Array.prototype.forEach.call(document.querySelectorAll('iframe'), function(f){ try{ f.contentWindow.postMessage({jyTema:t}, '*'); }catch(e){} });
+}
+function botonTema(extra){
+  var claro = temaActual() === 'claro';
+  return '<button type="button" class="btn sm ghost tema-btn ' + (extra||'') + '" data-tema-btn="1" aria-label="' + (claro ? 'Cambiar a modo noche' : 'Cambiar a modo día') + '" title="' + (claro ? 'Cambiar a modo noche' : 'Cambiar a modo día') + '">'
+    + '<span class="ti" aria-hidden="true">' + (claro ? '☾' : '☀') + '</span><span class="tt">' + (claro ? 'Modo noche' : 'Modo día') + '</span></button>';
+}
+if(!window.__jyTemaLigado){
+  window.__jyTemaLigado = true;
+  document.addEventListener('click', function(e){
+    var b = e.target && e.target.closest ? e.target.closest('[data-tema-btn]') : null;
+    if(b){ e.preventDefault(); ponerTema(temaActual() === 'claro' ? 'oscuro' : 'claro'); }
+  });
+  try{ ponerTema(temaActual()); }catch(e){}
+}
+
 function marca(tag){
   return '<div class="brandmark">'+logo(30)+'<div><div class="wm" aria-label="JYNTRA">'+svgLogo(LOGO_PALABRA, 15)+'</div>'
     + (!tag?'':'<span class="tag">'+tag+'</span>')+'</div></div>';
@@ -1394,6 +1596,7 @@ function vistaAcceso(){
   const roles = ['alumno','profesor','nutricionista'];
   return ''
   + '<div class="gate">'
+  +  botonTema('tema-flot')
   +  '<div class="gate-art">'
   +    '<svg class="rings" viewBox="0 0 400 400" aria-hidden="true">'
   +      [0,1,2,3,4].map(i=>'<circle cx="200" cy="200" r="'+(60+i*38)+'" fill="none" stroke="#FFFFFF" stroke-opacity="'+(0.30-i*0.05)+'" stroke-width="1"/>').join('')
@@ -1619,6 +1822,7 @@ function pintar(){
   +      '<div class="crumb">JYNTRA · '+ROLES[u.rol].nombre+' / <b>'+esc(titulo)+'</b></div>'
   +      '<div class="grow"></div>'
   +      (esProfesional(u.rol) ? avisoCupo(u) : '')
+  +      botonTema()
   +    '</header>'
   +    '<main class="content" id="vista"></main>'
   +  '</div>'
@@ -2821,9 +3025,15 @@ VISTAS['perfil'] = (v,u)=>{
   +   '<p class="sub" style="margin:0">Guardamos todo en este dispositivo. Descarga un respaldo antes de cambiar de equipo o de limpiar el navegador.</p>'
   +   '<div class="row" style="margin-top:12px"><button class="btn sm" id="b-exp">Descargar respaldo</button>'
   +   '<label class="btn sm" style="cursor:pointer">Cargar respaldo<input type="file" id="b-imp" accept="application/json" hidden></label></div></div>'
-  +  '<div class="card"><div class="h2" style="margin-bottom:8px">Zona delicada</div>'
-  +   '<p class="sub" style="margin:0 0 12px">Vuelve la aplicación a los datos de ejemplo. No se puede deshacer.</p>'
-  +   '<button class="btn danger sm" id="b-reset">Reiniciar la plataforma</button></div>'
+  + (u.rol === 'administrador'
+    ? '<div class="card"><div class="h2" style="margin-bottom:8px">Zona delicada</div>'
+      + '<p class="sub" style="margin:0 0 12px">Vuelve la aplicación a los datos de ejemplo. No se puede deshacer.</p>'
+      + '<button class="btn danger sm" id="b-reset">Reiniciar la plataforma</button></div>'
+    : '<div class="card" id="jy-zona-priv"><div class="h2" style="margin-bottom:8px">Privacidad y eliminación</div>'
+      + '<p class="sub" style="margin:0 0 12px">Tienes derecho a llevarte tus datos y a pedir que se borren. '
+      + 'Al eliminar tu perfil se borran tu cuenta y tus datos de esta aplicación.</p>'
+      + '<div class="row" style="gap:8px;flex-wrap:wrap"><button class="btn sm" id="b-priv" type="button">Mi privacidad</button>'
+      + '<button class="btn danger sm" id="b-eliminar-perfil" type="button">Eliminar mi perfil y mis datos</button></div></div>')
   + '</div></div>';
   $('#f-perfil').onsubmit = (e)=>{
     e.preventDefault(); const f=e.target;
@@ -2850,7 +3060,9 @@ VISTAS['perfil'] = (v,u)=>{
     }catch(err){ toast('El archivo no es un respaldo válido de JYNTRA.','bad'); } };
     r.readAsText(f);
   };
-  $('#b-reset').onclick = async ()=>{
+  if($('#b-eliminar-perfil')) $('#b-eliminar-perfil').onclick = ()=>{ try{ JY21.eliminarMiPerfil(); }catch(e){ toast('No se pudo abrir el asistente.','bad'); } };
+  if($('#b-priv')) $('#b-priv').onclick = ()=>{ try{ JY21.panelPrivacidad(); }catch(e){} };
+  if($('#b-reset')) $('#b-reset').onclick = async ()=>{
     if(!await preguntar('Reiniciar la plataforma','<p class="sub" style="margin:0">Se borran cuentas, vínculos y registros, y vuelven los datos de ejemplo.</p>',{ok:'Reiniciar',peligro:true})) return;
     Object.keys(S).forEach(k=> S[k]=null);
     if(disco) Object.keys(localStorage).filter(k=>k.startsWith('jyntra.')).forEach(k=>localStorage.removeItem(k));
@@ -4503,6 +4715,174 @@ var jy_ligarHorarioAlumno = function(u, raiz){
   };
 };
 
+/* ---------- 20.11 · PROFESIONAL · carga rápida de clases ----------
+   Elegir personas + días + hora + semanas, ver cuántas clases salen y
+   publicarlas de una vez. Usa los bloques del plan que aún no tienen fecha
+   (plan Elite: si faltan, agrega sesiones solo); respeta el tope del plan. */
+var JY_CR = { personas:null, dias:[1,3], ini:'08:00', dur:60, desde:'', semanas:4, act:'', lugar:'' };
+function jyCRFin(ini, dur){
+  var m = /^(\d{1,2}):(\d{2})$/.exec(ini||''); if(!m) return '';
+  var t = Math.min((+m[1])*60 + (+m[2]) + (+dur||60), 23*60+59);
+  return String(Math.floor(t/60)).padStart(2,'0') + ':' + String(t%60).padStart(2,'0');
+}
+function jyCRFechas(){
+  var e = JY_CR, d0 = e.desde || iso(new Date()), out = [];
+  if(!aFecha(d0) || !e.dias.length) return out;
+  var n = Math.max(1, Math.min(12, +e.semanas || 1)) * 7;
+  for(var k=0;k<n && out.length<60;k++){
+    var f = masDias(d0, k);
+    if(e.dias.indexOf(diaDeFecha(f)) >= 0) out.push(f);
+  }
+  return out;
+}
+function jyCRCalcular(u){
+  var e = JY_CR, fechas = jyCRFechas(), fin = jyCRFin(e.ini, e.dur);
+  var sel = e.personas || [];
+  var filas = vinculosActivosDe(u.id).filter(function(v){ return sel.indexOf(v.alumnoId) >= 0; }).map(function(v){
+    var libres = hDe(v.alumnoId).filter(function(b){ return b.origenPlan === v.id && !b.fecha; }).length;
+    var faltan = Math.max(0, fechas.length - libres);
+    var nuevas = sinTopeSesiones(u) ? faltan : 0;
+    var asignadas = Math.min(fechas.length, libres + nuevas);
+    return { v:v, nombre:(usr(v.alumnoId)||{nombre:'—'}).nombre, fechas:fechas.slice(0, asignadas),
+             nuevas:nuevas, omitidas:fechas.length - asignadas };
+  });
+  var ocupadas = 0;
+  if(fin && e.ini < fin){
+    var ya = bloquesDelPro(u.id).map(function(x){ return x.b; }).filter(function(b){ return b.fecha && b.ini; });
+    fechas.forEach(function(f){
+      if(ya.some(function(b){ return b.fecha === f && b.ini < fin && (b.fin || jyCRFin(b.ini,60)) > e.ini; })) ocupadas++;
+    });
+  }
+  return { filas:filas, fechas:fechas, fin:fin,
+           total:filas.reduce(function(a,f){ return a + f.fechas.length; }, 0), ocupadas:ocupadas };
+}
+function jyCRPrevio(u){
+  var e = JY_CR, p = jyCRCalcular(u);
+  if(!(e.personas||[]).length) return '<span class="hint" style="margin:0">Elige a quién le programas las clases.</span>';
+  if(!e.dias.length) return '<span class="hint" style="margin:0">Elige al menos un día.</span>';
+  if(!p.fin || e.ini >= p.fin) return '<span class="hint" style="margin:0">Revisa la hora de inicio y la duración.</span>';
+  var partes = p.filas.map(function(f){
+    return esc(f.nombre.split(' ')[0]) + ': <b>' + f.fechas.length + '</b>'
+      + (f.nuevas ? ' (+' + f.nuevas + ' sesión' + (f.nuevas>1?'es':'') + ' nueva' + (f.nuevas>1?'s':'') + ')' : '')
+      + (f.omitidas ? ' <span style="color:var(--warn)">· ' + f.omitidas + ' sin cupo en el plan</span>' : '');
+  });
+  return '<div class="row" style="gap:8px;flex-wrap:wrap"><span class="chip ' + (p.total ? 'ok' : 'warn') + '">'
+    + p.total + ' clase' + (p.total===1?'':'s') + ' por crear</span>'
+    + '<span class="hint" style="margin:0">' + partes.join(' · ') + '</span></div>'
+    + (p.ocupadas ? '<p class="hint" style="margin:6px 0 0;color:var(--warn)">' + p.ocupadas + ' fecha' + (p.ocupadas>1?'s':'')
+        + ' se cruza' + (p.ocupadas>1?'n':'') + ' con otra clase tuya a esa hora (se crean igual).</p>' : '')
+    + (p.filas.some(function(f){ return f.omitidas; }) && !sinTopeSesiones(u)
+        ? '<p class="hint" style="margin:6px 0 0">' + esc(avisoTopeSesiones(u)) + '</p>' : '');
+}
+function jyCRHTML(u){
+  var gente = alumnosDelPro(u.id);
+  var rotulo = u.rol === 'nutricionista' ? 'pacientes' : 'alumnos';
+  if(!gente.length) return '';
+  if(JY_CR.personas == null) JY_CR.personas = gente.length === 1 ? [gente[0].id] : [];
+  if(!JY_CR.desde) JY_CR.desde = iso(new Date());
+  if(!JY_CR.act) JY_CR.act = u.rol === 'nutricionista' ? 'Consulta nutricional' : 'Entrenamiento';
+  var sinPub = 0;
+  bloquesDelPro(u.id).forEach(function(x){ if(x.b.fecha && !x.b.publicado) sinPub++; });
+  var tg = function(attr, val, on, txt){ return '<button type="button" class="tg' + (on?' on':'') + '" ' + attr + '="' + val + '" aria-pressed="' + (on?'true':'false') + '">' + txt + '</button>'; };
+  var DL = {1:'Lun',2:'Mar',3:'Mié',4:'Jue',5:'Vie',6:'Sáb',0:'Dom'};
+  return '<div class="card jy-cr" id="jy-cr" style="margin-bottom:18px"><div class="card-head"><div class="h2">Programar clases</div><div class="grow"></div>'
+    + (sinPub ? '<button class="btn sm" id="jy-cr-pub">Publicar ' + sinPub + ' pendiente' + (sinPub>1?'s':'') + '</button>' : '<span class="chip">todo publicado</span>')
+    + '</div>'
+    + '<p class="hint" style="margin:0 0 12px">Elige ' + rotulo + ', días y hora: las clases se crean con fecha y quedan publicadas en un solo paso.</p>'
+    + '<label class="f">' + (u.rol === 'nutricionista' ? 'Pacientes' : 'Alumnos') + '</label>'
+    + '<div class="row" style="gap:6px;flex-wrap:wrap;margin-bottom:12px">'
+    +   (gente.length > 1 ? tg('data-cr-todos','1', (JY_CR.personas||[]).length === gente.length, 'Todos') : '')
+    +   gente.map(function(a){ return tg('data-cr-p', a.id, (JY_CR.personas||[]).indexOf(a.id) >= 0, esc(a.nombre)); }).join('')
+    + '</div>'
+    + '<label class="f">Días</label>'
+    + '<div class="row" style="gap:6px;flex-wrap:wrap;margin-bottom:12px">'
+    +   DIAS_ORD.map(function(d){ return tg('data-cr-d', d, JY_CR.dias.indexOf(d) >= 0, DL[d]); }).join('')
+    + '</div>'
+    + '<div class="cr-grid">'
+    +   '<div><label class="f">Hora</label><input class="inp" type="time" id="jy-cr-ini" value="' + esc(JY_CR.ini) + '"></div>'
+    +   '<div><label class="f">Duración</label><select class="inp" id="jy-cr-dur">'
+    +     [30,45,60,75,90,120].map(function(m){ return '<option value="' + m + '"' + (+JY_CR.dur === m ? ' selected' : '') + '>' + m + ' min</option>'; }).join('') + '</select></div>'
+    +   '<div><label class="f">Desde</label><input class="inp" type="date" id="jy-cr-desde" value="' + esc(JY_CR.desde) + '"></div>'
+    +   '<div><label class="f">Semanas</label><select class="inp" id="jy-cr-sem">'
+    +     [1,2,3,4,5,6,8,10,12].map(function(n){ return '<option value="' + n + '"' + (+JY_CR.semanas === n ? ' selected' : '') + '>' + n + (n===1?' semana':' semanas') + '</option>'; }).join('') + '</select></div>'
+    +   '<div><label class="f">Actividad</label><input class="inp" type="text" id="jy-cr-act" value="' + esc(JY_CR.act) + '" placeholder="Entrenamiento"></div>'
+    +   '<div><label class="f">Lugar</label><input class="inp" type="text" id="jy-cr-lugar" value="' + esc(JY_CR.lugar) + '" placeholder="Opcional"></div>'
+    + '</div>'
+    + '<div id="jy-cr-prev" style="margin:14px 0 12px">' + jyCRPrevio(u) + '</div>'
+    + '<button class="btn gold" id="jy-cr-go">Crear y publicar clases</button></div>';
+}
+function jyCRLigar(u, raiz){
+  var r = q('#jy-cr', raiz || document); if(!r) return;
+  var gente = alumnosDelPro(u.id);
+  var prev = function(){ var p = q('#jy-cr-prev', r); if(p) p.innerHTML = jyCRPrevio(u); };
+  var marcar = function(el, on){ el.classList.toggle('on', !!on); el.setAttribute('aria-pressed', on ? 'true' : 'false'); };
+  r.addEventListener('click', function(ev){
+    var b = ev.target.closest ? ev.target.closest('.tg') : null; if(!b) return;
+    if(b.hasAttribute('data-cr-todos')){
+      var todos = (JY_CR.personas||[]).length !== gente.length;
+      JY_CR.personas = todos ? gente.map(function(a){ return a.id; }) : [];
+      qq('[data-cr-p]', r).forEach(function(x){ marcar(x, todos); }); marcar(b, todos);
+    } else if(b.hasAttribute('data-cr-p')){
+      var id = b.getAttribute('data-cr-p'), i = (JY_CR.personas||[]).indexOf(id);
+      if(i >= 0) JY_CR.personas.splice(i,1); else JY_CR.personas.push(id);
+      marcar(b, i < 0);
+      var t = q('[data-cr-todos]', r); if(t) marcar(t, JY_CR.personas.length === gente.length);
+    } else if(b.hasAttribute('data-cr-d')){
+      var d = +b.getAttribute('data-cr-d'), j = JY_CR.dias.indexOf(d);
+      if(j >= 0) JY_CR.dias.splice(j,1); else JY_CR.dias.push(d);
+      marcar(b, j < 0);
+    }
+    prev();
+  });
+  var campo = function(id, clave, num){
+    var el = q('#' + id, r); if(!el) return;
+    var f = function(){ JY_CR[clave] = num ? +el.value : el.value; prev(); };
+    el.addEventListener('input', f); el.addEventListener('change', f);
+  };
+  campo('jy-cr-ini','ini'); campo('jy-cr-dur','dur',true); campo('jy-cr-desde','desde');
+  campo('jy-cr-sem','semanas',true); campo('jy-cr-act','act'); campo('jy-cr-lugar','lugar');
+
+  var pub = q('#jy-cr-pub', r);
+  if(pub) pub.onclick = function(){
+    var n = 0;
+    bloquesDelPro(u.id).forEach(function(x){
+      if(x.b.fecha && !x.b.publicado){
+        x.b.publicado = true; x.b.profesionalId = x.b.profesionalId || u.id;
+        x.b.profesional = x.b.profesional || u.nombre; x.b.rolPro = x.b.rolPro || u.rol;
+        x.b.dia = diaDeFecha(x.b.fecha); sellar(x.b, u.id); n++;
+      }
+    });
+    if(n){ guardar('horario'); toast(n + ' clase' + (n>1?'s':'') + ' publicada' + (n>1?'s':''),'ok'); pintar(); }
+  };
+
+  var go = q('#jy-cr-go', r);
+  if(go) go.onclick = function(){
+    var e = JY_CR, p = jyCRCalcular(u);
+    if(!(e.personas||[]).length) return toast('Elige al menos una persona','warn');
+    if(!e.dias.length) return toast('Elige al menos un día','warn');
+    if(!p.fin || e.ini >= p.fin) return toast('Revisa la hora de inicio y la duración','warn');
+    if(!p.total) return toast(sinTopeSesiones(u) ? 'No hay fechas para crear' : 'Sin cupo: ' + avisoTopeSesiones(u),'warn');
+    p.filas.forEach(function(f){
+      if(f.nuevas){ f.v.sesionesPlan = (+f.v.sesionesPlan || 0) + f.nuevas; guardar('vinculos'); sembrarBloques(f.v); }
+      var libres = hDe(f.v.alumnoId).filter(function(b){ return b.origenPlan === f.v.id && !b.fecha; });
+      f.fechas.forEach(function(fecha, i){
+        var b = libres[i]; if(!b) return;
+        b.fecha = fecha; b.dia = diaDeFecha(fecha); b.ini = e.ini; b.fin = p.fin;
+        if(e.act){ b.actividad = e.act; b.servicio = e.act; }
+        if(e.lugar) b.lugar = e.lugar;
+        b.publicado = true; b.profesionalId = u.id;
+        b.profesional = b.profesional || u.nombre; b.rolPro = b.rolPro || u.rol;
+        sellar(b, u.id);
+      });
+    });
+    guardar('horario');
+    var omit = p.filas.reduce(function(a,f){ return a + f.omitidas; }, 0);
+    toast(p.total + ' clase' + (p.total>1?'s':'') + ' creada' + (p.total>1?'s':'') + ' y publicada' + (p.total>1?'s':'')
+      + (omit ? ' · ' + omit + ' sin cupo en el plan' : ''), omit ? 'warn' : 'ok');
+    pintar();
+  };
+}
+
 /* ---------- 20.9 · PROFESIONAL · «Agenda»: información del plan, S.agenda en lectura y Mi calendario ---------- */
 function agDe(proId){
   return (S.agenda||[]).filter(function(b){ return b.profesionalId === proId; })
@@ -4566,6 +4946,7 @@ var jy_pantallaAgenda = function(v, u){
 
   v.innerHTML = cab('Agenda','El plan de cada ' + rotulo + ', sus bloques con fecha y tu calendario del mes.')
   + tarjetaInfoPlan(u)
+  + jyCRHTML(u)
   + jy_recuadroHorarioSemanal(u)
   + '<div class="card" style="margin-bottom:18px"><div class="card-head"><div class="h2">Mi calendario</div>'
   +   '<div class="grow"></div><span class="chip ' + (eventos.length?'ok':'') + '">' + eventos.length + ' clases publicadas</span></div>'
@@ -4598,6 +4979,7 @@ var jy_pantallaAgenda = function(v, u){
   + ranura(esNutri ? 'nutricionista.agenda' : 'profesor.agenda');
 
   jy_ligarHorarioAlumno(u, v);
+  jyCRLigar(u, v);
   if(typeof montarRanuras === 'function') montarRanuras(null);
 };
 ['grillaCombinada','clasesDeLaSemana','tablaHorarioAlumno','recuadroHorarioSemanal',
@@ -5171,6 +5553,7 @@ function panelPrivacidad(){
    +   '<button class="jy21-btn" data-p="doc">Ver el documento</button>'
    +   '<button class="jy21-btn" data-p="exp">Descargar mis datos</button>'
    +   '<button class="jy21-btn" data-p="rev">Revocar consentimiento</button>'
+   +   (u.rol !== 'administrador' ? '<button class="jy21-btn" data-p="del" style="border-color:#B3212C;color:#E5484D">Eliminar mi perfil y mis datos</button>' : '')
    +   '<button class="jy21-btn oro" data-p="x">Cerrar</button>'
    + '</div></div>';
   document.body.appendChild(bg);
@@ -5181,6 +5564,7 @@ function panelPrivacidad(){
     if(a === 'x') return bg.remove();
     if(a === 'doc') return abrirPolitica();
     if(a === 'exp') return exportarMisDatos(u);
+    if(a === 'del'){ bg.remove(); return eliminarMiPerfil(); }
     if(a === 'rev'){
       bg.remove();
       preguntar('Revocar consentimiento',
@@ -5217,6 +5601,153 @@ function exportarMisDatos(u){
   }catch(e){ toast('No se pudo generar la descarga.','bad'); }
 }
 
+/* ---------- 21.8b · eliminar mi perfil y mis datos (derecho de supresión) ---------- */
+function nubeDeBorrado(){ return (window.JYNUBE && window.JYNUBE.activa && window.JYNUBE.backend) || null; }
+function leerUnaVez(B, consulta){
+  return new Promise(function(ok, mal){
+    var hecho = false, off = null;
+    var fin = function(fn, v){ if(hecho) return; hecho = true; try{ if(off) off(); }catch(e){} fn(v); };
+    off = B.escuchar(consulta, function(l){ fin(ok, l || []); }, function(err){ fin(mal, err); });
+    if(hecho){ try{ off(); }catch(e){} }
+    setTimeout(function(){ fin(mal, new Error('tiempo de espera agotado')); }, 20000);
+  });
+}
+function borrarRutas(B, rutas, avance){
+  var i = 0;
+  return new Promise(function(ok, mal){
+    (function sig(){
+      if(i >= rutas.length) return ok();
+      var r = rutas[i++];
+      B.del(r).then(function(){ if(avance) avance(i, rutas.length); sig(); }, mal);
+    })();
+  });
+}
+function eliminarTodoDe(B, u, correo, paso){
+  var uid = u.id, tareas = [];
+  ['registros','metricas','quemas','horario','pautas','fichas'].forEach(function(c){
+    tareas.push([{col:'alumnos/' + uid + '/' + c}, 'tu ficha y tus registros']);
+  });
+  tareas.push([{col:'vinculos', donde:['alumnoId', uid]}, 'tus conexiones']);
+  tareas.push([{col:'vinculos', donde:['profesionalId', uid]}, 'tus conexiones']);
+  tareas.push([{col:'invitaciones', donde:['profesionalId', uid]}, 'tus invitaciones']);
+  if(correo) tareas.push([{col:'invitaciones', donde:['email', correo]}, 'tus invitaciones']);
+  tareas.push([{col:'agenda', donde:['profesionalId', uid]}, 'tu agenda']);
+  tareas.push([{col:'consentimientos', donde:['usuarioId', uid]}, 'tus consentimientos']);
+  var i = 0;
+  return new Promise(function(ok, mal){
+    (function sig(){
+      if(i >= tareas.length) return ok();
+      var t = tareas[i++];
+      paso('Borrando ' + t[1] + '…');
+      leerUnaVez(B, t[0]).then(function(lista){
+        return borrarRutas(B, lista.map(function(d){ return d.ruta; }));
+      }).then(sig, mal);
+    })();
+  });
+}
+function eliminarMiPerfil(){
+  var u = (typeof sesion === 'function') ? sesion() : null;
+  if(!u) return;
+  if(u.rol === 'administrador') return toast('La cuenta de administración no se elimina desde aquí.','warn');
+  var esPro = u.rol === 'profesor' || u.rol === 'nutricionista';
+  var B = nubeDeBorrado();
+  var bg = document.createElement('div'); bg.className = 'jy21-bg';
+  bg.innerHTML = '<div class="jy21-caja" role="dialog" aria-modal="true" aria-labelledby="jy-del-t">'
+   + '<div class="jy21-h"><div style="flex:1"><b id="jy-del-t">Eliminar mi perfil y mis datos</b>'
+   +   '<small>' + esc(u.nombre) + ' · Ley N° 21.719 · derecho de supresión</small></div></div>'
+   + '<div class="jy21-b"><div class="jy21-doc">'
+   +   '<p><b>Esta acción es definitiva y no se puede deshacer.</b></p>'
+   +   '<h3>Qué se borra</h3><ul>'
+   +     '<li>Tu cuenta de acceso y tu perfil, con tus datos personales.</li>'
+   +     '<li>Tus conexiones con ' + (esPro ? 'tus alumnos y pacientes' : 'tu coach, tu nutricionista o tu equipo') + ' y las invitaciones.</li>'
+   +     (esPro
+        ? '<li>Tu ficha pública, tu agenda y tus planes de servicio.</li>'
+        : '<li>Tu ficha, evaluaciones, mediciones, rutinas, pautas, horarios y registros.</li>')
+   +     '<li>Tus consentimientos y lo que este dispositivo guarde de JYNTRA.</li></ul>'
+   +   '<h3>Qué no se borra</h3><ul>'
+   +     (esPro ? '<li>Los registros que hiciste sobre cada persona quedan en la ficha de ella: son parte de su historial de salud.</li>' : '')
+   +     '<li>Solo lo que la ley exige conservar: registros de facturación y de seguridad, sin tus datos de salud.</li></ul>'
+   +   '<p>Antes de eliminar puedes <a href="#" id="jy-del-exp">descargar una copia de tus datos</a>.</p>'
+   +   '<div class="field" style="margin:14px 0 6px"><label>¿Por qué eliminas tu perfil? <span style="font-weight:400;color:var(--mute)">(opcional, nos ayuda a mejorar)</span></label>'
+   +     '<div class="jy-del-mot" style="display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 8px">'
+   +       ['No la estoy usando','Terminé mi proceso','Me cambio a otra app','Me preocupan mis datos','Otro motivo'].map(function(m){ return '<button type="button" class="jy-mot" data-mot="' + esc(m) + '" aria-pressed="false">' + esc(m) + '</button>'; }).join('')
+   +     '</div>'
+   +     '<textarea class="inp" id="jy-del-txt" rows="2" maxlength="300" placeholder="Cuéntanos en pocas palabras (opcional)" style="width:100%;resize:vertical"></textarea>'
+   +     '<small style="display:block;color:var(--mute);font-size:11.5px;margin-top:4px">Se guarda sin tu nombre ni tu correo. No es obligatorio para eliminar.</small></div>'
+   +   (B ? '<div class="field" style="margin:14px 0 8px"><label for="jy-del-clave">Confirma con tu contraseña</label>'
+   +        '<input class="inp" id="jy-del-clave" type="password" autocomplete="current-password" style="width:100%"></div>' : '')
+   +   '<p id="jy-del-est" role="status" style="margin:10px 0 0;min-height:1.4em;font-size:13px"></p>'
+   + '</div></div>'
+   + '<div class="jy21-f">'
+   +   '<button class="jy21-btn" data-p="x" id="jy-del-no">Cancelar</button>'
+   +   '<button class="jy21-btn" data-p="go" id="jy-del-go" disabled style="background:#B3212C;border-color:#B3212C;color:#fff">Eliminar definitivamente</button>'
+   + '</div></div>';
+  document.body.appendChild(bg);
+  var g = function(id){ return bg.querySelector('#' + id); };
+  var est = g('jy-del-est'), go = g('jy-del-go'), txt = g('jy-del-txt'), clave = g('jy-del-clave');
+  var ocupado = false;
+  var decir = function(t, mal){ est.textContent = t; est.style.color = mal ? '#E5484D' : ''; };
+  var motivo = '';
+  var valido = function(){ go.disabled = ocupado || (clave ? !clave.value : false); };
+  if(clave) clave.addEventListener('input', valido);
+  if(!clave) go.disabled = false;
+  Array.prototype.forEach.call(bg.querySelectorAll('[data-mot]'), function(c){
+    c.onclick = function(){
+      var on = c.getAttribute('aria-pressed') !== 'true';
+      Array.prototype.forEach.call(bg.querySelectorAll('[data-mot]'), function(o){ o.setAttribute('aria-pressed','false'); });
+      if(on) c.setAttribute('aria-pressed','true');
+      motivo = on ? c.getAttribute('data-mot') : '';
+    };
+  });
+  g('jy-del-exp').onclick = function(e){ e.preventDefault(); exportarMisDatos(u); };
+  bg.addEventListener('click', function(e){ if(e.target === bg && !ocupado) bg.remove(); });
+  g('jy-del-no').onclick = function(){ if(!ocupado) bg.remove(); };
+  (clave || txt).focus();
+
+  go.onclick = async function(){
+    if(go.disabled) return;
+    ocupado = true; valido(); g('jy-del-no').disabled = true; txt.disabled = true; if(clave) clave.disabled = true;
+    try{
+      var correo = String(u.email || '').toLowerCase();
+      if(B){
+        var act = B.auth.actual ? B.auth.actual() : null;
+        correo = String((act && act.email) || correo).toLowerCase();
+        decir('Verificando tu contraseña…');
+        try{ await B.auth.entrar(correo, clave.value); }
+        catch(err){ throw { clave:true, e:err }; }
+        var detalle = String(txt.value || '').trim().slice(0, 300);
+        if(motivo || detalle){                                   // motivo anónimo: sin nombre, correo ni id
+          try{ await B.set('bajas/b' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8),
+                 { rol: u.rol, motivo: motivo || 'Sin elegir', detalle: detalle, fecha: new Date().toISOString() }); }catch(e){}
+        }
+        window.JY_ELIMINANDO = true;                       // la app deja de escribir datos mientras se borra
+        await eliminarTodoDe(B, u, correo, decir);
+        decir('Borrando tu perfil…');
+        await borrarRutas(B, ['privado/' + u.id]);
+        await borrarRutas(B, ['usuarios/' + u.id]);
+        decir('Cerrando tu cuenta de acceso…');
+        await B.auth.eliminar();
+      }
+      try{
+        Object.keys(localStorage).forEach(function(k){ localStorage.removeItem(k); });
+        sessionStorage.clear();
+        if(window.indexedDB && indexedDB.databases) indexedDB.databases().then(function(l){ (l||[]).forEach(function(d){ try{ indexedDB.deleteDatabase(d.name); }catch(e){} }); });
+      }catch(e){}
+      bg.querySelector('.jy21-b').innerHTML = '<div class="jy21-doc"><h3>Listo: tu perfil y tus datos fueron eliminados</h3>'
+        + '<p>Gracias por haber usado JYNTRA. Si más adelante quieres volver, puedes crear una cuenta nueva.</p></div>';
+      bg.querySelector('.jy21-f').innerHTML = '<button class="jy21-btn oro" id="jy-del-fin">Cerrar</button>';
+      var fin = function(){ location.replace(location.pathname); };
+      bg.querySelector('#jy-del-fin').onclick = fin; setTimeout(fin, 6000);
+    }catch(err){
+      window.JY_ELIMINANDO = false;
+      ocupado = false; g('jy-del-no').disabled = false; txt.disabled = false; if(clave) clave.disabled = false; valido();
+      var cod = err && (err.e ? err.e.code : err.code) || '';
+      if(err && err.clave) decir(/too-many|demasiados/i.test(cod) ? 'Demasiados intentos. Espera unos minutos.' : 'La contraseña no es correcta.', true);
+      else decir('No pudimos terminar la eliminación (' + ((err && (err.code || err.message)) || 'error') + '). Tu cuenta sigue activa: intenta de nuevo o escribe al correo de privacidad.', true);
+    }
+  };
+}
+
 /* ---------- 21.9 · puente de inspección ---------- */
 window.JY21 = {
   version: '21.0',
@@ -5225,6 +5756,7 @@ window.JY21 = {
   canal: (typeof JY_CANAL !== 'undefined' ? JY_CANAL : null),
   abrirPolitica: abrirPolitica,
   panelPrivacidad: panelPrivacidad,
+  eliminarMiPerfil: eliminarMiPerfil,
   bloqueConsentimiento: bloqueConsentimiento,
   textoSalud: textoSalud,
   validarConsentimiento: validarConsentimiento,
@@ -5407,7 +5939,7 @@ function ojosClave(raiz){
 
 /* ---------- 22.3 · la pantalla del portal ---------- */
 function portalHTML(){
-  return '<div class="jy22-portal"><div class="jy22-in">'
+  return '<div class="jy22-portal">' + (typeof botonTema === 'function' ? botonTema('tema-flot') : '') + '<div class="jy22-in">'
    + '<div class="jy22-marca" style="display:flex;justify-content:center;margin-bottom:6px">'+logoCompleto(118)+'</div>'
    + '<div class="jy22-cabe">'
    +   '<div class="jy22-eb">Tu progreso conectado</div>'
@@ -5806,13 +6338,15 @@ function programarSubida(clave){
   pendientes[clave] = setTimeout(function(){ delete pendientes[clave]; subir(clave); }, 0);
 }
 function escribir(ruta, datos){
+  if(window.JY_ELIMINANDO) return;
   B.set(ruta, datos).catch(function(err){ delete conocidos[ruta]; errorNube(err, 'guardar ' + ruta.split('/')[0]); });
 }
 function borrar(ruta){
+  if(window.JY_ELIMINANDO) return;
   B.del(ruta).catch(function(err){ errorNube(err, 'borrar ' + ruta.split('/')[0]); });
 }
 function subir(clave){
-  if(!yoUid) return;
+  if(!yoUid || window.JY_ELIMINANDO) return;
   if(!claveLista(clave)){ setTimeout(function(){ programarSubida(clave); }, 400); return; }
   if(clave === 'usuarios') return subirUsuarios();
   var m = MAPA[clave]; if(!m) return;
@@ -6581,7 +7115,7 @@ function nivel(k){
 }
 
 function marco(html){
-  return '<div class="jy22-portal"><div class="jy22-in" style="width:min(440px,100%)">'
+  return '<div class="jy22-portal">' + (typeof botonTema === 'function' ? botonTema('tema-flot') : '') + '<div class="jy22-in" style="width:min(440px,100%)">'
    + '<div class="jy22-marca" style="display:flex;justify-content:center;margin-bottom:18px">' + logoCompleto(96) + '</div>'
    + '<div class="jy25-caja" id="jy25">' + html + '</div></div></div>';
 }

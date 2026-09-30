@@ -8,7 +8,7 @@
      Firebase/Google, que se manejan solas.
    Para forzar que todos reciban una versión nueva: sube VERSION.
    ================================================================ */
-var VERSION = 'jyntra-v9';   // v9: ortografía, sesiones por plan, pauta con conexión, marcos a su alto, logo negro en planilla
+var VERSION = 'jyntra-v9-2-2';   // v9.2.2: modo día en el portal, baja con motivo
 var BASICOS = ['/', '/index.html', '/nube-config.js', '/nube-backend.js', '/vendor/firebase-jyntra.js',
                '/manifest.webmanifest', '/iconos/icono-192.png'];
 
